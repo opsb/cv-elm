@@ -1,0 +1,8 @@
+@media screen {
+    .style-elements .page {
+        box-shadow: 0 .5mm 2mm rgba(0,0,0,.3);
+        margin-top: 20mm;
+        margin-bottom: 20mm;
+        padding: 10mm;
+    }
+}
