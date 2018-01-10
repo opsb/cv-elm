@@ -1,8 +1,17 @@
 @media screen {
-    .style-elements .page {
+    html {
+        background: rgba(244,244,244,1);
+    }
+
+    #root > .se {
+        margin-top: 20mm !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        margin-bottom: 20mm !important;
+    }
+
+    [data-class="page"] {
         box-shadow: 0 .5mm 2mm rgba(0,0,0,.3);
-        margin-top: 20mm;
-        margin-bottom: 20mm;
         padding: 10mm;
     }
 }
