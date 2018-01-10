@@ -2,34 +2,32 @@ module Main exposing (..)
 
 import Time exposing (Time)
 import Element exposing (..)
-import Element.Attributes exposing (..)
 import Element.Events as Events
 import Element.Input as Input
 import Html exposing (Html)
-import Style exposing (StyleSheet, style, prop)
-import Style.Background as Background
-import Style.Border as Border
-import Style.Color as Color
-import Style.Filter as Filter
-import Style.Font as Font
-import Style.Scale as Scale
-import Style.Shadow as Shadow
-import Style.Sheet as Sheet
-import Style.Transition as Transition
+import Element.Background as Background
+import Element.Border as Border
+import Element.Font as Font
 import Color
 import Data exposing (..)
 import List.Extra
-import Styles
+import Html.Attributes
+import Atom exposing (..)
+import Extra.Element exposing (..)
+
+
+--import Styles
+
 import String.Extra
 import Icon
 
 
 type alias El =
-    Element Styles.Styles Styles.Variations Msg
+    Element Msg
 
 
 type alias Attr =
-    Element.Attribute Styles.Variations Msg
+    Element.Attribute Msg
 
 
 
@@ -74,39 +72,37 @@ gutter =
 
 view : Model -> Html Msg
 view model =
-    Element.viewport Styles.stylesheet <|
-        column Styles.Main
-            []
-            [ el Styles.Page [ padding 30, class "page", center ] <|
-                column Styles.None
-                    [ width <| fill, height <| fill ]
-                    [ headerView model
-                    , row Styles.None
-                        [ paddingTop 20, width <| fill, height <| fill, paddingBottom 20 ]
-                        [ column Styles.LeftColumn
-                            [ width <| fill, paddingRight gutter, height <| fill ]
-                            [ introductionView model
-                            , skillsView model
-                            , openSourceView model
-                            , educationView model
-                            ]
-                        , column Styles.RightColumn
-                            [ width <| fill, paddingLeft gutter, height <| fill ]
-                            [ experienceView model
-                            ]
+    Element.layout [ fonts.helvetica, Font.color colors.black, Background.color colors.transparent ] <|
+        a4Page [ padding 30 ] <|
+            column []
+                [ headerView model
+                , mainColumns
+                    { left =
+                        [ introductionView model
+                        , skillsView model
+                        , openSourceView model
+                        , educationView model
                         ]
-                    , footerView model
-                    ]
+                    , right =
+                        [ experienceView model
+                        ]
+                    }
+                , footerView model
+                ]
+
+
+mainColumns { left, right } =
+    row [ paddingXY 0 20 ]
+        [ column
+            [ borderRight 2
+            , Border.color colors.blue
+            , paddingRight gutter
             ]
-
-
-
--- BASE ELEMENTS
-
-
-sectionTitle : List Attr -> String -> El
-sectionTitle props title =
-    el Styles.SectionTitle (List.append props [ paddingBottom 16 ]) (text title)
+            left
+        , column
+            [ paddingLeft gutter ]
+            right
+        ]
 
 
 
@@ -114,15 +110,28 @@ sectionTitle props title =
 
 
 headerView model =
-    column Styles.None
-        [ center ]
+    column
+        [ center, tag "headerView", width <| fill ]
         [ el
-            Styles.DeveloperTitle
-            [ center, padding 20 ]
+            [ center
+            , padding 20
+            , Font.color colors.black
+            , Font.size h1Size
+            , Border.color colors.blue
+            , Border.width 2
+            , uppercase
+            , Font.letterSpacing 4
+            , width <| shrink
+            , Font.weight 400
+            ]
             (text model.data.name)
         , el
-            Styles.Tagline
-            [ center, padding 10 ]
+            [ center
+            , padding 10
+            , uppercase
+            , Font.letterSpacing 2
+            , Font.size 12
+            ]
             (text model.data.tagline)
         ]
 
@@ -132,18 +141,26 @@ headerView model =
 
 
 introductionView model =
-    column Styles.None
+    column
         []
-        [ sectionTitle [ alignRight ] "Introduction"
-        , column Styles.None
-            []
-            (List.map introSectionView model.data.introduction)
+        [ sectionTitle [ alignRight, Font.color colors.black ] "Introduction"
+        , column [] <| (List.map introSectionView model.data.introduction)
         ]
 
 
 introSectionView : IntroSection -> El
 introSectionView data =
-    paragraph Styles.BodyTextJustified [ paddingBottom 10 ] [ text data.body ]
+    paragraph
+        [ paddingEach { bottom = 10, top = 0, right = 0, left = 0 }
+        , Font.size 12
+        , Font.lineHeight 1.4
+        , hyphenatedText
+        , fonts.roboto
+        , Font.justify
+        , Font.weight 300
+        , Font.letterSpacing 0.5
+        ]
+        [ text data.body ]
 
 
 skillsView model =
@@ -151,15 +168,23 @@ skillsView model =
         ( columnA, columnB ) =
             splitInTwo model.data.skills
     in
-        column Styles.None
+        column
             [ paddingBottom 25 ]
             [ sectionTitle [ alignRight ] "Skills"
-            , row Styles.None
+            , row
                 [ spacing 15 ]
-                [ column Styles.Skill [ width <| percent 50 ] <| List.map skillView columnA
-                , column Styles.Skill [ width <| percent 50 ] <| List.map skillView columnB
+                [ column (List.append [] skillStyles) <| List.map skillView columnA
+                , column (List.append [] skillStyles) <| List.map skillView columnB
                 ]
             ]
+
+
+skillStyles =
+    [ Font.size skillsSize
+    , Font.alignRight
+    , skillsWeight
+    , fonts.roboto
+    ]
 
 
 splitInTwo list =
@@ -171,10 +196,10 @@ splitInTwo list =
 
 
 skillView skill =
-    row Styles.None
-        [ alignLeft, paddingBottom 5, spacing 5, alignBottom, spread ]
-        [ text ((skill.name))
-        , el Styles.SkillYears [] <| text <| (toString skill.years) ++ " years"
+    row
+        [ paddingBottom 5, alignBottom, spaceEvenly, alignLeft ]
+        [ el [] (text skill.name)
+        , el [ Font.size skillsSize, skillsWeight, fonts.roboto ] <| text <| (toString skill.years) ++ " years"
         ]
 
 
@@ -186,21 +211,25 @@ codify text =
 
 
 educationView model =
-    column Styles.None
+    column
         []
         [ sectionTitle [ alignRight ] "Education"
-        , column Styles.None
+        , column
             []
             (List.map institutionView model.data.education)
         ]
 
 
 institutionView institution =
-    column Styles.None
+    column
         []
-        [ el Styles.EducationInstitution
+        [ el
             [ alignRight
             , paddingBottom 4
+            , Font.size 10
+            , uppercase
+            , Font.weight 600
+            , Font.letterSpacing 1
             ]
             (text
                 (String.join ""
@@ -212,23 +241,49 @@ institutionView institution =
                     ]
                 )
             )
-        , el Styles.EducationCourse [ alignRight ] (text (String.join "" [ institution.course, " | ", institution.result ]))
+        , el
+            [ alignRight
+            , Font.size 12
+            , Font.lineHeight 1.4
+            , Font.justify
+            , Font.weight 200
+            , Font.letterSpacing 0.5
+            , fonts.roboto
+            ]
+            (text (String.join "" [ institution.course, " | ", institution.result ]))
         ]
 
 
 openSourceView model =
-    column Styles.None
+    column
         [ paddingBottom 20 ]
         [ sectionTitle [ alignRight ] "Open Source"
-        , column Styles.None [ spacing 15 ] <| List.map openSourceProjectView model.data.openSource
+        , column [ spacing 15 ] <| List.map openSourceProjectView model.data.openSource
         ]
 
 
 openSourceProjectView project =
-    column Styles.None
+    column
         [ alignRight ]
-        [ el Styles.OpenSourceRepo [ paddingBottom 1 ] (text <| project.name ++ "  |  " ++ (String.toLower project.shortInvolvement))
-        , paragraph Styles.OpenSourceText [ alignRight ] [ text project.overview ]
+        [ el
+            [ paddingBottom 1
+            , Font.size 10
+            , Font.letterSpacing 1
+            , uppercase
+            , Font.weight 600
+            , alignRight
+            ]
+            (text <| project.name ++ "  |  " ++ (String.toLower project.shortInvolvement))
+        , paragraph
+            [ alignRight
+            , Font.size 12
+            , Font.lineHeight 1.5
+            , Font.alignRight
+            , Font.weight 200
+            , fonts.roboto
+            , Font.letterSpacing 0.5
+            ]
+            [ text project.overview ]
         ]
 
 
@@ -237,10 +292,10 @@ experienceView model =
         ( full, simple ) =
             List.Extra.splitAt 4 model.data.experience
     in
-        column Styles.None
+        column
             []
-            [ sectionTitle [] "Experience"
-            , column Styles.None
+            [ sectionTitle [ alignLeft ] "Experience"
+            , column
                 [ spacing 15 ]
                 (List.concat
                     [ List.map
@@ -252,12 +307,8 @@ experienceView model =
             ]
 
 
-ellipsis props =
-    el Styles.Ellipsis props (text "...")
-
-
 positionDivider =
-    el Styles.None [ center, paddingBottom 5 ] (text " ")
+    el [ center, paddingBottom 5 ] (text " ")
 
 
 positionView : (Project -> El) -> Position -> El
@@ -266,17 +317,38 @@ positionView func position =
         positionTitle =
             String.join " // " <| [ position.title, position.company ]
     in
-        column Styles.None
+        column
             []
-            [ el Styles.PositionTitle [ paddingBottom 3 ] (text positionTitle)
-            , row Styles.None [ paddingBottom 10, spacing 5 ] <|
+            [ el
+                [ paddingBottom 3
+                , Font.size 13
+                , Font.weight 800
+                , uppercase
+                , Font.letterSpacing 1
+                , alignLeft
+                ]
+                (text positionTitle)
+            , row [ paddingBottom 10, spacing 5 ] <|
                 List.filterMap identity
                     [ flip Maybe.map (positionDateRange position) <|
                         \dateRange ->
-                            el Styles.PositionDateRange [] (text dateRange)
-                    , Just <| el Styles.PositionLocation [] (text position.location)
+                            el
+                                [ Font.size 10
+                                , Font.color colors.lighterGrey
+                                , Font.letterSpacing 1
+                                , alignLeft
+                                ]
+                                (text dateRange)
+                    , Just <|
+                        el
+                            [ Font.size 10
+                            , Font.color colors.lighterGrey
+                            , Font.letterSpacing 1
+                            , alignLeft
+                            ]
+                            (text position.location)
                     ]
-            , column Styles.None [] (List.map func position.projects)
+            , column [] (List.map func position.projects)
             ]
 
 
@@ -304,20 +376,32 @@ fullProjectView project =
                 |> List.map (String.append "#")
                 |> String.join (" ")
     in
-        column Styles.None
+        column
             [ paddingBottom 7 ]
-            [ el Styles.ProjectTitle [ paddingBottom 3 ] (text project.name)
-            , paragraph Styles.BodyText [ paddingBottom 6 ] [ text <| project.overview ++ " " ++ hashtags ]
+            [ projectTitle project.name
+            , bodyText <| project.overview ++ " " ++ hashtags
             ]
 
 
 simpleProjectView : Project -> El
 simpleProjectView project =
-    column Styles.None
+    column
         [ paddingBottom 5 ]
-        [ el Styles.ProjectTitle [ paddingBottom 3 ] (text <| String.join " // " [ project.name ])
-        , paragraph Styles.BodyText [ paddingBottom 6 ] [ text <| project.overview ]
+        [ projectTitle project.name
+        , bodyText project.overview
         ]
+
+
+projectTitle string =
+    el
+        [ paddingBottom 3
+        , Font.size 10
+        , uppercase
+        , Font.weight 600
+        , Font.letterSpacing 1
+        , alignLeft
+        ]
+        (text <| String.join " // " [ string ])
 
 
 listSingleton a =
@@ -325,18 +409,26 @@ listSingleton a =
 
 
 footerView model =
-    row Styles.Footer
-        [ spacing 25, center, verticalCenter, paddingTop 7 ]
-        [ socialDetails Icon.envelope "oliver@opsb.co.uk"
-        , socialDetails Icon.stackoverflow "opsb"
-        , socialDetails Icon.twitter "ollysb"
-        , socialDetails Icon.github "opsb"
-        ]
+    el [] <|
+        row
+            [ center
+            , centerY
+            , paddingEach { top = 7, bottom = 0, left = 0, right = 0 }
+            , Font.size 12
+            , Font.color (grey 100)
+            , width <| shrink
+            , spacing 25
+            ]
+            [ socialDetails Icon.envelope "oliver@opsb.co.uk"
+            , socialDetails Icon.stackoverflow "opsb"
+            , socialDetails Icon.twitter "ollysb"
+            , socialDetails Icon.github "opsb"
+            ]
 
 
 socialDetails icon detail =
-    row Styles.None
-        [ spacing 5, verticalCenter ]
+    row
+        [ spacing 5, centerY ]
         [ icon iconSize
         , text detail
         ]
@@ -358,3 +450,54 @@ main =
         , update = update
         , subscriptions = always Sub.none
         }
+
+
+
+---- STYLES ----
+
+
+h1Size =
+    30
+
+
+h3Size =
+    16
+
+
+h4Size =
+    10
+
+
+fonts =
+    { roboto =
+        Font.family [ Font.typeface "Roboto" ]
+    , helvetica =
+        Font.family [ Font.typeface "helvetica neue" ]
+    }
+
+
+skillsSize =
+    12
+
+
+skillsWeight =
+    Font.weight 300
+
+
+colors =
+    { white = Color.white
+    , darkGrey = Color.grey
+    , black = Color.black
+    , lightGrey = Color.rgba 244 244 244 1
+    , lighterGrey = Color.rgba 140 140 140 1
+    , blue = Color.rgba 148 196 252 100
+    , transparent = Color.rgba 255 255 255 0
+    }
+
+
+grey level =
+    Color.rgba level level level 1
+
+
+tag name =
+    attribute <| Html.Attributes.attribute "data-tag" name
