@@ -12,6 +12,10 @@ borderRight n =
     Border.widthEach { right = n, left = 0, top = 0, bottom = 0 }
 
 
+borderLeft n =
+    Border.widthEach { right = 0, left = n, top = 0, bottom = 0 }
+
+
 paddingRight n =
     paddingEach { right = n, left = 0, top = 0, bottom = 0 }
 

@@ -14,6 +14,7 @@ import List.Extra
 import Html.Attributes
 import Atom exposing (..)
 import Extra.Element exposing (..)
+import Styles exposing (..)
 
 
 --import Styles
@@ -75,116 +76,83 @@ view model =
     Element.layout [ fonts.helvetica, Font.color colors.black, Background.color colors.transparent ] <|
         a4Page [ padding 30 ] <|
             column []
-                [ headerView model
-                , mainColumns
-                    { left =
-                        [ introductionView model
-                        , skillsView model
-                        , openSourceView model
-                        , educationView model
+                -- HEADER
+                [ column
+                    [ center, width <| fill ]
+                    [ headerTitle model.data.name
+                    , headerSubTitle model.data.tagline
+                    ]
+
+                -- LEFT COLUMN
+                , row [ paddingXY 0 20, spacing 30 ]
+                    [ column []
+                        [ section "Introduction" <|
+                            column [] <|
+                                flip List.map model.data.introduction <|
+                                    (.body >> bodyText)
+                        , section "Skills" <|
+                            column [] <|
+                                let
+                                    ( columnA, columnB ) =
+                                        splitInTwo model.data.skills
+                                in
+                                    [ row
+                                        [ spacing 15 ]
+                                        [ keyValueTable <| skillsData <| columnA
+                                        , keyValueTable <| skillsData <| columnB
+                                        ]
+                                    ]
+                        , section "Open Source" <|
+                            column [ spacing 15 ] <|
+                                flip List.map model.data.openSource <|
+                                    \project ->
+                                        column
+                                            []
+                                            [ smallTitle <| project.name ++ "  |  " ++ (String.toLower project.shortInvolvement)
+                                            , bodyText project.overview
+                                            ]
+                        , section "Education" <|
+                            column [] <|
+                                flip List.map model.data.education <|
+                                    \institution ->
+                                        column
+                                            []
+                                            [ smallTitle <| institutionTitle <| institution
+                                            , bodyText <| courseTitle <| institution
+                                            ]
                         ]
-                    , right =
-                        [ experienceView model
+                    , columnDivider
+
+                    -- RIGHT COLUMN
+                    , column []
+                        [ section "Experience" <|
+                            column
+                                [ spacing 15 ]
+                                (flip List.map model.data.experience <|
+                                    \position ->
+                                        column
+                                            []
+                                            [ subSectionTitle <| positionTitle <| position
+                                            , metaTitle <| positionMetaTitle <| position
+                                            , column [] <|
+                                                (flip List.map position.projects <|
+                                                    \project ->
+                                                        column
+                                                            [ paddingBottom 7 ]
+                                                            [ smallTitle project.name
+                                                            , bodyText <| project.overview ++ " " ++ (projectHashTags project)
+                                                            ]
+                                                )
+                                            ]
+                                )
                         ]
-                    }
+                    ]
                 , footerView model
                 ]
 
 
-mainColumns { left, right } =
-    row [ paddingXY 0 20 ]
-        [ column
-            [ borderRight 2
-            , Border.color colors.blue
-            , paddingRight gutter
-            ]
-            left
-        , column
-            [ paddingLeft gutter ]
-            right
-        ]
-
-
-
--- HEADER
-
-
-headerView model =
-    column
-        [ center, tag "headerView", width <| fill ]
-        [ el
-            [ center
-            , padding 20
-            , Font.color colors.black
-            , Font.size h1Size
-            , Border.color colors.blue
-            , Border.width 2
-            , uppercase
-            , Font.letterSpacing 4
-            , width <| shrink
-            , Font.weight 400
-            ]
-            (text model.data.name)
-        , el
-            [ center
-            , padding 10
-            , uppercase
-            , Font.letterSpacing 2
-            , Font.size 12
-            ]
-            (text model.data.tagline)
-        ]
-
-
 
 -- SECTIONS
-
-
-introductionView model =
-    column
-        []
-        [ sectionTitle [ alignRight, Font.color colors.black ] "Introduction"
-        , column [] <| (List.map introSectionView model.data.introduction)
-        ]
-
-
-introSectionView : IntroSection -> El
-introSectionView data =
-    paragraph
-        [ paddingEach { bottom = 10, top = 0, right = 0, left = 0 }
-        , Font.size 12
-        , Font.lineHeight 1.4
-        , hyphenatedText
-        , fonts.roboto
-        , Font.justify
-        , Font.weight 300
-        , Font.letterSpacing 0.5
-        ]
-        [ text data.body ]
-
-
-skillsView model =
-    let
-        ( columnA, columnB ) =
-            splitInTwo model.data.skills
-    in
-        column
-            [ paddingBottom 25 ]
-            [ sectionTitle [ alignRight ] "Skills"
-            , row
-                [ spacing 15 ]
-                [ column (List.append [] skillStyles) <| List.map skillView columnA
-                , column (List.append [] skillStyles) <| List.map skillView columnB
-                ]
-            ]
-
-
-skillStyles =
-    [ Font.size skillsSize
-    , Font.alignRight
-    , skillsWeight
-    , fonts.roboto
-    ]
 
 
 splitInTwo list =
@@ -195,12 +163,8 @@ splitInTwo list =
         List.Extra.splitAt index list
 
 
-skillView skill =
-    row
-        [ paddingBottom 5, alignBottom, spaceEvenly, alignLeft ]
-        [ el [] (text skill.name)
-        , el [ Font.size skillsSize, skillsWeight, fonts.roboto ] <| text <| (toString skill.years) ++ " years"
-        ]
+skillsData skills =
+    List.map (\skill -> { key = skill.name, value = toString skill.years ++ " years" }) skills
 
 
 codify text =
@@ -210,145 +174,33 @@ codify text =
         |> String.Extra.dasherize
 
 
-educationView model =
-    column
-        []
-        [ sectionTitle [ alignRight ] "Education"
-        , column
-            []
-            (List.map institutionView model.data.education)
+institutionTitle institution =
+    String.join ""
+        [ institution.name
+        , " | "
+        , toString institution.startYear
+        , "-"
+        , toString institution.endYear
         ]
 
 
-institutionView institution =
-    column
-        []
-        [ el
-            [ alignRight
-            , paddingBottom 4
-            , Font.size 10
-            , uppercase
-            , Font.weight 600
-            , Font.letterSpacing 1
-            ]
-            (text
-                (String.join ""
-                    [ institution.name
-                    , " | "
-                    , toString institution.startYear
-                    , "-"
-                    , toString institution.endYear
-                    ]
-                )
-            )
-        , el
-            [ alignRight
-            , Font.size 12
-            , Font.lineHeight 1.4
-            , Font.justify
-            , Font.weight 200
-            , Font.letterSpacing 0.5
-            , fonts.roboto
-            ]
-            (text (String.join "" [ institution.course, " | ", institution.result ]))
-        ]
-
-
-openSourceView model =
-    column
-        [ paddingBottom 20 ]
-        [ sectionTitle [ alignRight ] "Open Source"
-        , column [ spacing 15 ] <| List.map openSourceProjectView model.data.openSource
-        ]
-
-
-openSourceProjectView project =
-    column
-        [ alignRight ]
-        [ el
-            [ paddingBottom 1
-            , Font.size 10
-            , Font.letterSpacing 1
-            , uppercase
-            , Font.weight 600
-            , alignRight
-            ]
-            (text <| project.name ++ "  |  " ++ (String.toLower project.shortInvolvement))
-        , paragraph
-            [ alignRight
-            , Font.size 12
-            , Font.lineHeight 1.5
-            , Font.alignRight
-            , Font.weight 200
-            , fonts.roboto
-            , Font.letterSpacing 0.5
-            ]
-            [ text project.overview ]
-        ]
-
-
-experienceView model =
-    let
-        ( full, simple ) =
-            List.Extra.splitAt 4 model.data.experience
-    in
-        column
-            []
-            [ sectionTitle [ alignLeft ] "Experience"
-            , column
-                [ spacing 15 ]
-                (List.concat
-                    [ List.map
-                        (positionView fullProjectView)
-                        full
-                    , List.map (positionView simpleProjectView) simple
-                    ]
-                )
-            ]
+courseTitle institution =
+    String.join "" [ institution.course, " | ", institution.result ]
 
 
 positionDivider =
     el [ center, paddingBottom 5 ] (text " ")
 
 
-positionView : (Project -> El) -> Position -> El
-positionView func position =
-    let
-        positionTitle =
-            String.join " // " <| [ position.title, position.company ]
-    in
-        column
-            []
-            [ el
-                [ paddingBottom 3
-                , Font.size 13
-                , Font.weight 800
-                , uppercase
-                , Font.letterSpacing 1
-                , alignLeft
-                ]
-                (text positionTitle)
-            , row [ paddingBottom 10, spacing 5 ] <|
-                List.filterMap identity
-                    [ flip Maybe.map (positionDateRange position) <|
-                        \dateRange ->
-                            el
-                                [ Font.size 10
-                                , Font.color colors.lighterGrey
-                                , Font.letterSpacing 1
-                                , alignLeft
-                                ]
-                                (text dateRange)
-                    , Just <|
-                        el
-                            [ Font.size 10
-                            , Font.color colors.lighterGrey
-                            , Font.letterSpacing 1
-                            , alignLeft
-                            ]
-                            (text position.location)
-                    ]
-            , column [] (List.map func position.projects)
+positionTitle position =
+    String.join " // " <| [ position.title, position.company ]
+
+
+positionMetaTitle position =
+    String.join " " <|
+        List.filterMap identity <|
+            [ positionDateRange position
+            , Just <| position.location
             ]
 
 
@@ -367,63 +219,28 @@ positionDateRange position =
         Maybe.map2 (\a b -> a ++ "–" ++ b) start end
 
 
-fullProjectView : Project -> El
-fullProjectView project =
-    let
-        hashtags =
-            project.stack
-                |> List.map (codify)
-                |> List.map (String.append "#")
-                |> String.join (" ")
-    in
-        column
-            [ paddingBottom 7 ]
-            [ projectTitle project.name
-            , bodyText <| project.overview ++ " " ++ hashtags
-            ]
-
-
-simpleProjectView : Project -> El
-simpleProjectView project =
-    column
-        [ paddingBottom 5 ]
-        [ projectTitle project.name
-        , bodyText project.overview
-        ]
-
-
-projectTitle string =
-    el
-        [ paddingBottom 3
-        , Font.size 10
-        , uppercase
-        , Font.weight 600
-        , Font.letterSpacing 1
-        , alignLeft
-        ]
-        (text <| String.join " // " [ string ])
-
-
-listSingleton a =
-    [ a ]
+projectHashTags project =
+    project.stack
+        |> List.map (codify)
+        |> List.map (String.append "#")
+        |> String.join (" ")
 
 
 footerView model =
-    el [] <|
-        row
-            [ center
-            , centerY
-            , paddingEach { top = 7, bottom = 0, left = 0, right = 0 }
-            , Font.size 12
-            , Font.color (grey 100)
-            , width <| shrink
-            , spacing 25
-            ]
-            [ socialDetails Icon.envelope "oliver@opsb.co.uk"
-            , socialDetails Icon.stackoverflow "opsb"
-            , socialDetails Icon.twitter "ollysb"
-            , socialDetails Icon.github "opsb"
-            ]
+    row
+        [ center
+        , centerY
+        , paddingEach { top = 7, bottom = 0, left = 0, right = 0 }
+        , Font.size 12
+        , Font.color (grey 100)
+        , width <| shrink
+        , spacing 25
+        ]
+        [ socialDetails Icon.envelope "oliver@opsb.co.uk"
+        , socialDetails Icon.stackoverflow "opsb"
+        , socialDetails Icon.twitter "ollysb"
+        , socialDetails Icon.github "opsb"
+        ]
 
 
 socialDetails icon detail =
@@ -454,49 +271,6 @@ main =
 
 
 ---- STYLES ----
-
-
-h1Size =
-    30
-
-
-h3Size =
-    16
-
-
-h4Size =
-    10
-
-
-fonts =
-    { roboto =
-        Font.family [ Font.typeface "Roboto" ]
-    , helvetica =
-        Font.family [ Font.typeface "helvetica neue" ]
-    }
-
-
-skillsSize =
-    12
-
-
-skillsWeight =
-    Font.weight 300
-
-
-colors =
-    { white = Color.white
-    , darkGrey = Color.grey
-    , black = Color.black
-    , lightGrey = Color.rgba 244 244 244 1
-    , lighterGrey = Color.rgba 140 140 140 1
-    , blue = Color.rgba 148 196 252 100
-    , transparent = Color.rgba 255 255 255 0
-    }
-
-
-grey level =
-    Color.rgba level level level 1
 
 
 tag name =
