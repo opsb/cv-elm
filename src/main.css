@@ -1,0 +1,35 @@
+body {
+  margin: 0;
+  text-align: center;
+  color: #293c4b;
+  transform: scale(1);
+  transform-origin: top left;
+  -webkit-print-color-adjust:exact;
+  padding: 0;
+  margin: 0;
+  transform: rotate(270deg) translate(-276mm, 0);
+  transform-origin: 0 0;
+}
+
+@media screen {
+    body {
+        background: rgba(244,244,244,1);
+        transform: rotate(0deg) translate(0, 0);
+        transform-origin: 0 0;
+    }
+
+    [data-class="page"] {
+        box-shadow: 0 .5mm 2mm rgba(0,0,0,.3);
+        padding: 10mm;
+        margin-top: 40px !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        margin-bottom: 20mm !important;
+        align-self: center !important;
+    }
+}
+
+@media print{
+    @page {size: A4 landscape};
+
+}
