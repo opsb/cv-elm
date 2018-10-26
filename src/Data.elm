@@ -287,35 +287,35 @@ skills =
 
 
 openSourceProjects =
-    [ { name = "fncasts/fnchess"
+    [ { name = "fncasts / fnchess"
       , repo = "https://github.com/fncasts/fnchess"
       , language = "Elm/Elixir"
       , overview = "Paired with a friend on youtube to build a chess game in Elm backend by Phoenix-Channels for realtime. See https://fncasts.io for the episodes."
       , shortInvolvement = "Owner"
       , involvement = ""
       }
-    , { name = "orbitjs/orbit"
+    , { name = "orbitjs / orbit"
       , repo = "https://github.com/orbitjs/orbit"
       , language = "javascript"
       , overview = "A javascript library for orchestrating data synchronization. See http://orbitjs.com for more information."
       , shortInvolvement = "Core"
       , involvement = "For 2 years I was a core contributor working with Dan Gebhard (co-author of the jsonapi spec), contributing code and discussing architectural direction"
       }
-    , { name = "saschatimme/elm-phoenix"
+    , { name = "saschatimme / elm-phoenix"
       , repo = "https://github.com/saschatimme/elm-phoenix"
       , language = "Elm"
       , overview = "Integration between Elm and Phoenix channels"
       , shortInvolvement = "Core"
       , involvement = "Having used elm-phoenix in production I've contributed several features, bug fixes, documentation and example code"
       }
-    , { name = "opsb/elm-debouncer-fx"
+    , { name = "opsb / elm-debouncer-fx"
       , repo = "https://github.com/opsb/elm-debouncer-fx"
       , language = "Elm"
       , overview = "An Elm effect manager for debouncing events"
       , shortInvolvement = "Owner"
       , involvement = "I created this while working on the Feeds project - it's original use was to debounce scroll input from the mouse"
       }
-    , { name = "opsb/patchstream"
+    , { name = "opsb / patchstream"
       , repo = "https://github.com/opsb/patchstream"
       , language = "Ruby"
       , overview = "Emits json patches as rails active records are updated"

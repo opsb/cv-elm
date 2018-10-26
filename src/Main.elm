@@ -200,7 +200,7 @@ positionView position =
                 , el [ alignRight ] (Atom.title4 [] position.location)
                 ]
             ]
-        , column [ spacing 15 ] (List.map projectView position.projects)
+        , column [ spacing 25 ] (List.map projectView position.projects)
         ]
 
 
@@ -208,7 +208,7 @@ projectView : Project -> Element msg
 projectView project =
     column [ spacing 5 ]
         [ Atom.title3 [] project.name
-        , Atom.paragraph [] project.overview
+        , Atom.paragraph [ Font.size 12 ] project.overview
         , hashTags project.stack
         ]
 
@@ -223,8 +223,10 @@ hashTags tags =
     in
     paragraph
         [ Font.size 12
-        , Font.semiBold
+
+        --, Font.normal
         , Font.color Colors.grey
+        , Font.italic
         , Atom.titleFont
         , Atom.letterSpacing 0.4
         , Font.alignLeft

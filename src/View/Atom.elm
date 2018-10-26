@@ -133,7 +133,7 @@ paragraph customAttrs body =
 bodyText : List (Element.Attribute msg) -> String -> Element msg
 bodyText customAttrs text_ =
     attrsEl
-        [ bodyTextFont, Font.color Colors.grey, Font.size 13, Font.light ]
+        [ bodyTextFont, Font.color Colors.grey, Font.size 12, Font.light ]
         customAttrs
         (text text_)
 
