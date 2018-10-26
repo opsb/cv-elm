@@ -103,7 +103,7 @@ experience =
             [ { name = "Salesforce Integration"
               , start = 2018
               , end = 2018
-              , overview = "Integrated a Ruby on Rails app with Salesforce using an Elixir/RabbitMQ based microservice. Introduced a declarative mapping system for translating GraphQL payloads to Salesforce operations. Also built an ORM for Salesforce."
+              , overview = "Integrated a Ruby on Rails app with Salesforce using an Elixir/RabbitMQ based microservice. Created a mapping system for translating GraphQL payloads to Salesforce operations and an ORM for Salesforce."
               , stack = [ "Elixir", "Ruby on Rails", "RabbitMQ", "Salesforce", "Docker", "GraphQL", "Scrum", "BDD" ]
               , talkingPoints = []
               }
@@ -118,8 +118,8 @@ experience =
             [ { name = "Feeds"
               , start = 2016
               , end = 2017
-              , overview = "Led the development of a realtime, embeddable social webapp. Built for embedding the product shipped with several components that communicated with each other via a message bus running on the page."
-              , stack = [ "Phoenix", "Phoenix-Channels", "Elixir", "Elm", "Javascript", "Postgres", "Webpack", "Kanban", "BDD" ]
+              , overview = "Led the development of a realtime, embeddable social webapp. The product shipped with several components that communicated with each other via a message bus running on the page."
+              , stack = [ "Phoenix", "Phoenix-Channels", "Elixir", "Elm", "Javascript", "JWT", "Auth0", "Postgres", "Webpack", "Kanban", "BDD" ]
               , talkingPoints =
                     [ "Implemented an Event Sourcing architecture to power the realtime front end built on top of Phoenix's websocket based channels."
                     , "Designed API for embedding product within 3rd party platforms including a variety of widgets and seamless integration with Single Sign On."
@@ -273,14 +273,14 @@ skills =
     , { name = "Firebase", years = 2 }
     , { name = "OLAP / MDX", years = 4 }
     , { name = "Event-sourcing/CQRS", years = 2 }
-    , { name = "Scrum / Kanban", years = 11 }
-    , { name = "BDD / TDD", years = 10 }
-    , { name = "Git", years = 8 }
+    , { name = "Scrum / Kanban", years = 13 }
+    , { name = "BDD / TDD", years = 13 }
+    , { name = "Git", years = 10 }
     , { name = "Realtime systems", years = 5 }
     , { name = "HTML", years = 12 }
     , { name = "CSS / SASS", years = 12 }
-    , { name = "OO", years = 12 }
-    , { name = "Functional", years = 2 }
+    , { name = "OO", years = 14 }
+    , { name = "Functional", years = 3 }
     , { name = "Heroku", years = 8 }
     , { name = "AWS", years = 8 }
     ]

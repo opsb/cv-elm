@@ -1,4 +1,4 @@
-module View.Colors exposing (..)
+module View.Colors exposing (blue, grey, lightGrey, lightestGrey, white)
 
 import Element exposing (Color, rgba255)
 
@@ -17,9 +17,10 @@ lightGrey : Color
 lightGrey =
     rgba255 86 86 98 0.5
 
+
 lightestGrey : Color
 lightestGrey =
-    rgba255 86 86 98 0.5
+    rgba255 244 244 244 1
 
 
 blue : Color

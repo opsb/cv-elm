@@ -1,21 +1,18 @@
-body {
-  margin: 0;
-  text-align: center;
-  color: #293c4b;
-  transform: scale(1);
-  transform-origin: top left;
+html, body, [data-class="page"] {
   -webkit-print-color-adjust:exact;
   padding: 0;
   margin: 0;
-  transform: rotate(270deg) translate(-276mm, 0);
-  transform-origin: 0 0;
+  border: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 86, 86, 98, 1);
 }
 
 @media screen {
     body {
         background: rgba(244,244,244,1);
-        transform: rotate(0deg) translate(0, 0);
-        transform-origin: 0 0;
+        /*transform: rotate(0deg) translate(0, 0);
+        transform-origin: 0 0;*/
     }
 
     [data-class="page"] {
@@ -31,5 +28,16 @@ body {
 
 @media print{
     @page {size: A4 landscape};
+    html, body {
+        padding: 0;
+        margin: 0;
+    }
+    [data-class="page"] {
+        page-break-before: always;
+        page-break-after: always;
 
+    }
+    [data-class="page"] * {
+        page-break-inside: avoid;
+    }
 }

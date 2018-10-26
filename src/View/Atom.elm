@@ -1,11 +1,9 @@
-module View.Atom exposing
-    ( ..
-    )
+module View.Atom exposing (a4Page, attrsEl, bodyText, bodyTextFont, id, letterSpacing, lineHeight, pageColumn, paragraph, section, title1, title2, title3, title4, titleFont, verticalDivider)
 
 import Element exposing (..)
 import Element.Background as Background
-import Element.Font as Font
 import Element.Border as Border
+import Element.Font as Font
 import Html.Attributes
 import View.Colors as Colors
 
@@ -74,9 +72,15 @@ title4 customAttrs title_ =
         customAttrs
         (text title_)
 
+
 verticalDivider : Element msg
 verticalDivider =
-    el [width (px 5), Border.widthEach {top = 0, right = 1, bottom = 0, left = 0}, Border.color Colors.lightestGrey ](text "")
+    el
+        [ width (px 5)
+        , Background.color Colors.lightestGrey
+        , height fill
+        ]
+        (text " ")
 
 
 attrsEl : List (Element.Attribute msg) -> List (Element.Attribute msg) -> Element msg -> Element msg
@@ -160,9 +164,12 @@ a4Page : List (Element.Attribute msg) -> (Element msg -> Element msg)
 a4Page attrs =
     let
         pageAttrs =
-            [ htmlAttribute <| Html.Attributes.style "height" "209mm"
+            [ htmlAttribute <| Html.Attributes.style "height" "209.88mm"
             , htmlAttribute <| Html.Attributes.style "width" "297mm"
             , htmlAttribute <| Html.Attributes.attribute "data-class" "page"
+            , htmlAttribute <| Html.Attributes.attribute "page-break-after" "always"
+            , htmlAttribute <| Html.Attributes.attribute "page-break-before" "always"
+            , htmlAttribute <| Html.Attributes.attribute "overflow" "hidden"
             ]
     in
     el (pageAttrs ++ attrs)

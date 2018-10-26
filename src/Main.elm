@@ -58,58 +58,88 @@ overviewPage =
     Atom.a4Page [] <|
         row
             [ width fill, height fill ]
-            [ Atom.pageColumn [ spacing 40, Background.color Colors.grey ]
-                [ column [ height (fillPortion 1) ]
-                    [ column [ alignBottom, moveUp 100, spacing 10 ] [ overviewName, overviewTagline ]
-                    ]
-                , column [ height (fillPortion 1) ]
-                    [ contactDetails
-                    ]
-                ]
-            , Atom.pageColumn []
-                [ Atom.section []
-                    [ Atom.title1 [] "Introduction"
-                    , Atom.paragraph [] "Building software that people actually like to use is what gets me going. With 14 years experience I've delivered successful products for the Telecoms, Retail, Publishing, Energy and Charity sectors. I've led teams to build a wide variety of projects including realtime social platforms and project management tools, business Intelligence, custom content management systems, online stores and browser extensions."
-                    , Atom.paragraph [] "From day one I've been an agile practitioner, whether it's Scrum or Kanban, Lean, BDD, outside-in, pair-programming, you name it, I've been doing it for years. I've usually led from the front but I’m comfortable working in many different styles and value project consistency over personal preferences so am equally comfortable working alone or slotting into an existing team."
-                    ]
-                , Atom.section []
-                    [ Atom.title1 [] "Open Source"
-                    , column [ spacing 20, width fill ] (List.map openSourceProject Data.openSourceProjects)
-                    ]
+            [ personalDetailsSection
+            , Atom.pageColumn [ spacing 50 ]
+                [ introductionSection
+                , communitySection
+                , educationSection
                 ]
             , Atom.verticalDivider
-            , Atom.pageColumn []
-                [ Atom.section []
-                    [ Atom.title1 [] "Skills"
-                    , let
-                        ( leftSkills, rightSkills ) =
-                            splitInTwo Data.skills
-                      in
-                      row [ spacing 30, width fill ]
-                        [ skillsColumn leftSkills
-                        , skillsColumn rightSkills
-                        ]
-                    ]
-                , Atom.section []
-                    [ Atom.title1 [] "Community"
-                    , Atom.paragraph [] "I love to meet other developers and hear what they’re getting up to. In Barcelona I’m a regular at the Elixir meetup and run the Elm hack night. I’m also regularly in London and Berlin so I make sure to pop into the local Elixir and Elm meetups there."
-                    , Atom.paragraph [] "Online you’ll regularly find me in the Elixir and Elm slacks. I’ve found both communities to be really friendly and helpful."
-                    ]
-                , Atom.section []
-                    [ Atom.title1 [] "Education"
-                    , column [ spacing 5, width fill ]
-                        [ row [ width fill ]
-                            [ el [ alignLeft ] (Atom.title3 [] "Sussex University")
-                            , el [ alignRight ] (Atom.title3 [] "2001-2004")
-                            ]
-                        , row [ width fill ]
-                            [ el [ alignLeft ] (Atom.bodyText [] "Artificial Intelligence")
-                            , el [ alignRight ] (Atom.bodyText [] "2/1")
-                            ]
-                        ]
-                    ]
+            , Atom.pageColumn [ spacing 50 ]
+                [ skillsSection
+                , openSourceSection
                 ]
             ]
+
+
+personalDetailsSection : Element msg
+personalDetailsSection =
+    Atom.pageColumn [ spacing 40, Background.color Colors.grey ]
+        [ column [ height (fillPortion 1) ]
+            [ column [ alignBottom, moveUp 100, spacing 10 ] [ overviewName, overviewTagline ]
+            ]
+        , column [ height (fillPortion 1) ]
+            [ contactDetails
+            ]
+        ]
+
+
+introductionSection : Element msg
+introductionSection =
+    Atom.section []
+        [ Atom.title1 [] "Introduction"
+        , Atom.paragraph [] "Building software that people actually like to use is what gets me going. With 14 years experience I've delivered successful products for the Telecoms, Retail, Publishing, Energy and Charity sectors. I've led teams to build a wide variety of projects including realtime social platforms and project management tools, business Intelligence, custom content management systems, online stores and browser extensions."
+        , Atom.paragraph [] "From day one I've been an agile practitioner, whether it's Scrum or Kanban, Lean, BDD, outside-in, pair-programming, you name it, I've been doing it for years. I've usually led from the front but I’m comfortable working in many different styles and value project consistency over personal preferences so am equally comfortable working alone or slotting into an existing team."
+        ]
+
+
+openSourceSection : Element msg
+openSourceSection =
+    Atom.section []
+        [ Atom.title1 [] "Open Source"
+        , column [ spacing 20, width fill ] (List.map openSourceProject Data.openSourceProjects)
+        ]
+
+
+skillsSection : Element msg
+skillsSection =
+    Atom.section []
+        [ Atom.title1 [] "Skills"
+        , let
+            ( leftSkills, rightSkills ) =
+                splitInTwo Data.skills
+          in
+          row [ spacing 30, width fill ]
+            [ skillsColumn leftSkills
+            , skillsColumn rightSkills
+            ]
+        ]
+
+
+communitySection : Element msg
+communitySection =
+    Atom.section []
+        [ Atom.title1 [] "Community"
+        , Atom.paragraph [] "I love to meet other developers and hear what they’re getting up to. In Barcelona I’m a regular at the Elixir meetup and run the Elm hack night. I’m also regularly in London and Berlin so I make sure to pop into the local Elixir and Elm meetups there."
+        , Atom.paragraph [] "Online you’ll regularly find me in the Elixir and Elm slacks. I’ve found both communities to be really friendly and helpful."
+        ]
+
+
+educationSection : Element msg
+educationSection =
+    Atom.section []
+        [ Atom.title1 [] "Education"
+        , column [ spacing 5, width fill ]
+            [ row [ width fill ]
+                [ el [ alignLeft ] (Atom.title3 [] "Sussex University")
+                , el [ alignRight ] (Atom.title3 [] "2001-2004")
+                ]
+            , row [ width fill ]
+                [ el [ alignLeft ] (Atom.bodyText [] "Artificial Intelligence")
+                , el [ alignRight ] (Atom.bodyText [] "2/1")
+                ]
+            ]
+        ]
 
 
 experiencePage : Element msg
@@ -163,7 +193,7 @@ positionView position =
         [ column [ spacing 3, width fill ]
             [ row [ width fill ]
                 [ el [ alignLeft ] (Atom.title2 [] position.company)
-                , el [ alignRight ] (Atom.title2 [] <| position.dates)
+                , el [ alignRight ] (Atom.title3 [ Font.italic ] <| position.dates)
                 ]
             , row [ width fill ]
                 [ el [ alignLeft ] (Atom.title4 [] position.title)
