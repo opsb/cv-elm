@@ -5,12 +5,12 @@ import Element exposing (Color, rgba255)
 
 grey : Color
 grey =
-    rgba255 86 86 98 100
+    rgba255 66 66 78 1
 
 
 white : Color
 white =
-    rgba255 255 255 255 100
+    rgba255 255 255 255 1
 
 
 lightGrey : Color

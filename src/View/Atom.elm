@@ -40,7 +40,7 @@ title2 : List (Element.Attribute msg) -> String -> Element msg
 title2 customAttrs title_ =
     attrsEl
         [ titleFont
-        , Font.size 24
+        , Font.size 26
         , Font.bold
         , Font.color Colors.grey
         , letterSpacing 0.5
@@ -53,7 +53,7 @@ title3 : List (Element.Attribute msg) -> String -> Element msg
 title3 customAttrs title_ =
     attrsEl
         [ titleFont
-        , Font.size 17
+        , Font.size 18
         , Font.color Colors.grey
         , Font.semiBold
         , letterSpacing -0.2

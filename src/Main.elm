@@ -189,18 +189,22 @@ contactDetails =
 
 positionView : Position -> Element msg
 positionView position =
-    column [ spacing 15, width fill ]
+    column
+        [ spacing 15
+        , width fill
+        , paddingEach { top = 0, right = 0, bottom = 5, left = 0 }
+        ]
         [ column [ spacing 3, width fill ]
             [ row [ width fill ]
                 [ el [ alignLeft ] (Atom.title2 [] position.company)
-                , el [ alignRight ] (Atom.title3 [ Font.italic ] <| position.dates)
                 ]
-            , row [ width fill ]
-                [ el [ alignLeft ] (Atom.title4 [] position.title)
-                , el [ alignRight ] (Atom.title4 [] position.location)
+            , row [ width fill, spacing 10 ]
+                [ el [ alignLeft ] (Atom.title4 [] position.dates)
+                , el [ alignLeft ] (Atom.title4 [] <| position.title)
+                , el [ alignLeft ] (Atom.title4 [] position.location)
                 ]
             ]
-        , column [ spacing 25 ] (List.map projectView position.projects)
+        , column [ spacing 15 ] (List.map projectView position.projects)
         ]
 
 
@@ -224,7 +228,6 @@ hashTags tags =
     paragraph
         [ Font.size 12
 
-        --, Font.normal
         , Font.color Colors.grey
         , Font.italic
         , Atom.titleFont
