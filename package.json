@@ -1,0 +1,25 @@
+{
+  "name": "cv-elm",
+  "version": "1.0.0",
+  "description": "CV for Oliver Searle-Barnes",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "build": "elm-app build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/opsb/cv-elm.git"
+  },
+  "author": "Oliver Searle-Barnes",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/opsb/cv-elm/issues"
+  },
+  "homepage": "https://github.com/opsb/cv-elm#readme",
+  "devDependencies": {
+    "create-elm-app": "^2.2.3"
+  }
+}
