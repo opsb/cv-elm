@@ -180,7 +180,7 @@ experiencePage =
 contactDetails : Element msg
 contactDetails =
     column [ alignBottom, Font.color Colors.white, spacing 10, Font.size 14, Font.light, Atom.letterSpacing 1 ]
-        [ row [ spacing 10 ] [ el [] (Icon.github 20), el [] (text "opsb") ]
+        [ row [ spacing 10 ] [ el [] (Icon.github 20), el [ Font.color Colors.white ] (text "opsb") ]
         , row [ spacing 10 ] [ el [] (Icon.stackoverflow 20), el [] (text "opsb") ]
         , row [ spacing 10 ] [ el [] (Icon.twitter 20), el [] (text "ollysb") ]
         , row [ spacing 10 ] [ el [] (Icon.envelope 20), el [] (text "oliver@opsb.co.uk") ]
