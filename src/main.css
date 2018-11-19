@@ -35,7 +35,6 @@ html, body, [data-class="page"] {
     [data-class="page"] {
         page-break-before: always;
         page-break-after: always;
-
     }
     [data-class="page"] * {
         page-break-inside: avoid;

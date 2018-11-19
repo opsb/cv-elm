@@ -1,4 +1,22 @@
-module View.Atom exposing (a4Page, attrsEl, bodyText, bodyTextFont, id, letterSpacing, lineHeight, pageColumn, paragraph, section, title1, title2, title3, title4, titleFont, verticalDivider)
+module View.Atom exposing
+    ( a4Page
+    , attrsEl
+    , bodyText
+    , bodyTextFont
+    , horizontalDivider
+    , id
+    , letterSpacing
+    , lineHeight
+    , pageColumn
+    , paragraph
+    , section
+    , title1
+    , title2
+    , title3
+    , title4
+    , titleFont
+    , verticalDivider
+    )
 
 import Element exposing (..)
 import Element.Background as Background
@@ -83,6 +101,16 @@ verticalDivider =
         (text " ")
 
 
+horizontalDivider : Element msg
+horizontalDivider =
+    el
+        [ height (px 5)
+        , Background.color Colors.lightGrey
+        , width fill
+        ]
+        (text " ")
+
+
 attrsEl : List (Element.Attribute msg) -> List (Element.Attribute msg) -> Element msg -> Element msg
 attrsEl defaultAttrs customAttrs body =
     el
@@ -145,6 +173,9 @@ bodyText customAttrs text_ =
 bodyTextFont =
     Font.family
         [ Font.typeface "Museo Sans"
+        , Font.typeface "Helvetica Neue"
+        , Font.typeface "Helvetica"
+        , Font.typeface "Arial"
         , Font.typeface "Sans Serif"
         ]
 
@@ -152,6 +183,9 @@ bodyTextFont =
 titleFont =
     Font.family
         [ Font.typeface "Proxima Nova"
+        , Font.typeface "Helvetica Neue"
+        , Font.typeface "Helvetica"
+        , Font.typeface "Arial"
         , Font.typeface "Sans Serif"
         ]
 

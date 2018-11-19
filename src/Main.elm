@@ -1,6 +1,7 @@
-module Main exposing (Model, Msg(..), init, main, openSourceProject, overviewName, overviewPage, overviewTagline, tableOfContentsLine, update, view)
+module Main exposing (main)
 
 import Browser
+import Browser.Events exposing (onResize)
 import Data exposing (..)
 import Element exposing (..)
 import Element.Background as Background
@@ -18,13 +19,19 @@ import View.TimelineBars as TimelineBars
 ---- MODEL ----
 
 
+type alias Flags =
+    { width : Int
+    , height : Int
+    }
+
+
 type alias Model =
-    {}
+    Device
 
 
-init : ( Model, Cmd Msg )
-init =
-    ( {}, Cmd.none )
+init : Flags -> ( Model, Cmd Msg )
+init flags =
+    ( Element.classifyDevice flags, Cmd.none )
 
 
 
@@ -32,51 +39,93 @@ init =
 
 
 type Msg
-    = NoOp
+    = DeviceClassified Device
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    ( model, Cmd.none )
+    case msg of
+        DeviceClassified device ->
+            ( device
+            , Cmd.none
+            )
+
+
+
+---- SUBSCRIPTIONS ----
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    onResize <|
+        \width height ->
+            DeviceClassified (Element.classifyDevice { width = width, height = height })
 
 
 
 ---- VIEW ----
 
 
-view : Model -> Html Msg
+view : Model -> Browser.Document Msg
 view model =
-    layout [ Atom.bodyTextFont ] <|
-        column [ width fill ]
-            [ overviewPage
-            , experiencePage
-            ]
+    { title = "Oliver Searle-Barnes"
+    , body =
+        [ layout [ Atom.bodyTextFont ] (deviceLayout model)
+        ]
+    }
 
 
-overviewPage : Element msg
-overviewPage =
-    Atom.a4Page [] <|
-        row
-            [ width fill, height fill ]
-            [ personalDetailsSection
-            , Atom.pageColumn [ spacing 50 ]
-                [ introductionSection
-                , communitySection
-                , educationSection
+deviceLayout : Device -> Element msg
+deviceLayout device =
+    case device.class of
+        Phone ->
+            mobileLayout
+
+        _ ->
+            a4PagesLayout
+
+
+
+---- MOBILE LAYOUT ----
+
+
+mobileLayout : Element msg
+mobileLayout =
+    column [ width fill, spacing 20 ]
+        [ mobilePersonalDetailsSection
+        , mobileSection "Introduction" introductionSection
+        , Atom.horizontalDivider
+        , mobileSection "Skills" skillsSection
+        , Atom.horizontalDivider
+        , mobileSection "Open Source" openSourceSection
+        , Atom.horizontalDivider
+        , mobileSection "Experience" <|
+            column [ spacing 60 ]
+                [ positionView (Data.experience |> .twentyBn)
+                , positionView (Data.experience |> .liqid)
+                , positionView (Data.experience |> .zapnito)
+                , positionView (Data.experience |> .lytbulb)
+                , positionView (Data.experience |> .myschooldirect)
+                , positionView (Data.experience |> .informa)
+                , positionView (Data.experience |> .nutshellDevelopment)
                 ]
-            , Atom.verticalDivider
-            , Atom.pageColumn [ spacing 50 ]
-                [ skillsSection
-                , openSourceSection
-                ]
-            ]
+        , Atom.horizontalDivider
+        , mobileSection "Community" communitySection
+        , Atom.horizontalDivider
+        , mobileSection "Education" educationSection
+        ]
 
 
-personalDetailsSection : Element msg
-personalDetailsSection =
-    Atom.pageColumn [ spacing 40, Background.color Colors.grey ]
+mobileSection : String -> Element msg -> Element msg
+mobileSection title body =
+    column [ padding 20, spacing 40 ] [ Atom.title1 [] title, body ]
+
+
+mobilePersonalDetailsSection : Element msg
+mobilePersonalDetailsSection =
+    Atom.pageColumn [ spacing 40, Background.color Colors.grey, Font.color Colors.white ]
         [ column [ height (fillPortion 1) ]
-            [ column [ alignBottom, moveUp 100, spacing 10 ] [ overviewName, overviewTagline ]
+            [ column [ alignBottom, spacing 10 ] [ overviewName, overviewTagline ]
             ]
         , column [ height (fillPortion 1) ]
             [ contactDetails
@@ -84,60 +133,53 @@ personalDetailsSection =
         ]
 
 
-introductionSection : Element msg
-introductionSection =
-    Atom.section []
-        [ Atom.title1 [] "Introduction"
-        , Atom.paragraph [] "Building software that people actually like to use is what gets me going. With 14 years experience I've delivered successful products for the Telecoms, Retail, Publishing, Energy and Charity sectors. I've led teams to build a wide variety of projects including realtime social platforms and project management tools, business Intelligence, custom content management systems, online stores and browser extensions."
-        , Atom.paragraph [] "From day one I've been an agile practitioner, whether it's Scrum or Kanban, Lean, BDD, outside-in, pair-programming, you name it, I've been doing it for years. I've usually led from the front but I’m comfortable working in many different styles and value project consistency over personal preferences so am equally comfortable working alone or slotting into an existing team."
+
+---- A4 PAGES LAYOUT ----
+
+
+a4PagesLayout : Element msg
+a4PagesLayout =
+    column [ width fill ]
+        [ overviewPage
+        , experiencePage
         ]
 
 
-openSourceSection : Element msg
-openSourceSection =
-    Atom.section []
-        [ Atom.title1 [] "Open Source"
-        , column [ spacing 20, width fill ] (List.map openSourceProject Data.openSourceProjects)
-        ]
-
-
-skillsSection : Element msg
-skillsSection =
-    Atom.section []
-        [ Atom.title1 [] "Skills"
-        , let
-            ( leftSkills, rightSkills ) =
-                splitInTwo Data.skills
-          in
-          row [ spacing 30, width fill ]
-            [ skillsColumn leftSkills
-            , skillsColumn rightSkills
+overviewPage : Element msg
+overviewPage =
+    Atom.a4Page [] <|
+        row
+            [ width fill, height fill ]
+            [ pagePersonalDetailsSection
+            , Atom.pageColumn [ spacing 50 ]
+                [ pageSection "Introduction" introductionSection
+                , pageSection "Community" communitySection
+                , pageSection "Education" educationSection
+                ]
+            , Atom.verticalDivider
+            , Atom.pageColumn [ spacing 50 ]
+                [ pageSection "Skills" skillsSection
+                , pageSection "Open Source" openSourceSection
+                ]
             ]
+
+
+pageSection : String -> Element msg -> Element msg
+pageSection title body =
+    Atom.section []
+        [ Atom.title1 [] title
+        , body
         ]
 
 
-communitySection : Element msg
-communitySection =
-    Atom.section []
-        [ Atom.title1 [] "Community"
-        , Atom.paragraph [] "I love to meet other developers and hear what they’re getting up to. In Barcelona I’m a regular at the Elixir meetup and run the Elm hack night. I’m also regularly in London and Berlin so I make sure to pop into the local Elixir and Elm meetups there."
-        , Atom.paragraph [] "Online you’ll regularly find me in the Elixir and Elm slacks. I’ve found both communities to be really friendly and helpful."
-        ]
-
-
-educationSection : Element msg
-educationSection =
-    Atom.section []
-        [ Atom.title1 [] "Education"
-        , column [ spacing 5, width fill ]
-            [ row [ width fill ]
-                [ el [ alignLeft ] (Atom.title3 [] "Sussex University")
-                , el [ alignRight ] (Atom.title3 [] "2001-2004")
-                ]
-            , row [ width fill ]
-                [ el [ alignLeft ] (Atom.bodyText [] "Artificial Intelligence")
-                , el [ alignRight ] (Atom.bodyText [] "2/1")
-                ]
+pagePersonalDetailsSection : Element msg
+pagePersonalDetailsSection =
+    Atom.pageColumn [ spacing 40, Background.color Colors.grey, Font.color Colors.white ]
+        [ column [ height (fillPortion 1) ]
+            [ column [ alignBottom, moveUp 100, spacing 10 ] [ overviewName, overviewTagline ]
+            ]
+        , column [ height (fillPortion 1) ]
+            [ contactDetails
             ]
         ]
 
@@ -177,10 +219,61 @@ experiencePage =
             ]
 
 
+
+---- SECTIONS ----
+
+
+introductionSection : Element msg
+introductionSection =
+    column []
+        [ Atom.paragraph [] "Building software that people actually like to use is what gets me going. With 14 years experience I've delivered successful products for the Telecoms, Retail, Publishing, Energy and Charity sectors. I've led teams to build a wide variety of projects including realtime social platforms and project management tools, business Intelligence, custom content management systems, online stores and browser extensions."
+        , Atom.paragraph [] "From day one I've been an agile practitioner, whether it's Scrum or Kanban, Lean, BDD, outside-in, pair-programming, you name it, I've been doing it for years. I've usually led from the front but I’m comfortable working in many different styles and value project consistency over personal preferences so am equally comfortable working alone or slotting into an existing team."
+        ]
+
+
+openSourceSection : Element msg
+openSourceSection =
+    column [ spacing 20, width fill ] (List.map openSourceProject Data.openSourceProjects)
+
+
+skillsSection : Element msg
+skillsSection =
+    let
+        ( leftSkills, rightSkills ) =
+            splitInTwo Data.skills
+    in
+    row [ spacing 30, width fill ]
+        [ skillsColumn leftSkills
+        , skillsColumn rightSkills
+        ]
+
+
+communitySection : Element msg
+communitySection =
+    column []
+        [ Atom.paragraph [] "I love to meet other developers and hear what they’re getting up to. In Barcelona I’m a regular at the Elixir meetup and run the Elm hack night. I’m also regularly in London and Berlin so I make sure to pop into the local Elixir and Elm meetups there."
+        , Atom.paragraph [] "Online you’ll regularly find me in the Elixir and Elm slacks. I’ve found both communities to be really friendly and helpful."
+        ]
+
+
+educationSection : Element msg
+educationSection =
+    column [ spacing 5, width fill ]
+        [ row [ width fill ]
+            [ el [ alignLeft ] (Atom.title3 [] "Sussex University")
+            , el [ alignRight ] (Atom.title3 [] "2001-2004")
+            ]
+        , row [ width fill ]
+            [ el [ alignLeft ] (Atom.bodyText [] "Artificial Intelligence")
+            , el [ alignRight ] (Atom.bodyText [] "2/1")
+            ]
+        ]
+
+
 contactDetails : Element msg
 contactDetails =
     column [ alignBottom, Font.color Colors.white, spacing 10, Font.size 14, Font.light, Atom.letterSpacing 1 ]
-        [ row [ spacing 10 ] [ el [] (Icon.github 20), el [ Font.color Colors.white ] (text "opsb") ]
+        [ row [ spacing 10 ] [ el [] (Icon.github 20), el [] (text "opsb") ]
         , row [ spacing 10 ] [ el [] (Icon.stackoverflow 20), el [] (text "opsb") ]
         , row [ spacing 10 ] [ el [] (Icon.twitter 20), el [] (text "ollysb") ]
         , row [ spacing 10 ] [ el [] (Icon.envelope 20), el [] (text "oliver@opsb.co.uk") ]
@@ -194,7 +287,7 @@ positionView position =
         , width fill
         , paddingEach { top = 0, right = 0, bottom = 5, left = 0 }
         ]
-        [ column [ spacing 3, width fill ]
+        [ column [ spacing 8, width fill ]
             [ row [ width fill ]
                 [ el [ alignLeft ] (Atom.title2 [] position.company)
                 ]
@@ -227,7 +320,6 @@ hashTags tags =
     in
     paragraph
         [ Font.size 12
-
         , Font.color Colors.grey
         , Font.italic
         , Atom.titleFont
@@ -359,11 +451,11 @@ overviewTagline =
 ---- PROGRAM ----
 
 
-main : Program () Model Msg
+main : Program Flags Model Msg
 main =
-    Browser.element
+    Browser.document
         { view = view
-        , init = \_ -> init
+        , init = init
         , update = update
-        , subscriptions = always Sub.none
+        , subscriptions = subscriptions
         }
