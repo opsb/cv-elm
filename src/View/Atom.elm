@@ -198,7 +198,7 @@ a4Page : List (Element.Attribute msg) -> (Element msg -> Element msg)
 a4Page attrs =
     let
         pageAttrs =
-            [ htmlAttribute <| Html.Attributes.style "height" "209.88mm"
+            [ htmlAttribute <| Html.Attributes.style "height" "210mm"
             , htmlAttribute <| Html.Attributes.style "width" "297mm"
             , htmlAttribute <| Html.Attributes.attribute "data-class" "page"
             , htmlAttribute <| Html.Attributes.attribute "page-break-after" "always"
