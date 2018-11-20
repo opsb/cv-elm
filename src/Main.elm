@@ -459,6 +459,7 @@ overviewName =
         [ text "Oliver", text "Searle-Barnes" ]
 
 
+overviewTagline : Element msg
 overviewTagline =
     el
         [ Font.color Colors.white

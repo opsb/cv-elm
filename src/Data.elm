@@ -268,7 +268,7 @@ education =
     ]
 
 
-
+skills : List Skill
 skills =
     [ { name = "Ruby on Rails", years = 8 }
     , { name = "Elixir / Phoenix", years = 2.5 }
