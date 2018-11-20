@@ -258,25 +258,40 @@ communitySection =
 
 educationSection : Element msg
 educationSection =
-    column [ spacing 5, width fill ]
-        [ row [ width fill ]
-            [ el [ alignLeft ] (Atom.title3 [] "Sussex University")
-            , el [ alignRight ] (Atom.title3 [] "2001-2004")
-            ]
-        , row [ width fill ]
-            [ el [ alignLeft ] (Atom.bodyText [] "Artificial Intelligence")
-            , el [ alignRight ] (Atom.bodyText [] "2/1")
-            ]
-        ]
+    column [ width fill ] (List.map institution Data.education)
+
+
+institution : Institution -> Element msg
+institution institution_ =
+    newTabLink [ width fill ]
+        { url = institution_.link
+        , label =
+            column [ spacing 5, width fill ]
+                [ row [ width fill ]
+                    [ el [ alignLeft ] (Atom.title3 [] institution_.name)
+                    , let
+                        formattedDate =
+                            [ institution_.startYear, institution_.endYear ]
+                                |> List.map String.fromInt
+                                |> String.join "-"
+                      in
+                      el [ alignRight ] (Atom.title3 [] formattedDate)
+                    ]
+                , row [ width fill ]
+                    [ el [ alignLeft ] (Atom.bodyText [] institution_.course)
+                    , el [ alignRight ] (Atom.bodyText [] institution_.result)
+                    ]
+                ]
+        }
 
 
 contactDetails : Element msg
 contactDetails =
     column [ alignBottom, Font.color Colors.white, spacing 10, Font.size 14, Font.light, Atom.letterSpacing 1 ]
-        [ row [ spacing 10 ] [ el [] (Icon.github 20), el [] (text "opsb") ]
-        , row [ spacing 10 ] [ el [] (Icon.stackoverflow 20), el [] (text "opsb") ]
-        , row [ spacing 10 ] [ el [] (Icon.twitter 20), el [] (text "ollysb") ]
-        , row [ spacing 10 ] [ el [] (Icon.envelope 20), el [] (text "oliver@opsb.co.uk") ]
+        [ row [ spacing 10 ] [ el [] (Icon.github 20), newTabLink [] { label = text "opsb", url = "https://github.com/opsb" } ]
+        , row [ spacing 10 ] [ el [] (Icon.stackoverflow 20), newTabLink [] { label = text "opsb", url = "https://stackoverflow.com/users/162337/opsb" } ]
+        , row [ spacing 10 ] [ el [] (Icon.twitter 20), newTabLink [] { label = text "ollysb", url = "https://twitter.com/ollysb" } ]
+        , row [ spacing 10 ] [ el [] (Icon.envelope 20), link [] {label = text "oliver@opsb.co.uk", url = "mailto:oliver@opsb.co.uk"} ]
         ]
 
 
@@ -419,15 +434,20 @@ splitInTwo list =
 
 openSourceProject : OpenSourceProject -> Element msg
 openSourceProject project =
-    column [ spacing 5, width fill ]
-        [ row [ width fill ]
-            [ el [ alignLeft ] (Atom.title3 [] project.name)
-            , el [ alignRight ] (Atom.title3 [] project.shortInvolvement)
-            ]
-        , Atom.paragraph [] project.overview
-        ]
+    newTabLink [ width fill ]
+        { url = project.repo
+        , label =
+            column [ spacing 5, width fill ]
+                [ row [ width fill ]
+                    [ el [ alignLeft ] (Atom.title3 [] project.name)
+                    , el [ alignRight ] (Atom.title3 [] project.shortInvolvement)
+                    ]
+                , Atom.paragraph [] project.overview
+                ]
+        }
 
 
+overviewName : Element msg
 overviewName =
     column
         [ Font.color Colors.white

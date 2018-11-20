@@ -43,6 +43,7 @@ type alias Institution =
     , result : String
     , startYear : Int
     , endYear : Int
+    , link : String
     }
 
 
@@ -255,9 +256,17 @@ experience =
     }
 
 
+education : List Institution
 education =
-    [ { name = "Sussex University", course = "Artificial Intelligence", result = "2/1", startYear = 2001, endYear = 2004 }
+    [ { name = "Sussex University"
+      , link = "https://www.sussex.ac.uk/"
+      , course = "Artificial Intelligence"
+      , result = "2/1"
+      , startYear = 2001
+      , endYear = 2004
+      }
     ]
+
 
 
 skills =
