@@ -12,7 +12,6 @@ import Html.Attributes exposing (src)
 import View.Atom as Atom
 import View.Colors as Colors
 import View.Icon as Icon
-import View.TimelineBars as TimelineBars
 
 
 
