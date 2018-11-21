@@ -23,7 +23,7 @@ function elementToPng(element) {
 }
 
 function build(pagesSelector, filename) {
-    const pages = Array.from(document.querySelectorAll("[data-class=page]"));
+    const pages = Array.from(document.querySelectorAll(pagesSelector));
 
     return Promise.all(pages.map(elementToPng))
         .then(a4PdfFromPngs);

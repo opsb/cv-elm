@@ -1,4 +1,4 @@
-module Main exposing (main)
+port module Main exposing (main)
 
 import Browser
 import Browser.Events exposing (onResize)
@@ -6,13 +6,21 @@ import Data exposing (..)
 import Element exposing (..)
 import Element.Background as Background
 import Element.Border as Border
+import Element.Events exposing (onClick)
 import Element.Font as Font
+import Element.Input as Input
 import Html exposing (Html)
 import Html.Attributes exposing (src)
+import Util.String exposing (autolink)
 import View.Atom as Atom
 import View.Colors as Colors
 import View.Icon as Icon
-import Util.String
+
+
+port downloadPdf : () -> Cmd msg
+
+
+port pdfGenerated : (() -> msg) -> Sub msg
 
 
 
@@ -26,12 +34,20 @@ type alias Flags =
 
 
 type alias Model =
-    Device
+    { device : Device
+    , pdfStatus : PdfStatus
+    }
+
+
+type PdfStatus
+    = Generating
+    | Ready
 
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
-    ( Element.classifyDevice flags, Cmd.none )
+    ( { pdfStatus = Generating
+        , device = Element.classifyDevice flags }, Cmd.none )
 
 
 
@@ -40,15 +56,23 @@ init flags =
 
 type Msg
     = DeviceClassified Device
+    | DownloadPdfClicked
+    | PdfGenerated
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         DeviceClassified device ->
-            ( device
+            ( { model | device = device }
             , Cmd.none
             )
+
+        DownloadPdfClicked ->
+            ( model, downloadPdf () )
+
+        PdfGenerated ->
+            ({model | pdfStatus = Ready}, Cmd.none)
 
 
 
@@ -57,9 +81,13 @@ update msg model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    onResize <|
-        \width height ->
-            DeviceClassified (Element.classifyDevice { width = width, height = height })
+    Sub.batch
+        [
+        onResize <|
+            \width height ->
+                DeviceClassified (Element.classifyDevice { width = width, height = height })
+        , pdfGenerated (\_ -> PdfGenerated)
+        ]
 
 
 
@@ -69,59 +97,60 @@ subscriptions model =
 view : Model -> Browser.Document Msg
 view model =
     { title = "Oliver Searle-Barnes"
-    , body =
-        [ layout [ Atom.bodyTextFont ] (deviceLayout model)
-        ]
+    , body = deviceBody model
     }
 
 
-deviceLayout : Device -> Element msg
-deviceLayout device =
-    case device.class of
+deviceBody : Model -> List (Html Msg)
+deviceBody model =
+    case model.device.class of
         Phone ->
             mobileLayout
 
         _ ->
-            a4PagesLayout
+            a4PagesLayout model
 
 
 
 ---- MOBILE LAYOUT ----
 
 
-mobileLayout : Element msg
+mobileLayout : List (Html Msg)
 mobileLayout =
-    column [ width fill, spacing 20 ]
-        [ mobilePersonalDetailsSection
-        , mobileSection "Introduction" introductionSection
-        , Atom.horizontalDivider
-        , mobileSection "Skills" skillsSection
-        , Atom.horizontalDivider
-        , mobileSection "Open Source" openSourceSection
-        , Atom.horizontalDivider
-        , mobileSection "Experience" <|
-            column [ spacing 60 ]
-                [ positionView (Data.experience |> .twentyBn)
-                , positionView (Data.experience |> .liqid)
-                , positionView (Data.experience |> .zapnito)
-                , positionView (Data.experience |> .lytbulb)
-                , positionView (Data.experience |> .myschooldirect)
-                , positionView (Data.experience |> .informa)
-                , positionView (Data.experience |> .nutshellDevelopment)
-                ]
-        , Atom.horizontalDivider
-        , mobileSection "Community" communitySection
-        , Atom.horizontalDivider
-        , mobileSection "Education" educationSection
-        ]
+    [ layout [ Atom.bodyTextFont ]
+        (column [ width fill, spacing 20 ]
+            [ mobilePersonalDetailsSection
+            , mobileSection "Introduction" introductionSection
+            , Atom.horizontalDivider
+            , mobileSection "Skills" skillsSection
+            , Atom.horizontalDivider
+            , mobileSection "Open Source" openSourceSection
+            , Atom.horizontalDivider
+            , mobileSection "Experience" <|
+                column [ spacing 60 ]
+                    [ positionView (Data.experience |> .twentyBn)
+                    , positionView (Data.experience |> .liqid)
+                    , positionView (Data.experience |> .zapnito)
+                    , positionView (Data.experience |> .lytbulb)
+                    , positionView (Data.experience |> .myschooldirect)
+                    , positionView (Data.experience |> .informa)
+                    , positionView (Data.experience |> .nutshellDevelopment)
+                    ]
+            , Atom.horizontalDivider
+            , mobileSection "Community" communitySection
+            , Atom.horizontalDivider
+            , mobileSection "Education" educationSection
+            ]
+        )
+    ]
 
 
-mobileSection : String -> Element msg -> Element msg
+mobileSection : String -> Element Msg -> Element Msg
 mobileSection title body =
     column [ padding 20, spacing 40 ] [ Atom.title1 [] title, body ]
 
 
-mobilePersonalDetailsSection : Element msg
+mobilePersonalDetailsSection : Element Msg
 mobilePersonalDetailsSection =
     Atom.pageColumn [ spacing 40, Background.color Colors.grey, Font.color Colors.white ]
         [ column [ height (fillPortion 1) ]
@@ -137,15 +166,57 @@ mobilePersonalDetailsSection =
 ---- A4 PAGES LAYOUT ----
 
 
-a4PagesLayout : Element msg
-a4PagesLayout =
-    column [ width fill ]
-        [ overviewPage
-        , experiencePage
+a4PagesLayout : { a | pdfStatus : PdfStatus } -> List (Html Msg)
+a4PagesLayout { pdfStatus } =
+    [ layout
+        [ Atom.bodyTextFont
+        , inFront
+            (el
+                [ alignRight
+                , alignBottom
+                , moveUp 10
+                , moveLeft 10
+                , htmlAttribute <| Html.Attributes.attribute "data-print" "false"
+                ]
+                (downloadButton pdfStatus)
+            )
         ]
+        (column
+            [ width fill
+            ]
+            [ overviewPage
+            , experiencePage
+            ]
+        )
+    ]
 
 
-overviewPage : Element msg
+downloadButton : PdfStatus -> Element Msg
+downloadButton status =
+    Input.button
+        [ paddingXY 20 10
+        , mouseOver []
+        , Border.solid
+        , Border.width 1
+        , Border.rounded 5
+        , Background.color Colors.green
+        , Font.color Colors.white
+        , Font.size 16
+        ]
+        (case status of
+            Generating ->
+                { label = text "Generating PDF"
+                , onPress = Nothing
+                }
+
+            Ready ->
+                { label = text "Download PDF"
+                , onPress = Just DownloadPdfClicked
+                }
+        )
+
+
+overviewPage : Element Msg
 overviewPage =
     Atom.a4Page [] <|
         row

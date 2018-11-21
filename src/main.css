@@ -1,5 +1,6 @@
-html, body, [data-class="page"] {
-  -webkit-print-color-adjust:exact;
+html,
+body,
+[data-class="page"] {
   padding: 0;
   margin: 0;
   border: 0;
@@ -9,37 +10,41 @@ html, body, [data-class="page"] {
   font-family: "helvetica", "sans-serif";
 }
 
-@media screen {
-    body {
-        background: rgba(244,244,244,1);
-    }
-
-    * {
-      font-family: "helvetica neue", "sans-serif";
-    }
-
-    [data-class="page"] {
-        box-shadow: 0 .5mm 2mm rgba(0,0,0,.3);
-        padding: 10mm;
-        margin-top: 40px !important;
-        margin-left: auto !important;
-        margin-right: auto !important;
-        margin-bottom: 20mm !important;
-        align-self: center !important;
-    }
+body {
+  background: rgba(244, 244, 244, 1);
 }
 
-@media print{
-    @page {size: A4 landscape};
-    html, body {
-        padding: 0;
-        margin: 0;
-    }
-    [data-class="page"] {
-        page-break-before: always;
-        page-break-after: always;
-    }
-    [data-class="page"] * {
-        page-break-inside: avoid;
-    }
+@media screen {
+  [data-class="page"] {
+    box-shadow: 0 .5mm 2mm rgba(0, 0, 0, .3);
+    padding: 10mm;
+    margin-top: 40px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    margin-bottom: 20mm !important;
+    align-self: center !important;
+  }
+}
+
+@media print {
+  html {
+    -webkit-print-color-adjust: exact;
+  }
+
+  @page {
+    size: A4 landscape;
+  }
+
+  [data-class="page"] {
+    page-break-before: always;
+    page-break-after: always;
+  }
+
+  [data-class="page"] * {
+    page-break-inside: avoid;
+  }
+
+  [data-print="false"] {
+    display: none !important;
+  }
 }

@@ -201,9 +201,9 @@ a4Page attrs =
             [ htmlAttribute <| Html.Attributes.style "height" "210mm"
             , htmlAttribute <| Html.Attributes.style "width" "297mm"
             , htmlAttribute <| Html.Attributes.attribute "data-class" "page"
-            , htmlAttribute <| Html.Attributes.attribute "page-break-after" "always"
-            , htmlAttribute <| Html.Attributes.attribute "page-break-before" "always"
-            , htmlAttribute <| Html.Attributes.attribute "overflow" "hidden"
+            , htmlAttribute <| Html.Attributes.style "page-break-after" "always"
+            , htmlAttribute <| Html.Attributes.style "page-break-before" "always"
+            , htmlAttribute <| Html.Attributes.style "overflow" "hidden"
             ]
     in
     el (pageAttrs ++ attrs)
