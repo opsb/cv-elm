@@ -143,7 +143,7 @@ section attrs body =
     column (defaultAttrs ++ attrs) body
 
 
-paragraph : List (Element.Attribute msg) -> String -> Element msg
+paragraph : List (Element.Attribute msg) -> List (Element msg) -> Element msg
 paragraph customAttrs body =
     let
         defaultAttrs =
@@ -155,7 +155,7 @@ paragraph customAttrs body =
             , lineHeight 18
             ]
     in
-    Element.paragraph (defaultAttrs ++ customAttrs) [ text body ]
+    Element.paragraph (defaultAttrs ++ customAttrs) body
 
 
 bodyText : List (Element.Attribute msg) -> String -> Element msg

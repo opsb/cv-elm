@@ -7,7 +7,8 @@
     "test": "tests"
   },
   "scripts": {
-    "build": "elm-app build"
+    "build": "elm-app build",
+    "test": "elm-test"
   },
   "repository": {
     "type": "git",

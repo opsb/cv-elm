@@ -12,6 +12,7 @@ import Html.Attributes exposing (src)
 import View.Atom as Atom
 import View.Colors as Colors
 import View.Icon as Icon
+import Util.String
 
 
 
@@ -225,8 +226,8 @@ experiencePage =
 introductionSection : Element msg
 introductionSection =
     column []
-        [ Atom.paragraph [] "Building software that people actually like to use is what gets me going. With 14 years experience I've delivered successful products for the Telecoms, Retail, Publishing, Energy and Charity sectors. I've led teams to build a wide variety of projects including realtime social platforms and project management tools, business Intelligence, custom content management systems, online stores and browser extensions."
-        , Atom.paragraph [] "From day one I've been an agile practitioner, whether it's Scrum or Kanban, Lean, BDD, outside-in, pair-programming, you name it, I've been doing it for years. I've usually led from the front but I’m comfortable working in many different styles and value project consistency over personal preferences so am equally comfortable working alone or slotting into an existing team."
+        [ Atom.paragraph [] [ text "Building software that people actually like to use is what gets me going. With 14 years experience I've delivered successful products for the Telecoms, Retail, Publishing, Energy and Charity sectors. I've led teams to build a wide variety of projects including realtime social platforms and project management tools, business Intelligence, custom content management systems, online stores and browser extensions." ]
+        , Atom.paragraph [] [ text "From day one I've been an agile practitioner, whether it's Scrum or Kanban, Lean, BDD, outside-in, pair-programming, you name it, I've been doing it for years. I've usually led from the front but I’m comfortable working in many different styles and value project consistency over personal preferences so am equally comfortable working alone or slotting into an existing team." ]
         ]
 
 
@@ -250,8 +251,8 @@ skillsSection =
 communitySection : Element msg
 communitySection =
     column []
-        [ Atom.paragraph [] "I love to meet other developers and hear what they’re getting up to. In Barcelona I’m a regular at the Elixir meetup and run the Elm hack night. I’m also regularly in London and Berlin so I make sure to pop into the local Elixir and Elm meetups there."
-        , Atom.paragraph [] "Online you’ll regularly find me in the Elixir and Elm slacks. I’ve found both communities to be really friendly and helpful."
+        [ Atom.paragraph [] [ text "I love to meet other developers and hear what they’re getting up to. In Barcelona I’m a regular at the Elixir meetup and run the Elm hack night. I’m also regularly in London and Berlin so I make sure to pop into the local Elixir and Elm meetups there." ]
+        , Atom.paragraph [] [ text "Online you’ll regularly find me in the Elixir and Elm slacks. I’ve found both communities to be really friendly and helpful." ]
         ]
 
 
@@ -290,7 +291,7 @@ contactDetails =
         [ row [ spacing 10 ] [ el [] (Icon.github 20), newTabLink [] { label = text "opsb", url = "https://github.com/opsb" } ]
         , row [ spacing 10 ] [ el [] (Icon.stackoverflow 20), newTabLink [] { label = text "opsb", url = "https://stackoverflow.com/users/162337/opsb" } ]
         , row [ spacing 10 ] [ el [] (Icon.twitter 20), newTabLink [] { label = text "ollysb", url = "https://twitter.com/ollysb" } ]
-        , row [ spacing 10 ] [ el [] (Icon.envelope 20), link [] {label = text "oliver@opsb.co.uk", url = "mailto:oliver@opsb.co.uk"} ]
+        , row [ spacing 10 ] [ el [] (Icon.envelope 20), link [] { label = text "oliver@opsb.co.uk", url = "mailto:oliver@opsb.co.uk" } ]
         ]
 
 
@@ -319,7 +320,7 @@ projectView : Project -> Element msg
 projectView project =
     column [ spacing 5 ]
         [ Atom.title3 [] project.name
-        , Atom.paragraph [ Font.size 12 ] project.overview
+        , Atom.paragraph [ Font.size 12 ] [ text project.overview ]
         , hashTags project.stack
         ]
 
@@ -350,7 +351,7 @@ bullets items =
             (\item ->
                 row [ spacing 3 ]
                     [ Atom.bodyText [ alignTop ] "•"
-                    , Atom.paragraph [ Font.size 11, Atom.lineHeight 14 ] item
+                    , Atom.paragraph [ Font.size 11, Atom.lineHeight 14 ] [ text item ]
                     ]
             )
             items
@@ -433,17 +434,33 @@ splitInTwo list =
 
 openSourceProject : OpenSourceProject -> Element msg
 openSourceProject project =
-    newTabLink [ width fill ]
-        { url = project.repo
-        , label =
-            column [ spacing 5, width fill ]
-                [ row [ width fill ]
+    column [ spacing 5, width fill ]
+        [ newTabLink [ width fill ]
+            { url = project.repo
+            , label =
+                row [ width fill ]
                     [ el [ alignLeft ] (Atom.title3 [] project.name)
                     , el [ alignRight ] (Atom.title3 [] project.shortInvolvement)
                     ]
-                , Atom.paragraph [] project.overview
-                ]
-        }
+            }
+        , autolink project.overview
+        ]
+
+
+autolink : String -> Element msg
+autolink text_ =
+    let
+        config =
+            { mapText = text
+            , mapLink = \link -> newTabLink [ Font.medium ] { url = link, label = text link }
+            }
+    in
+    case Util.String.autolink config text_ of
+        Ok paragraphItems ->
+            Atom.paragraph [] paragraphItems
+
+        Err _ ->
+            Atom.paragraph [] [ text text_ ]
 
 
 overviewName : Element msg
