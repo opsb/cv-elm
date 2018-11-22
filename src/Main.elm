@@ -11,10 +11,10 @@ import Element.Font as Font
 import Element.Input as Input
 import Html exposing (Html)
 import Html.Attributes exposing (src)
-import Util.String exposing (autolink)
-import View.Atom as Atom
+import View.Atom as Atom exposing (..)
 import View.Colors as Colors
 import View.Icon as Icon
+import Util.List exposing (splitInTwo)
 
 
 port downloadPdf : () -> Cmd msg
@@ -296,7 +296,7 @@ experiencePage =
 
 introductionSection : Element msg
 introductionSection =
-    column []
+    column [spacing 15]
         [ Atom.paragraph [] [ text "Building software that people actually like to use is what gets me going. With 14 years experience I've delivered successful products for the Telecoms, Retail, Publishing, Energy and Charity sectors. I've led teams to build a wide variety of projects including realtime social platforms and project management tools, business Intelligence, custom content management systems, online stores and browser extensions." ]
         , Atom.paragraph [] [ text "From day one I've been an agile practitioner, whether it's Scrum or Kanban, Lean, BDD, outside-in, pair-programming, you name it, I've been doing it for years. I've usually led from the front but I’m comfortable working in many different styles and value project consistency over personal preferences so am equally comfortable working alone or slotting into an existing team." ]
         ]
@@ -321,7 +321,7 @@ skillsSection =
 
 communitySection : Element msg
 communitySection =
-    column []
+    column [spacing 15]
         [ Atom.paragraph [] [ text "I love to meet other developers and hear what they’re getting up to. In Barcelona I’m a regular at the Elixir meetup and run the Elm hack night. I’m also regularly in London and Berlin so I make sure to pop into the local Elixir and Elm meetups there." ]
         , Atom.paragraph [] [ text "Online you’ll regularly find me in the Elixir and Elm slacks. I’ve found both communities to be really friendly and helpful." ]
         ]
@@ -404,7 +404,7 @@ hashTags tags =
                 |> List.map (String.append "")
                 |> String.join ",  "
     in
-    paragraph
+    Atom.paragraph
         [ Font.size 12
         , Font.color Colors.grey
         , Font.italic
@@ -415,17 +415,7 @@ hashTags tags =
         [ text formatted ]
 
 
-bullets : List String -> Element msg
-bullets items =
-    column [ spacing 15 ] <|
-        List.map
-            (\item ->
-                row [ spacing 3 ]
-                    [ Atom.bodyText [ alignTop ] "•"
-                    , Atom.paragraph [ Font.size 11, Atom.lineHeight 14 ] [ text item ]
-                    ]
-            )
-            items
+
 
 
 positionDateRange : Position -> String
@@ -462,45 +452,9 @@ skillsColumn skills =
         ]
     <|
         List.map
-            (\{ name, years } -> tableOfContentsLine name (String.fromFloat years))
+            (\{ name, years } -> Atom.tableOfContentsLine name (String.fromFloat years))
             skills
 
-
-tableOfContentsLine : String -> String -> Element msg
-tableOfContentsLine leftText rightText =
-    row [ width fill ]
-        [ el
-            [ Font.color
-                Colors.grey
-            , paddingEach { bottom = 0, left = 0, top = 0, right = 5 }
-            ]
-            (Atom.title4 [] leftText)
-        , el
-            [ width fill
-            , Border.dotted
-            , Border.color Colors.lightGrey
-            , Border.widthEach { bottom = 1, left = 0, top = 0, right = 0 }
-            , moveUp 7
-            , Font.color Colors.lightGrey
-            ]
-            (text " ")
-        , el
-            [ Font.color Colors.grey
-            , Font.italic
-            , Font.bold
-            , paddingEach { bottom = 0, left = 5, top = 0, right = 0 }
-            ]
-            (Atom.title4 [] rightText)
-        ]
-
-
-splitInTwo : List a -> ( List a, List a )
-splitInTwo list =
-    let
-        index =
-            round (((toFloat <| List.length list) - 1) / toFloat 2)
-    in
-    ( List.take index list, List.drop index list )
 
 
 openSourceProject : OpenSourceProject -> Element msg
@@ -514,24 +468,9 @@ openSourceProject project =
                     , el [ alignRight ] (Atom.title3 [] project.shortInvolvement)
                     ]
             }
-        , autolink project.overview
+        , Atom.autolink project.overview
         ]
 
-
-autolink : String -> Element msg
-autolink text_ =
-    let
-        config =
-            { mapText = text
-            , mapLink = \link -> newTabLink [ Font.medium ] { url = link, label = text link }
-            }
-    in
-    case Util.String.autolink config text_ of
-        Ok paragraphItems ->
-            Atom.paragraph [] paragraphItems
-
-        Err _ ->
-            Atom.paragraph [] [ text text_ ]
 
 
 overviewName : Element msg

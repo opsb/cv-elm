@@ -16,6 +16,8 @@ module View.Atom exposing
     , title4
     , titleFont
     , verticalDivider
+    , tableOfContentsLine
+    , autolink
     )
 
 import Element exposing (..)
@@ -24,6 +26,8 @@ import Element.Border as Border
 import Element.Font as Font
 import Html.Attributes
 import View.Colors as Colors
+import Util.String exposing (autolink)
+import Util.List exposing (splitInTwo)
 
 
 lineHeight : Int -> Element.Attribute msg
@@ -166,6 +170,61 @@ bodyText customAttrs text_ =
         (text text_)
 
 
+tableOfContentsLine : String -> String -> Element msg
+tableOfContentsLine leftText rightText =
+    row [ width fill ]
+        [ el
+            [ Font.color
+                Colors.grey
+            , paddingEach { bottom = 0, left = 0, top = 0, right = 5 }
+            ]
+            (title4 [] leftText)
+        , el
+            [ width fill
+            , Border.dotted
+            , Border.color Colors.lightGrey
+            , Border.widthEach { bottom = 1, left = 0, top = 0, right = 0 }
+            , moveUp 7
+            , Font.color Colors.lightGrey
+            ]
+            (text " ")
+        , el
+            [ Font.color Colors.grey
+            , Font.italic
+            , Font.bold
+            , paddingEach { bottom = 0, left = 5, top = 0, right = 0 }
+            ]
+            (title4 [] rightText)
+        ]
+
+
+autolink : String -> Element msg
+autolink text_ =
+    let
+        config =
+            { mapText = text
+            , mapLink = \link -> newTabLink [ Font.medium ] { url = link, label = text link }
+            }
+    in
+    case Util.String.autolink config text_ of
+        Ok paragraphItems ->
+            paragraph [] paragraphItems
+
+        Err _ ->
+            paragraph [] [ text text_ ]
+
+
+bullets : List String -> Element msg
+bullets items =
+    column [ spacing 15 ] <|
+        List.map
+            (\item ->
+                row [ spacing 3 ]
+                    [ bodyText [ alignTop ] "•"
+                    , paragraph [ Font.size 11, lineHeight 14 ] [ text item ]
+                    ]
+            )
+            items
 
 ---- FONTS ----
 
