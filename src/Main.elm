@@ -149,7 +149,7 @@ mobileLayout =
 
 mobileSection : String -> Element Msg -> Element Msg
 mobileSection title body =
-    column [ padding 20, spacing 40 ] [ Atom.title1 [] title, body ]
+    column [ padding 20, spacing 40, width fill ] [ Atom.title1 [] title, body ]
 
 
 mobilePersonalDetailsSection : Element Msg
