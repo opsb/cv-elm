@@ -360,6 +360,7 @@ contactDetails : Element msg
 contactDetails =
     column [ alignBottom, Font.color Colors.white, spacing 10, Font.size 14, Font.light, Atom.letterSpacing 1 ]
         [ row [ spacing 10 ] [ el [] (Icon.github 20), newTabLink [] { label = text "opsb", url = "https://github.com/opsb" } ]
+        , row [ spacing 10 ] [ el [] (Icon.slack 20), el [] (text "opsb") ]
         , row [ spacing 10 ] [ el [] (Icon.stackoverflow 20), newTabLink [] { label = text "opsb", url = "https://stackoverflow.com/users/162337/opsb" } ]
         , row [ spacing 10 ] [ el [] (Icon.twitter 20), newTabLink [] { label = text "ollysb", url = "https://twitter.com/ollysb" } ]
         , row [ spacing 10 ] [ el [] (Icon.envelope 20), link [] { label = text "oliver@opsb.co.uk", url = "mailto:oliver@opsb.co.uk" } ]
