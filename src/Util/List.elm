@@ -1,5 +1,4 @@
-module Util.List exposing (..)
-
+module Util.List exposing (splitInTwo)
 
 
 splitInTwo : List a -> ( List a, List a )

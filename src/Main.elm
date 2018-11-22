@@ -11,10 +11,10 @@ import Element.Font as Font
 import Element.Input as Input
 import Html exposing (Html)
 import Html.Attributes exposing (src)
+import Util.List exposing (splitInTwo)
 import View.Atom as Atom exposing (..)
 import View.Colors as Colors
 import View.Icon as Icon
-import Util.List exposing (splitInTwo)
 
 
 port downloadPdf : () -> Cmd msg
@@ -47,7 +47,10 @@ type PdfStatus
 init : Flags -> ( Model, Cmd Msg )
 init flags =
     ( { pdfStatus = Generating
-        , device = Element.classifyDevice flags }, Cmd.none )
+      , device = Element.classifyDevice flags
+      }
+    , Cmd.none
+    )
 
 
 
@@ -72,7 +75,7 @@ update msg model =
             ( model, downloadPdf () )
 
         PdfGenerated ->
-            ({model | pdfStatus = Ready}, Cmd.none)
+            ( { model | pdfStatus = Ready }, Cmd.none )
 
 
 
@@ -82,8 +85,7 @@ update msg model =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        [
-        onResize <|
+        [ onResize <|
             \width height ->
                 DeviceClassified (Element.classifyDevice { width = width, height = height })
         , pdfGenerated (\_ -> PdfGenerated)
@@ -296,7 +298,7 @@ experiencePage =
 
 introductionSection : Element msg
 introductionSection =
-    column [spacing 15]
+    column [ spacing 15 ]
         [ Atom.paragraph [] [ text "Building software that people actually like to use is what gets me going. With 14 years experience I've delivered successful products for the Telecoms, Retail, Publishing, Energy and Charity sectors. I've led teams to build a wide variety of projects including realtime social platforms and project management tools, business Intelligence, custom content management systems, online stores and browser extensions." ]
         , Atom.paragraph [] [ text "From day one I've been an agile practitioner, whether it's Scrum or Kanban, Lean, BDD, outside-in, pair-programming, you name it, I've been doing it for years. I've usually led from the front but I’m comfortable working in many different styles and value project consistency over personal preferences so am equally comfortable working alone or slotting into an existing team." ]
         ]
@@ -321,7 +323,7 @@ skillsSection =
 
 communitySection : Element msg
 communitySection =
-    column [spacing 15]
+    column [ spacing 15 ]
         [ Atom.paragraph [] [ text "I love to meet other developers and hear what they’re getting up to. In Barcelona I’m a regular at the Elixir meetup and run the Elm hack night. I’m also regularly in London and Berlin so I make sure to pop into the local Elixir and Elm meetups there." ]
         , Atom.paragraph [] [ text "Online you’ll regularly find me in the Elixir and Elm slacks. I’ve found both communities to be really friendly and helpful." ]
         ]
@@ -416,9 +418,6 @@ hashTags tags =
         [ text formatted ]
 
 
-
-
-
 positionDateRange : Position -> String
 positionDateRange position =
     let
@@ -457,7 +456,6 @@ skillsColumn skills =
             skills
 
 
-
 openSourceProject : OpenSourceProject -> Element msg
 openSourceProject project =
     column [ spacing 5, width fill ]
@@ -471,7 +469,6 @@ openSourceProject project =
             }
         , Atom.autolink project.overview
         ]
-
 
 
 overviewName : Element msg

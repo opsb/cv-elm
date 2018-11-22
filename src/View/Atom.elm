@@ -1,6 +1,7 @@
 module View.Atom exposing
     ( a4Page
     , attrsEl
+    , autolink
     , bodyText
     , bodyTextFont
     , horizontalDivider
@@ -10,14 +11,13 @@ module View.Atom exposing
     , pageColumn
     , paragraph
     , section
+    , tableOfContentsLine
     , title1
     , title2
     , title3
     , title4
     , titleFont
     , verticalDivider
-    , tableOfContentsLine
-    , autolink
     )
 
 import Element exposing (..)
@@ -25,9 +25,9 @@ import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Html.Attributes
-import View.Colors as Colors
-import Util.String exposing (autolink)
 import Util.List exposing (splitInTwo)
+import Util.String exposing (autolink)
+import View.Colors as Colors
 
 
 lineHeight : Int -> Element.Attribute msg
@@ -225,6 +225,8 @@ bullets items =
                     ]
             )
             items
+
+
 
 ---- FONTS ----
 
