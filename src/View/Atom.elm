@@ -258,7 +258,7 @@ a4Page attrs =
     let
         pageAttrs =
             [ htmlAttribute <| Html.Attributes.style "height" "210mm"
-            , htmlAttribute <| Html.Attributes.style "width" "297mm"
+            , htmlAttribute <| Html.Attributes.style "width" "297.3mm"
             , htmlAttribute <| Html.Attributes.attribute "data-class" "page"
             , htmlAttribute <| Html.Attributes.style "page-break-after" "always"
             , htmlAttribute <| Html.Attributes.style "page-break-before" "always"
