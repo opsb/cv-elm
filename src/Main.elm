@@ -1,4 +1,4 @@
-port module Main exposing (main)
+module Main exposing (main)
 
 import Browser
 import Browser.Events exposing (onResize)
@@ -17,12 +17,6 @@ import View.Colors as Colors
 import View.Icon as Icon
 
 
-port downloadPdf : () -> Cmd msg
-
-
-port pdfGenerated : (() -> msg) -> Sub msg
-
-
 
 ---- MODEL ----
 
@@ -35,19 +29,12 @@ type alias Flags =
 
 type alias Model =
     { device : Device
-    , pdfStatus : PdfStatus
     }
-
-
-type PdfStatus
-    = Generating
-    | Ready
 
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
-    ( { pdfStatus = Generating
-      , device = Element.classifyDevice flags
+    ( { device = Element.classifyDevice flags
       }
     , Cmd.none
     )
@@ -59,8 +46,6 @@ init flags =
 
 type Msg
     = DeviceClassified Device
-    | DownloadPdfClicked
-    | PdfGenerated
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -71,12 +56,6 @@ update msg model =
             , Cmd.none
             )
 
-        DownloadPdfClicked ->
-            ( model, downloadPdf () )
-
-        PdfGenerated ->
-            ( { model | pdfStatus = Ready }, Cmd.none )
-
 
 
 ---- SUBSCRIPTIONS ----
@@ -84,12 +63,9 @@ update msg model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.batch
-        [ onResize <|
-            \width height ->
-                DeviceClassified (Element.classifyDevice { width = width, height = height })
-        , pdfGenerated (\_ -> PdfGenerated)
-        ]
+    onResize <|
+        \width height ->
+            DeviceClassified (Element.classifyDevice { width = width, height = height })
 
 
 
@@ -110,7 +86,7 @@ deviceBody model =
             mobileLayout
 
         _ ->
-            a4PagesLayout model
+            a4PagesLayout
 
 
 
@@ -168,8 +144,8 @@ mobilePersonalDetailsSection =
 ---- A4 PAGES LAYOUT ----
 
 
-a4PagesLayout : { a | pdfStatus : PdfStatus } -> List (Html Msg)
-a4PagesLayout { pdfStatus } =
+a4PagesLayout : List (Html Msg)
+a4PagesLayout =
     [ layout
         [ Atom.bodyTextFont
         , inFront
@@ -180,7 +156,7 @@ a4PagesLayout { pdfStatus } =
                 , moveLeft 10
                 , htmlAttribute <| Html.Attributes.attribute "data-print" "false"
                 ]
-                (downloadButton pdfStatus)
+                downloadButton
             )
         ]
         (column
@@ -193,9 +169,9 @@ a4PagesLayout { pdfStatus } =
     ]
 
 
-downloadButton : PdfStatus -> Element Msg
-downloadButton status =
-    Input.button
+downloadButton : Element Msg
+downloadButton =
+    link
         [ paddingXY 20 10
         , mouseOver []
         , Border.solid
@@ -204,18 +180,9 @@ downloadButton status =
         , Background.color Colors.green
         , Font.color Colors.white
         , Font.size 16
+        , pointer
         ]
-        (case status of
-            Generating ->
-                { label = text "Generating PDF"
-                , onPress = Nothing
-                }
-
-            Ready ->
-                { label = text "Download PDF"
-                , onPress = Just DownloadPdfClicked
-                }
-        )
+        { url = "./static/opsb.pdf", label = text "Download PDF" }
 
 
 overviewPage : Element Msg

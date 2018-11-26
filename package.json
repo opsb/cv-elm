@@ -7,7 +7,7 @@
     "test": "tests"
   },
   "scripts": {
-    "build": "elm-app build",
+    "build": "elm-app build && node scripts/generate-pdf.js",
     "test": "elm-test"
   },
   "repository": {
@@ -21,6 +21,8 @@
   },
   "homepage": "https://github.com/opsb/cv-elm#readme",
   "devDependencies": {
-    "create-elm-app": "^2.2.3"
+    "create-elm-app": "^2.2.3",
+    "puppeteer": "^1.10.0",
+    "serve-static": "^1.13.2"
   }
 }
