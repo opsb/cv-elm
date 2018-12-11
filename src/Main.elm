@@ -105,14 +105,14 @@ mobileLayout =
             , mobileSection "Open Source" openSourceSection
             , Atom.horizontalDivider
             , mobileSection "Experience" <|
-                column [ spacing 60 ]
-                    [ positionView (Data.experience |> .twentyBn)
-                    , positionView (Data.experience |> .liqid)
-                    , positionView (Data.experience |> .zapnito)
-                    , positionView (Data.experience |> .lytbulb)
-                    , positionView (Data.experience |> .myschooldirect)
-                    , positionView (Data.experience |> .informa)
-                    , positionView (Data.experience |> .nutshellDevelopment)
+                column [ spacing 80 ]
+                    [ mobilePositionView (Data.experience |> .twentyBn)
+                    , mobilePositionView (Data.experience |> .liqid)
+                    , mobilePositionView (Data.experience |> .zapnito)
+                    , mobilePositionView (Data.experience |> .lytbulb)
+                    , mobilePositionView (Data.experience |> .myschooldirect)
+                    , mobilePositionView (Data.experience |> .informa)
+                    , mobilePositionView (Data.experience |> .nutshellDevelopment)
                     ]
             , Atom.horizontalDivider
             , mobileSection "Community" communitySection
@@ -135,7 +135,8 @@ mobilePersonalDetailsSection =
             [ column [ alignBottom, spacing 10 ] [ overviewName, overviewTagline ]
             ]
         , column [ height (fillPortion 1) ]
-            [ contactDetails
+            [ contentDetails
+            , contactDetails
             ]
         ]
 
@@ -193,13 +194,13 @@ overviewPage =
             [ pagePersonalDetailsSection
             , Atom.pageColumn [ spacing 50 ]
                 [ pageSection "Introduction" introductionSection
-                , pageSection "Community" communitySection
-                , pageSection "Education" educationSection
+                , pageSection "Skills" skillsSection
                 ]
             , Atom.verticalDivider
             , Atom.pageColumn [ spacing 50 ]
-                [ pageSection "Skills" skillsSection
-                , pageSection "Open Source" openSourceSection
+                [ pageSection "Open Source" openSourceSection
+                , pageSection "Community" communitySection
+                , pageSection "Education" educationSection
                 ]
             ]
 
@@ -215,13 +216,30 @@ pageSection title body =
 pagePersonalDetailsSection : Element msg
 pagePersonalDetailsSection =
     Atom.pageColumn [ spacing 40, Background.color Colors.grey, Font.color Colors.white ]
-        [ column [ height (fillPortion 1) ]
-            [ column [ alignBottom, moveUp 100, spacing 10 ] [ overviewName, overviewTagline ]
+        [ column [ height (fillPortion 10), spacing 10 ]
+            [ column [ alignBottom, moveUp 100, spacing 10 ]
+                [ overviewName
+                , column [ spacing 10, paddingXY 0 10 ]
+                    [ el [ Font.light, Font.size 16 ] (text "Passionate full stack leader")
+                    , el [ Font.light, Font.size 16 ] (text "Founder, CTO, VP Engineering, Architect")
+                    , el [ Font.light, Font.size 16 ] (text "14 Years experience")
+                    ]
+                , contentDetails
+                ]
             ]
-        , column [ height (fillPortion 1) ]
+        , column [ height (fillPortion 1), spacing 80 ]
             [ contactDetails
             ]
         ]
+
+
+overviewTagline : Element msg
+overviewTagline =
+    el
+        [ Font.color Colors.white
+        , Font.light
+        ]
+        (text "Passionate full-stack tech leader")
 
 
 experiencePage : Element msg
@@ -240,19 +258,16 @@ experiencePage =
                     "Experience"
                 )
             , row [ width fill, height fill ]
-                [ Atom.pageColumn []
+                [ Atom.pageColumn [ spacing 40 ]
                     [ positionView (Data.experience |> .twentyBn)
                     , positionView (Data.experience |> .liqid)
                     , positionView (Data.experience |> .zapnito)
+                    , positionView (Data.experience |> .lytbulb)
                     ]
                 , Atom.verticalDivider
                 , Atom.pageColumn []
-                    [ positionView (Data.experience |> .lytbulb)
-                    , positionView (Data.experience |> .myschooldirect)
-                    ]
-                , Atom.verticalDivider
-                , Atom.pageColumn []
-                    [ positionView (Data.experience |> .informa)
+                    [ positionView (Data.experience |> .myschooldirect)
+                    , positionView (Data.experience |> .informa)
                     , positionView (Data.experience |> .nutshellDevelopment)
                     ]
                 ]
@@ -308,31 +323,70 @@ institution institution_ =
         , label =
             column [ spacing 5, width fill ]
                 [ row [ width fill ]
-                    [ el [ alignLeft ] (Atom.title3 [] institution_.name)
+                    [ el [ alignLeft ] (Atom.title3 [] institution_.course)
+                    , el [ alignRight ] (Atom.title3 [] institution_.result)
+                    ]
+                , row [ width fill ]
+                    [ el [ alignLeft ] (Atom.bodyText [] institution_.name)
                     , let
                         formattedDate =
                             [ institution_.startYear, institution_.endYear ]
                                 |> List.map String.fromInt
                                 |> String.join "-"
                       in
-                      el [ alignRight ] (Atom.title3 [] formattedDate)
-                    ]
-                , row [ width fill ]
-                    [ el [ alignLeft ] (Atom.bodyText [] institution_.course)
-                    , el [ alignRight ] (Atom.bodyText [] institution_.result)
+                      el [ alignRight ] (Atom.bodyText [] formattedDate)
                     ]
                 ]
         }
 
 
+contentDetails : Element msg
+contentDetails =
+    column
+        [ paddingXY 0 80
+        , alignBottom
+        , Font.color Colors.white
+        , spacing 10
+        , Font.size 14
+        , Font.light
+        , Atom.letterSpacing 1
+        ]
+        [ row [ spacing 10 ] [ el [] (Icon.youtube 20), newTabLink [] { label = text "FnCasts - watch me code on youtube", url = "https://www.youtube.com/channel/UCEVIBi0jFVXrCvd7CdVYxvw" } ]
+        , row [ spacing 10 ] [ el [] (Icon.github 20), newTabLink [] { label = text "opsb - 200+ repos", url = "https://github.com/opsb" } ]
+        , row [ spacing 10 ] [ el [] (Icon.slack 20), el [] (text "opsb - 14 communities") ]
+        , row [ spacing 10 ] [ el [] (Icon.stackoverflow 20), newTabLink [] { label = text "opsb - top 2%", url = "https://stackoverflow.com/users/162337/opsb" } ]
+        ]
+
+
 contactDetails : Element msg
 contactDetails =
     column [ alignBottom, Font.color Colors.white, spacing 10, Font.size 14, Font.light, Atom.letterSpacing 1 ]
-        [ row [ spacing 10 ] [ el [] (Icon.github 20), newTabLink [] { label = text "opsb", url = "https://github.com/opsb" } ]
-        , row [ spacing 10 ] [ el [] (Icon.slack 20), el [] (text "opsb") ]
-        , row [ spacing 10 ] [ el [] (Icon.stackoverflow 20), newTabLink [] { label = text "opsb", url = "https://stackoverflow.com/users/162337/opsb" } ]
-        , row [ spacing 10 ] [ el [] (Icon.twitter 20), newTabLink [] { label = text "ollysb", url = "https://twitter.com/ollysb" } ]
+        [ row [ spacing 10 ] [ el [] (Icon.twitter 20), newTabLink [] { label = text "ollysb", url = "https://twitter.com/ollysb" } ]
         , row [ spacing 10 ] [ el [] (Icon.envelope 20), link [] { label = text "oliver@opsb.co.uk", url = "mailto:oliver@opsb.co.uk" } ]
+        ]
+
+
+mobilePositionView : Position -> Element msg
+mobilePositionView position =
+    column
+        [ spacing 45
+        , width fill
+        , paddingEach { top = 0, right = 0, bottom = 5, left = 0 }
+        ]
+        [ column [ spacing 40, width fill ]
+            [ column [ width fill, spacing 30 ]
+                [ column [ width (fillPortion 11), spacing 5, alignTop ]
+                    [ el [ alignLeft ]
+                        (Atom.title2 [] position.company)
+                    , el [ alignLeft ] (Atom.title3 [ Font.color Colors.red ] <| position.title)
+                    , el [ alignLeft ] (Atom.bodyText [] position.dates)
+                    , el [ alignLeft ] (Atom.bodyText [] position.location)
+                    ]
+                , row [ spacing 20, width (fillPortion 20), alignTop ]
+                    [ column [ spacing 15, width (fillPortion 20) ] (List.map projectView position.projects)
+                    ]
+                ]
+            ]
         ]
 
 
@@ -344,26 +398,34 @@ positionView position =
         , paddingEach { top = 0, right = 0, bottom = 5, left = 0 }
         ]
         [ column [ spacing 8, width fill ]
-            [ row [ width fill ]
-                [ el [ alignLeft ] (Atom.title2 [] position.company)
-                ]
-            , row [ width fill, spacing 10 ]
-                [ el [ alignLeft ] (Atom.title4 [] position.dates)
-                , el [ alignLeft ] (Atom.title4 [] <| position.title)
-                , el [ alignLeft ] (Atom.title4 [] position.location)
+            [ row [ width fill, spacing 20 ]
+                [ column [ width (fillPortion 11), spacing 5, alignTop ]
+                    [ el [ alignLeft ]
+                        (Atom.title2 [] position.company)
+                    , el [ alignLeft ] (Atom.title3 [ Font.color Colors.red ] <| position.title)
+                    , el [ alignLeft ] (Atom.bodyText [] position.dates)
+                    , el [ alignLeft ] (Atom.bodyText [] position.location)
+                    ]
+                , row [ spacing 20, width (fillPortion 20), alignTop ]
+                    [ column [ spacing 15, width (fillPortion 20) ] (List.map projectView position.projects)
+                    ]
                 ]
             ]
-        , column [ spacing 15 ] (List.map projectView position.projects)
         ]
 
 
 projectView : Project -> Element msg
 projectView project =
     column [ spacing 5 ]
-        [ Atom.title3 [] project.name
-        , Atom.paragraph [ Font.size 12 ] [ text project.overview ]
+        [ Atom.title3 [ paddingEach { top = 0, right = 0, bottom = 5, left = 0 } ] project.name
+        , Atom.paragraph [ Font.size 12 ] [ text <| projectSummary <| project ]
         , hashTags project.stack
         ]
+
+
+projectSummary : Project -> String
+projectSummary project =
+    project.overview |> String.split "." |> List.head |> Maybe.withDefault ""
 
 
 hashTags : List String -> Element msg
@@ -375,12 +437,14 @@ hashTags tags =
                 |> String.join ",  "
     in
     Atom.paragraph
-        [ Font.size 12
+        [ Font.size 11
         , Font.color Colors.grey
-        , Font.italic
-        , Atom.titleFont
-        , Atom.letterSpacing 0.4
+
+        --, Font.italic
+        --, Atom.titleFont
         , Font.alignLeft
+        , Font.medium
+        , Font.family [ Font.monospace ]
         ]
         [ text formatted ]
 
@@ -412,7 +476,6 @@ skillsColumn skills =
                 [ alignRight
                 , Font.size 10
                 , Font.color Colors.grey
-                , Font.italic
                 , moveRight 2
                 ]
                 (text "years")
@@ -431,7 +494,7 @@ openSourceProject project =
             , label =
                 row [ width fill ]
                     [ el [ alignLeft ] (Atom.title3 [] project.name)
-                    , el [ alignRight ] (Atom.title3 [] project.shortInvolvement)
+                    , el [ alignRight ] (Atom.title4 [] project.shortInvolvement)
                     ]
             }
         , Atom.autolink project.overview
@@ -448,15 +511,6 @@ overviewName =
         , Atom.letterSpacing 1
         ]
         [ text "Oliver", text "Searle-Barnes" ]
-
-
-overviewTagline : Element msg
-overviewTagline =
-    el
-        [ Font.color Colors.white
-        , Font.light
-        ]
-        (text "Passionate full-stack tech leader")
 
 
 

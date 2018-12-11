@@ -1,4 +1,4 @@
-module View.Colors exposing (blue, green, grey, lightGrey, lightestGrey, white)
+module View.Colors exposing (blue, green, grey, lightGrey, lightestGrey, red, white)
 
 import Element exposing (Color, rgba255)
 
@@ -31,3 +31,8 @@ blue =
 green : Color
 green =
     rgba255 13 96 105 1
+
+
+red : Color
+red =
+    rgba255 255 0 0 1

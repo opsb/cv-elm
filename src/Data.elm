@@ -169,7 +169,7 @@ experience =
             [ { name = "Give4Sure"
               , start = 2012
               , end = 2014
-              , overview = "Led development of a cross-browser plugin and webapp that helped charities raise money while their supporters shopped online. The browser extension highlighted links on any page to participating retailers in a charity's chosen color. Given that the extension ran on every page and costs needed to be kept low it was built so that it can run entirely independently of our servers."
+              , overview = "A cross-browser plugin and webapp that helped charities raise money while their supporters shopped online. The browser extension highlighted links on any page to participating retailers in a charity's chosen color. Given that the extension ran on every page and costs needed to be kept low it was built so that it can run entirely independently of our servers."
               , stack = [ "Browser extensions", "Ruby on Rails", "Postgres", "Ember.js", "Kanban", "BDD" ]
               , talkingPoints =
                     [ "Built browser extension to handle high volume but with low infrastructure costs."
@@ -181,7 +181,7 @@ experience =
             , { name = "Marks and Spencer School Uniforms"
               , start = 2011
               , end = 2012
-              , overview = "Led a collaboration with Marks and Spencer to provide bespoke school uniforms to UK schools. Built a webapp that allowed schools to create and preview custom school uniforms based on Marks and Spencer's standard uniform."
+              , overview = "A collaboration with Marks and Spencer to provide bespoke school uniforms to UK schools. Built a webapp that allowed schools to create and preview custom school uniforms based on Marks and Spencer's standard uniform."
               , stack = [ "Ruby on Rails", "Postgres", "Kanban", "BDD" ]
               , talkingPoints =
                     [ "Built online catalogue that allowed schools to sign up and create their own bespoke uniform online."
@@ -190,7 +190,7 @@ experience =
             , { name = "myschooldirect.com"
               , start = 2010
               , end = 2011
-              , overview = "Led development of a Quidco style shopping site where parent's could find deals that would raise money for their children's schools"
+              , overview = "A Quidco style shopping site where parent's could find deals that would raise money for their children's schools"
               , stack = [ "Ruby on rails", "Postgres", "Kanban", "BDD" ]
               , talkingPoints =
                     [ "Built shopping catalogue."
@@ -239,7 +239,7 @@ experience =
             ]
         }
     , nutshellDevelopment =
-        { title = "Head of development"
+        { title = "Head of dev."
         , location = "Brighton"
         , company = "Nutshell Dev."
         , dates = "2004-2005"
@@ -300,35 +300,35 @@ openSourceProjects =
       , repo = "https://github.com/fncasts/fnchess"
       , language = "Elm/Elixir"
       , overview = "Paired with a friend on youtube to build a chess game in Elm backend by Phoenix-Channels for realtime. See https://fncasts.io for the episodes."
-      , shortInvolvement = "Owner"
+      , shortInvolvement = "owner"
       , involvement = ""
       }
     , { name = "orbitjs / orbit"
       , repo = "https://github.com/orbitjs/orbit"
       , language = "javascript"
       , overview = "A javascript library for orchestrating data synchronization. See http://orbitjs.com for more information."
-      , shortInvolvement = "Core"
+      , shortInvolvement = "core"
       , involvement = "For 2 years I was a core contributor working with Dan Gebhard (co-author of the jsonapi spec), contributing code and discussing architectural direction"
       }
     , { name = "saschatimme / elm-phoenix"
       , repo = "https://github.com/saschatimme/elm-phoenix"
       , language = "Elm"
       , overview = "Integration between Elm and Phoenix channels"
-      , shortInvolvement = "Core"
+      , shortInvolvement = "core"
       , involvement = "Having used elm-phoenix in production I've contributed several features, bug fixes, documentation and example code"
       }
     , { name = "opsb / elm-debouncer-fx"
       , repo = "https://github.com/opsb/elm-debouncer-fx"
       , language = "Elm"
       , overview = "An Elm effect manager for debouncing events"
-      , shortInvolvement = "Owner"
+      , shortInvolvement = "owner"
       , involvement = "I created this while working on the Feeds project - it's original use was to debounce scroll input from the mouse"
       }
     , { name = "opsb / patchstream"
       , repo = "https://github.com/opsb/patchstream"
       , language = "Ruby"
       , overview = "Emits json patches as rails active records are updated"
-      , shortInvolvement = "Owner"
+      , shortInvolvement = "owner"
       , involvement = "I created this while working on the Lytbulb project - it was used while transitioning the project from a pure rails backend to firebase"
       }
     ]
