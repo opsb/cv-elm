@@ -8,6 +8,7 @@ module View.Atom exposing
     , id
     , letterSpacing
     , lineHeight
+    , monospacedFont
     , pageColumn
     , paragraph
     , section
@@ -49,7 +50,7 @@ title1 : List (Element.Attribute msg) -> String -> Element msg
 title1 customAttrs title_ =
     attrsEl
         [ titleFont
-        , Font.size 28
+        , Font.size 26
         , Font.bold
         , Font.color Colors.grey
         , letterSpacing 1
@@ -62,7 +63,7 @@ title2 : List (Element.Attribute msg) -> String -> Element msg
 title2 customAttrs title_ =
     attrsEl
         [ titleFont
-        , Font.size 26
+        , Font.size 24
         , Font.bold
         , Font.color Colors.grey
         , letterSpacing 0.5
@@ -88,7 +89,7 @@ title4 : List (Element.Attribute msg) -> String -> Element msg
 title4 customAttrs title_ =
     attrsEl
         [ titleFont
-        , Font.size 12
+        , Font.size 14
         , Font.color Colors.grey
         ]
         customAttrs
@@ -172,13 +173,13 @@ bodyText customAttrs text_ =
 
 tableOfContentsLine : String -> String -> Element msg
 tableOfContentsLine leftText rightText =
-    row [ width fill ]
+    row [ width fill, Font.family [ Font.monospace ] ]
         [ el
             [ Font.color
                 Colors.grey
             , paddingEach { bottom = 0, left = 0, top = 0, right = 5 }
             ]
-            (title4 [] leftText)
+            (title4 [ Font.family [ Font.monospace ], Font.size 11 ] leftText)
         , el
             [ width fill
             , Border.dotted
@@ -190,11 +191,9 @@ tableOfContentsLine leftText rightText =
             (text " ")
         , el
             [ Font.color Colors.grey
-            , Font.italic
-            , Font.bold
             , paddingEach { bottom = 0, left = 5, top = 0, right = 0 }
             ]
-            (title4 [] rightText)
+            (title4 [ Font.family [ Font.monospace ], Font.size 12 ] rightText)
         ]
 
 
@@ -249,6 +248,11 @@ titleFont =
         , Font.typeface "Arial"
         , Font.typeface "Sans Serif"
         ]
+
+
+monospacedFont =
+    Font.family
+        [ Font.typeface "monospace" ]
 
 
 
