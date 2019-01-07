@@ -183,7 +183,7 @@ downloadButton =
         , Font.size 16
         , pointer
         ]
-        { url = "./static/opsb.pdf", label = text "Download PDF" }
+        { url = "%PUBLIC_URL%/opsb.pdf", label = text "Download PDF" }
 
 
 overviewPage : Element Msg

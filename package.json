@@ -7,7 +7,8 @@
     "test": "tests"
   },
   "scripts": {
-    "build": "elm-app build && node scripts/generate-pdf.js",
+    "build": "elm-app build",
+    "generate-pdf": "node scripts/generate-pdf.js",
     "test": "elm-test"
   },
   "repository": {
