@@ -182,6 +182,7 @@ downloadButton =
         , Font.color Colors.white
         , Font.size 16
         , pointer
+        , htmlAttribute <| Html.Attributes.attribute "download" "opsb.pdf"
         ]
         { url = "%PUBLIC_URL%/opsb.pdf", label = text "Download PDF" }
 
