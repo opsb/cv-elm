@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/opsb/cv-elm#readme",
   "devDependencies": {
-    "create-elm-app": "^2.2.3",
+    "create-elm-app": "^5.22.0",
     "puppeteer": "^1.10.0",
     "serve-static": "^1.13.2"
   }
