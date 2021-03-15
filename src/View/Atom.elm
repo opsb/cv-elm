@@ -17,6 +17,7 @@ module View.Atom exposing
     , title2
     , title3
     , title4
+    , title5
     , titleFont
     , verticalDivider
     )
@@ -76,7 +77,7 @@ title3 : List (Element.Attribute msg) -> String -> Element msg
 title3 customAttrs title_ =
     attrsEl
         [ titleFont
-        , Font.size 18
+        , Font.size 16
         , Font.color Colors.grey
         , Font.semiBold
         , letterSpacing -0.2
@@ -87,6 +88,18 @@ title3 customAttrs title_ =
 
 title4 : List (Element.Attribute msg) -> String -> Element msg
 title4 customAttrs title_ =
+    attrsEl
+        [ titleFont
+        , Font.size 14
+        , Font.semiBold
+        , Font.color Colors.grey
+        ]
+        customAttrs
+        (text title_)
+
+
+title5 : List (Element.Attribute msg) -> String -> Element msg
+title5 customAttrs title_ =
     attrsEl
         [ titleFont
         , Font.size 14
@@ -173,13 +186,13 @@ bodyText customAttrs text_ =
 
 tableOfContentsLine : String -> String -> Element msg
 tableOfContentsLine leftText rightText =
-    row [ width fill, Font.family [ Font.monospace ] ]
+    row [ width fill, Font.family [] ]
         [ el
             [ Font.color
                 Colors.grey
             , paddingEach { bottom = 0, left = 0, top = 0, right = 5 }
             ]
-            (title4 [ Font.family [ Font.monospace ], Font.size 11 ] leftText)
+            (title4 [ Font.family [], Font.size 11 ] leftText)
         , el
             [ width fill
             , Border.dotted
@@ -193,7 +206,7 @@ tableOfContentsLine leftText rightText =
             [ Font.color Colors.grey
             , paddingEach { bottom = 0, left = 5, top = 0, right = 0 }
             ]
-            (title4 [ Font.family [ Font.monospace ], Font.size 12 ] rightText)
+            (title4 [ Font.letterSpacing 0.1, Font.size 10 ] rightText)
         ]
 
 

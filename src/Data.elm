@@ -80,7 +80,22 @@ introduction =
 
 
 experience =
-    { twentyBn =
+    { ctm =
+        { title = "Consultant"
+        , location = "London / Remote"
+        , company = "CompareThe\nMarket.com"
+        , dates = "Feb 2019-Present"
+        , projects =
+            [ { name = "MoneyHub"
+              , start = 2019
+              , end = 2021
+              , overview = "Having bought Bean.com, a startup that helped people save money on their bills CompareTheMarket wanted to replace the existing platform with a high performance elixir service to integrate the majority of UK high street banks using the Open Banking specification. Devised and built custom algorithms for analysing transaction data and identifying merchants and recurring bills and payments."
+              , stack = [ "Elixir", "Elm", "Javascript", "Ruby" ]
+              , talkingPoints = []
+              }
+            ]
+        }
+    , twentyBn =
         { title = "Consultant"
         , location = "Berlin / Remote"
         , company = "TwentyBN"
@@ -169,7 +184,7 @@ experience =
             [ { name = "Give4Sure"
               , start = 2012
               , end = 2014
-              , overview = "A cross-browser plugin and webapp that helped charities raise money while their supporters shopped online. The browser extension highlighted links on any page to participating retailers in a charity's chosen color. Given that the extension ran on every page and costs needed to be kept low it was built so that it can run entirely independently of our servers."
+              , overview = "A cross-browser plugin and webapp that helped charities raise money while their supporters shopped online. The browser extension highlighted links on any page to participating retailers in a charity's chosen color."
               , stack = [ "Browser extensions", "Ruby on Rails", "Postgres", "Ember.js", "Kanban", "BDD" ]
               , talkingPoints =
                     [ "Built browser extension to handle high volume but with low infrastructure costs."
@@ -181,7 +196,7 @@ experience =
             , { name = "Marks and Spencer School Uniforms"
               , start = 2011
               , end = 2012
-              , overview = "A collaboration with Marks and Spencer to provide bespoke school uniforms to UK schools. Built a webapp that allowed schools to create and preview custom school uniforms based on Marks and Spencer's standard uniform."
+              , overview = "Led the development of an online store allowing schools to customise standard Marks and Spencer uniforms with their school badges and colours."
               , stack = [ "Ruby on Rails", "Postgres", "Kanban", "BDD" ]
               , talkingPoints =
                     [ "Built online catalogue that allowed schools to sign up and create their own bespoke uniform online."
@@ -201,25 +216,16 @@ experience =
             ]
         }
     , informa =
-        { title = "Tech lead"
+        { title = "Tech lead/Architect"
         , location = "London"
         , company = "Informa"
         , dates = "2005-2010"
         , projects =
-            [ { name = "Intelligence Centre 2"
-              , start = 2008
-              , end = 2010
-              , stack = [ "Java/Spring", "Oracle DB", "Scrum", "BDD" ]
-              , overview = "Custom CMS for analysis of the telecoms sector. Frustrated with using web based text editors (which were very poor at the time), I proposed and built a webdav based solution for the journalists to write articles in word, save and then see them rendered immediately on the website."
-              , talkingPoints =
-                    [ "Devised a webdav based system that allowed journalists to edit articles directly in MS Word. The system allowed journalists to hit save in Word and instantly see a preview on the live site."
-                    ]
-              }
-            , { name = "World Cellular Information Service"
+            [ { name = "World Cellular Information Service"
               , start = 2007
               , end = 2006
               , stack = [ "Java", "Spring", "MS Analytics services", "Oracle DB", "Scrum", "TDD" ]
-              , overview = "BI portal for worldwide cellular market data. Having developed the successful architecture for the new WBIS product (see below) I was asked to roll it out for what's Informa Telecom's flagship product."
+              , overview = "BI portal for worldwide cellular market data. Having developed the successful architecture for the new WBIS product (see below) I was asked to roll it out for Informa Telecom's flagship product."
               , talkingPoints =
                     [ "Used incremental approach with frequent releases to gradually shift product over to new architecture without disrupting the live service or requiring parallel development."
                     , "Introduced clover to track test coverage and promote a TDD approach"
@@ -234,6 +240,15 @@ experience =
                     [ "Developed algorithms to integrate noisy/conflicting data provided by hundreds of different businesses"
                     , "Introduced Scrum for more effective project management"
                     , "Introduced maven to standardise build process"
+                    ]
+              }
+            , { name = "Intelligence Centre 2"
+              , start = 2008
+              , end = 2010
+              , stack = [ "Java/Spring", "Oracle DB", "Scrum", "BDD" ]
+              , overview = "Devised a webdav based CMS allowing Journalists to write their articles in MS Word, save and see an instant preview of their article on the website."
+              , talkingPoints =
+                    [ "Devised a webdav based system that allowed journalists to edit articles directly in MS Word. The system allowed journalists to hit save in Word and instantly see a preview on the live site."
                     ]
               }
             ]
@@ -271,27 +286,27 @@ education =
 skills : List Skill
 skills =
     [ { name = "Ruby on Rails", years = 8 }
-    , { name = "Elixir / Phoenix", years = 2.5 }
-    , { name = "Elm", years = 2.5 }
+    , { name = "Elixir / Phoenix", years = 5 }
+    , { name = "Elm", years = 5 }
     , { name = "React/Redux", years = 0.5 }
     , { name = "RxJS", years = 1.5 }
     , { name = "Ember.js", years = 5 }
-    , { name = "Javascript - ES2017", years = 8 }
+    , { name = "Javascript - ES2017", years = 10 }
     , { name = "Java", years = 5 }
-    , { name = "SQL", years = 14 }
+    , { name = "SQL", years = 16 }
     , { name = "Firebase", years = 2 }
     , { name = "OLAP / MDX", years = 4 }
     , { name = "Event-sourcing/CQRS", years = 2 }
-    , { name = "Scrum / Kanban", years = 13 }
-    , { name = "BDD / TDD", years = 13 }
-    , { name = "Git", years = 10 }
+    , { name = "Scrum / Kanban", years = 15 }
+    , { name = "BDD / TDD", years = 15 }
+    , { name = "Git", years = 12 }
     , { name = "Realtime systems", years = 5 }
-    , { name = "HTML", years = 12 }
-    , { name = "CSS / SASS", years = 12 }
-    , { name = "OO", years = 14 }
-    , { name = "Functional", years = 3 }
+    , { name = "HTML", years = 16 }
+    , { name = "CSS / SASS", years = 16 }
+    , { name = "OO", years = 16 }
+    , { name = "Functional", years = 5 }
     , { name = "Heroku", years = 8 }
-    , { name = "AWS", years = 8 }
+    , { name = "AWS", years = 10 }
     ]
 
 

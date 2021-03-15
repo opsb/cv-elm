@@ -223,7 +223,7 @@ pagePersonalDetailsSection =
                 , column [ spacing 10, paddingXY 0 10 ]
                     [ el [ Font.light, Font.size 16 ] (text "Passionate full stack leader")
                     , el [ Font.light, Font.size 16 ] (text "Founder, CTO, VP Engineering, Architect")
-                    , el [ Font.light, Font.size 16 ] (text "14 Years experience")
+                    , el [ Font.light, Font.size 16 ] (text "16 Years experience")
                     ]
                 , contentDetails
                 ]
@@ -259,8 +259,9 @@ experiencePage =
                     "Experience"
                 )
             , row [ width fill, height fill ]
-                [ Atom.pageColumn [ spacing 40 ]
-                    [ positionView (Data.experience |> .twentyBn)
+                [ Atom.pageColumn [ spacing 25 ]
+                    [ positionView (Data.experience |> .ctm)
+                    , positionView (Data.experience |> .twentyBn)
                     , positionView (Data.experience |> .liqid)
                     , positionView (Data.experience |> .zapnito)
                     , positionView (Data.experience |> .lytbulb)
@@ -282,7 +283,7 @@ experiencePage =
 introductionSection : Element msg
 introductionSection =
     column [ spacing 15 ]
-        [ Atom.paragraph [] [ text "Building software that people actually like to use is what gets me going. With 14 years experience I've delivered successful products for the Telecoms, Retail, Publishing, Energy and Charity sectors. I've led teams to build a wide variety of projects including realtime social platforms and project management tools, business Intelligence, custom content management systems, online stores and browser extensions." ]
+        [ Atom.paragraph [] [ text "Building software that people actually like to use is what gets me going. With 16 years experience I've delivered successful products for the Telecoms, Retail, Publishing, Energy and Charity sectors. I've led teams to build a wide variety of projects including realtime social platforms and project management tools, business Intelligence, custom content management systems, online stores and browser extensions." ]
         , Atom.paragraph [] [ text "From day one I've been an agile practitioner, whether it's Scrum or Kanban, Lean, BDD, outside-in, pair-programming, you name it, I've been doing it for years. I've usually led from the front but I’m comfortable working in many different styles and value project consistency over personal preferences so am equally comfortable working alone or slotting into an existing team." ]
         ]
 
@@ -393,32 +394,22 @@ mobilePositionView position =
 
 positionView : Position -> Element msg
 positionView position =
-    column
-        [ spacing 15
-        , width fill
-        , paddingEach { top = 0, right = 0, bottom = 5, left = 0 }
-        ]
-        [ column [ spacing 8, width fill ]
-            [ row [ width fill, spacing 20 ]
-                [ column [ width (fillPortion 11), spacing 5, alignTop ]
-                    [ el [ alignLeft ]
-                        (Atom.title2 [] position.company)
-                    , el [ alignLeft ] (Atom.title3 [ Font.color Colors.red ] <| position.title)
-                    , el [ alignLeft ] (Atom.bodyText [] position.dates)
-                    , el [ alignLeft ] (Atom.bodyText [] position.location)
-                    ]
-                , row [ spacing 20, width (fillPortion 20), alignTop ]
-                    [ column [ spacing 15, width (fillPortion 20) ] (List.map projectView position.projects)
-                    ]
-                ]
+    row [ width fill, spacing 0 ]
+        [ column [ width (fillPortion 7), spacing 5, alignTop ]
+            [ Atom.title3 [ Font.size 16, paddingEach { top = 0, right = 0, bottom = 5, left = 0 } ] position.company
+            , Atom.title5 [ Font.size 12, Font.color Colors.red ] <| position.title
+            , Atom.bodyText [ Font.size 10 ] position.dates
+            , Atom.bodyText [ Font.size 10 ] position.location
             ]
+        , column [ spacing 15, width (fillPortion 20) ]
+            (List.map projectView position.projects)
         ]
 
 
 projectView : Project -> Element msg
 projectView project =
     column [ spacing 5 ]
-        [ Atom.title3 [ paddingEach { top = 0, right = 0, bottom = 5, left = 0 } ] project.name
+        [ Atom.title3 [ Font.size 14, Font.medium, paddingEach { top = 0, right = 0, bottom = 2, left = 0 }, centerY ] project.name
         , Atom.paragraph [ Font.size 12 ] [ text <| projectSummary <| project ]
         , hashTags project.stack
         ]
@@ -426,7 +417,7 @@ projectView project =
 
 projectSummary : Project -> String
 projectSummary project =
-    project.overview |> String.split "." |> List.head |> Maybe.withDefault ""
+    project.overview
 
 
 hashTags : List String -> Element msg
@@ -438,14 +429,14 @@ hashTags tags =
                 |> String.join ",  "
     in
     Atom.paragraph
-        [ Font.size 11
+        [ Font.size 9
         , Font.color Colors.grey
 
         --, Font.italic
         --, Atom.titleFont
         , Font.alignLeft
         , Font.medium
-        , Font.family [ Font.monospace ]
+        , Font.family []
         ]
         [ text formatted ]
 
@@ -494,8 +485,7 @@ openSourceProject project =
             { url = project.repo
             , label =
                 row [ width fill ]
-                    [ el [ alignLeft ] (Atom.title3 [] project.name)
-                    , el [ alignRight ] (Atom.title4 [] project.shortInvolvement)
+                    [ el [ alignLeft ] (Atom.title4 [ Font.size 14, Font.medium ] project.name)
                     ]
             }
         , Atom.autolink project.overview
