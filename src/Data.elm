@@ -346,4 +346,11 @@ openSourceProjects =
       , shortInvolvement = "owner"
       , involvement = "I created this while working on the Lytbulb project - it was used while transitioning the project from a pure rails backend to firebase"
       }
+    , { name = "opsb / cv-elm"
+      , repo = "https://github.com/opsb/cv-elm"
+      , language = "Elm"
+      , overview = "The code used to generate the CV you're reading right now"
+      , shortInvolvement = "owner"
+      , involvement = "I wanted a CV that made it convenient to update the content or design so I built this one in Elm."
+      }
     ]
