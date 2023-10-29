@@ -2,7 +2,6 @@ module Util.StringTest exposing (all)
 
 import Expect
 import Parser exposing (..)
-import Regex
 import Test exposing (..)
 import Util.String exposing (autolink)
 

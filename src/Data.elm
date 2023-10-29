@@ -80,7 +80,52 @@ introduction =
 
 
 experience =
-    { ctm =
+    { tastermonial =
+        { title = "Consultant"
+        , location = "Cupertino / Remote"
+        , company = "Tastermonial"
+        , dates = "Jun 2023-Nov 2023"
+        , projects =
+            [ { name = "Tastermonial App"
+              , start = 2023
+              , end = 2023
+              , overview = "Replaced MVP with a high performance and reliable mobile App using Flutter and Phoenix. Built out AWS infrastructure and supporting build pipelines."
+              , stack = [ "Elixir", "Flutter", "Sqlite", "Postgres", "AWS/Terraform" ]
+              , talkingPoints = []
+              }
+            ]
+        }
+    , boulevard =
+        { title = "Consultant"
+        , location = "Los Angeles / Remote"
+        , company = "Boulevard"
+        , dates = "Oct 2021-Jun 2023"
+        , projects =
+            [ { name = "API and Platform Services"
+              , start = 2023
+              , end = 2021
+              , overview = "Joined the API team to scale platform services and integrations with 3rd party services."
+              , stack = [ "Elixir", "Postgres", "React", "Typescript", "AWS/Terraform" ]
+              , talkingPoints = []
+              }
+            ]
+        }
+    , vorwerk =
+        { title = "Consultant"
+        , location = "Wuppertal / Remote"
+        , company = "Vorwerk"
+        , dates = "Apr 2021-Sep 2021"
+        , projects =
+            [ { name = "Kobold"
+              , start = 2021
+              , end = 2021
+              , overview = "Bootstrapped an Elixir/Phoenix team to provide cloud services and python client for a new line of commercial Robot Vacuum Cleaners."
+              , stack = [ "Elixir", "Python", "Postgres", "AWS/Terraform" ]
+              , talkingPoints = []
+              }
+            ]
+        }
+    , ctm =
         { title = "Consultant"
         , location = "London / Remote"
         , company = "CompareThe\nMarket.com"
@@ -89,8 +134,8 @@ experience =
             [ { name = "MoneyHub"
               , start = 2019
               , end = 2021
-              , overview = "Having bought Bean.com, a startup that helped people save money on their bills CompareTheMarket wanted to replace the existing platform with a high performance elixir service to integrate the majority of UK high street banks using the Open Banking specification. Devised and built custom algorithms for analysing transaction data and identifying merchants and recurring bills and payments."
-              , stack = [ "Elixir", "Elm", "Javascript", "Ruby" ]
+              , overview = "Rebuilt Bean.com as a high performance elixir service to integrate the majority of UK high street banks using the Open Banking specification."
+              , stack = [ "Elixir", "GraphQL", "Elm", "Javascript", "Ruby", "Postgres", "AWS" ]
               , talkingPoints = []
               }
             ]
@@ -101,11 +146,11 @@ experience =
         , company = "TwentyBN"
         , dates = "Sep–Nov 2018"
         , projects =
-            [ { name = "Video Annotation Editors"
+            [ { name = "Video Annotation Editor"
               , start = 2018
               , end = 2018
               , overview = "Designed and built two Elm apps for collecting video gesture metadata from Amazon Mechanical Turk workers. "
-              , stack = [ "Elm", "Javascript", "Webpack" ]
+              , stack = [ "Elm", "Javascript" ]
               , talkingPoints = []
               }
             ]
@@ -119,8 +164,8 @@ experience =
             [ { name = "Salesforce Integration"
               , start = 2018
               , end = 2018
-              , overview = "Integrated a Ruby on Rails app with Salesforce using an Elixir/RabbitMQ based microservice. Created a mapping system for translating GraphQL payloads to Salesforce operations and an ORM for Salesforce."
-              , stack = [ "Elixir", "Ruby on Rails", "RabbitMQ", "Salesforce", "Docker", "GraphQL", "Scrum", "BDD" ]
+              , overview = "Integrated a Ruby on Rails app with Salesforce through an Elixir/RabbitMQ microservice."
+              , stack = [ "Elixir", "Ruby on Rails", "RabbitMQ", "Salesforce", "Docker", "GraphQL" ]
               , talkingPoints = []
               }
             ]
@@ -134,7 +179,7 @@ experience =
             [ { name = "Feeds"
               , start = 2016
               , end = 2017
-              , overview = "Led the development of a realtime, embeddable social webapp. The product shipped with several components that communicated with each other via a message bus running on the page."
+              , overview = "Led the development of a white-labelled realtime community platform."
               , stack = [ "Phoenix", "Phoenix-Channels", "Elixir", "Elm", "Javascript", "JWT", "Auth0", "Postgres", "Webpack", "Kanban", "BDD" ]
               , talkingPoints =
                     [ "Implemented an Event Sourcing architecture to power the realtime front end built on top of Phoenix's websocket based channels."
@@ -142,19 +187,20 @@ experience =
                     , "Built testing infrastructure that allowed full stack testing in multiple concurrent browser instances."
                     ]
               }
-            , { name = "Knowledge Networks"
-              , start = 2014
-              , end = 2017
-              , overview = "Tech lead and architect for an expert focused content management system and online training platform."
-              , stack = [ "Ruby on Rails", "ember.js", "Javascript", "Postgres", "Redis", "Memcached", "Solr", "Kanban", "BDD" ]
-              , talkingPoints =
-                    [ "Built video discussion feature including recording facilities."
-                    , "Built theming system that included a ruby command line tool allowing designers to build and release themes independently of the main app release process."
-                    , "Refined core architecture to focus on consistent content management."
-                    , "Performance work to optimise load time of site"
-                    , "Introduced and rolled out ember.js across the app to modernise user experience."
-                    ]
-              }
+
+            -- , { name = "Knowledge Networks"
+            --   , start = 2014
+            --   , end = 2017
+            --   , overview = "Tech lead and architect for an expert focused content management system and online training platform."
+            --   , stack = [ "Ruby on Rails", "ember.js", "Javascript", "Postgres", "Redis", "Memcached", "Solr", "Kanban", "BDD" ]
+            --   , talkingPoints =
+            --         [ "Built video discussion feature including recording facilities."
+            --         , "Built theming system that included a ruby command line tool allowing designers to build and release themes independently of the main app release process."
+            --         , "Refined core architecture to focus on consistent content management."
+            --         , "Performance work to optimise load time of site"
+            --         , "Introduced and rolled out ember.js across the app to modernise user experience."
+            --         ]
+            --   }
             ]
         }
     , lytbulb =
@@ -166,7 +212,7 @@ experience =
             [ { name = "lytbulb.com"
               , start = 2014
               , end = 2015
-              , overview = "Led development of a trello-like product aimed at the energy sector, focusing on oil and gas. Built with collaboration of large projects in mind Firebase was used to power the realtime elements of the product."
+              , overview = "Led development of a trello-like product aimed at the energy sector, focusing on oil and gas."
               , stack = [ "Ruby on Rails", "Ember.js", "Firebase", "Postgres", "Kanban", "BDD" ]
               , talkingPoints =
                     [ "Built realtime kanban board using firebase backend"
@@ -184,7 +230,7 @@ experience =
             [ { name = "Give4Sure"
               , start = 2012
               , end = 2014
-              , overview = "A cross-browser plugin and webapp that helped charities raise money while their supporters shopped online. The browser extension highlighted links on any page to participating retailers in a charity's chosen color."
+              , overview = "A cross-browser plugin and webapp that helped charities raise money while their supporters shopped online."
               , stack = [ "Browser extensions", "Ruby on Rails", "Postgres", "Ember.js", "Kanban", "BDD" ]
               , talkingPoints =
                     [ "Built browser extension to handle high volume but with low infrastructure costs."
@@ -225,23 +271,24 @@ experience =
               , start = 2007
               , end = 2006
               , stack = [ "Java", "Spring", "MS Analytics services", "Oracle DB", "Scrum", "TDD" ]
-              , overview = "BI portal for worldwide cellular market data. Having developed the successful architecture for the new WBIS product (see below) I was asked to roll it out for Informa Telecom's flagship product."
+              , overview = "Created architecture and led team to develop a replacement for Infoerma Telecom's flagship product."
               , talkingPoints =
                     [ "Used incremental approach with frequent releases to gradually shift product over to new architecture without disrupting the live service or requiring parallel development."
                     , "Introduced clover to track test coverage and promote a TDD approach"
                     ]
               }
-            , { name = "World Broadband Information Service"
-              , start = 2005
-              , end = 2006
-              , stack = [ "Java", "Spring", "OLAP", "Mondrian", "Oracle DB", "Scrum", "TDD" ]
-              , overview = "BI portal for worldwide broadband market data. Developed a BI architecture based on the Mondrian OLAP engine."
-              , talkingPoints =
-                    [ "Developed algorithms to integrate noisy/conflicting data provided by hundreds of different businesses"
-                    , "Introduced Scrum for more effective project management"
-                    , "Introduced maven to standardise build process"
-                    ]
-              }
+
+            -- , { name = "World Broadband Information Service"
+            --   , start = 2005
+            --   , end = 2006
+            --   , stack = [ "Java", "Spring", "OLAP", "Mondrian", "Oracle DB", "Scrum", "TDD" ]
+            --   , overview = "Developed a BI portal based on the Mondrian OLAP engine."
+            --   , talkingPoints =
+            --         [ "Developed algorithms to integrate noisy/conflicting data provided by hundreds of different businesses"
+            --         , "Introduced Scrum for more effective project management"
+            --         , "Introduced maven to standardise build process"
+            --         ]
+            --   }
             , { name = "Intelligence Centre 2"
               , start = 2008
               , end = 2010
@@ -285,28 +332,26 @@ education =
 
 skills : List Skill
 skills =
-    [ { name = "Ruby on Rails", years = 8 }
-    , { name = "Elixir / Phoenix", years = 5 }
+    [ { name = "Elixir / Phoenix", years = 5 }
+    , { name = "Ruby on Rails", years = 8 }
     , { name = "Elm", years = 5 }
-    , { name = "React/Redux", years = 0.5 }
-    , { name = "RxJS", years = 1.5 }
-    , { name = "Ember.js", years = 5 }
-    , { name = "Javascript - ES2017", years = 10 }
-    , { name = "Java", years = 5 }
-    , { name = "SQL", years = 16 }
+    , { name = "React", years = 3 }
+    , { name = "Typescript/Javascript", years = 14 }
+    , { name = "Java", years = 6 }
+    , { name = "SQL", years = 20 }
     , { name = "Firebase", years = 2 }
     , { name = "OLAP / MDX", years = 4 }
     , { name = "Event-sourcing/CQRS", years = 2 }
-    , { name = "Scrum / Kanban", years = 15 }
-    , { name = "BDD / TDD", years = 15 }
-    , { name = "Git", years = 12 }
-    , { name = "Realtime systems", years = 5 }
-    , { name = "HTML", years = 16 }
-    , { name = "CSS / SASS", years = 16 }
-    , { name = "OO", years = 16 }
-    , { name = "Functional", years = 5 }
-    , { name = "Heroku", years = 8 }
-    , { name = "AWS", years = 10 }
+    , { name = "Scrum / Kanban", years = 18 }
+    , { name = "BDD / TDD", years = 18 }
+    , { name = "Git", years = 14 }
+    , { name = "Realtime systems", years = 7 }
+    , { name = "HTML", years = 20 }
+    , { name = "CSS / SASS", years = 18 }
+    , { name = "OO", years = 20 }
+    , { name = "Functional", years = 8 }
+    , { name = "AWS", years = 12 }
+    , { name = "Terraform", years = 4 }
     ]
 
 

@@ -106,7 +106,11 @@ mobileLayout =
             , Atom.horizontalDivider
             , mobileSection "Experience" <|
                 column [ spacing 80 ]
-                    [ mobilePositionView (Data.experience |> .twentyBn)
+                    [ mobilePositionView (Data.experience |> .tastermonial)
+                    , mobilePositionView (Data.experience |> .boulevard)
+                    , mobilePositionView (Data.experience |> .vorwerk)
+                    , mobilePositionView (Data.experience |> .ctm)
+                    , mobilePositionView (Data.experience |> .twentyBn)
                     , mobilePositionView (Data.experience |> .liqid)
                     , mobilePositionView (Data.experience |> .zapnito)
                     , mobilePositionView (Data.experience |> .lytbulb)
@@ -259,16 +263,19 @@ experiencePage =
                     "Experience"
                 )
             , row [ width fill, height fill ]
-                [ Atom.pageColumn [ spacing 25 ]
-                    [ positionView (Data.experience |> .ctm)
+                [ Atom.pageColumn []
+                    [ positionView (Data.experience |> .tastermonial)
+                    , positionView (Data.experience |> .boulevard)
+                    , positionView (Data.experience |> .vorwerk)
+                    , positionView (Data.experience |> .ctm)
                     , positionView (Data.experience |> .twentyBn)
                     , positionView (Data.experience |> .liqid)
                     , positionView (Data.experience |> .zapnito)
-                    , positionView (Data.experience |> .lytbulb)
                     ]
                 , Atom.verticalDivider
                 , Atom.pageColumn []
-                    [ positionView (Data.experience |> .myschooldirect)
+                    [ positionView (Data.experience |> .lytbulb)
+                    , positionView (Data.experience |> .myschooldirect)
                     , positionView (Data.experience |> .informa)
                     , positionView (Data.experience |> .nutshellDevelopment)
                     ]
@@ -283,7 +290,7 @@ experiencePage =
 introductionSection : Element msg
 introductionSection =
     column [ spacing 15 ]
-        [ Atom.paragraph [] [ text "Building software that people actually like to use is what gets me going. With 16 years experience I've delivered successful products for the Telecoms, Retail, Publishing, Energy and Charity sectors. I've led teams to build a wide variety of projects including realtime social platforms and project management tools, business Intelligence, custom content management systems, online stores and browser extensions." ]
+        [ Atom.paragraph [] [ text "Building software that people actually like to use is what gets me going. With 20 years experience I've delivered successful products for the Telecoms, Retail, Publishing, Energy, Charity, Health and Beauty and Domestric appliance sectors. I've led teams to build a wide variety of projects including realtime social platforms and project management tools, business Intelligence, custom content management systems, online stores and browser extensions." ]
         , Atom.paragraph [] [ text "From day one I've been an agile practitioner, whether it's Scrum or Kanban, Lean, BDD, outside-in, pair-programming, you name it, I've been doing it for years. I've usually led from the front but I’m comfortable working in many different styles and value project consistency over personal preferences so am equally comfortable working alone or slotting into an existing team." ]
         ]
 
@@ -356,7 +363,7 @@ contentDetails =
         [ row [ spacing 10 ] [ el [] (Icon.youtube 20), newTabLink [] { label = text "FnCasts - watch me code on youtube", url = "https://www.youtube.com/channel/UCEVIBi0jFVXrCvd7CdVYxvw" } ]
         , row [ spacing 10 ] [ el [] (Icon.github 20), newTabLink [] { label = text "opsb - 200+ repos", url = "https://github.com/opsb" } ]
         , row [ spacing 10 ] [ el [] (Icon.slack 20), el [] (text "opsb - 14 communities") ]
-        , row [ spacing 10 ] [ el [] (Icon.stackoverflow 20), newTabLink [] { label = text "opsb - top 2%", url = "https://stackoverflow.com/users/162337/opsb" } ]
+        , row [ spacing 10 ] [ el [] (Icon.stackoverflow 20), newTabLink [] { label = text "opsb - top 1%", url = "https://stackoverflow.com/users/162337/opsb" } ]
         ]
 
 
@@ -378,7 +385,8 @@ mobilePositionView position =
         [ column [ spacing 40, width fill ]
             [ column [ width fill, spacing 30 ]
                 [ column [ width (fillPortion 11), spacing 5, alignTop ]
-                    [ el [ alignLeft ]
+                    [ column [] []
+                    , el [ alignLeft ]
                         (Atom.title2 [] position.company)
                     , el [ alignLeft ] (Atom.title3 [ Font.color Colors.red ] <| position.title)
                     , el [ alignLeft ] (Atom.bodyText [] position.dates)
@@ -398,10 +406,10 @@ positionView position =
         [ column [ width (fillPortion 7), spacing 5, alignTop ]
             [ Atom.title3 [ Font.size 16, paddingEach { top = 0, right = 0, bottom = 5, left = 0 } ] position.company
             , Atom.title5 [ Font.size 12, Font.color Colors.red ] <| position.title
-            , Atom.bodyText [ Font.size 10 ] position.dates
-            , Atom.bodyText [ Font.size 10 ] position.location
+            , Atom.bodyText [ Font.size 10, Font.regular ] position.dates
+            , Atom.bodyText [ Font.size 10, Font.regular ] position.location
             ]
-        , column [ spacing 15, width (fillPortion 20) ]
+        , column [ spacing 15, width (fillPortion 22) ]
             (List.map projectView position.projects)
         ]
 
