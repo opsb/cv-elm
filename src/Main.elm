@@ -184,7 +184,7 @@ downloadButton =
         , pointer
         , htmlAttribute <| Html.Attributes.attribute "download" "opsb.pdf"
         ]
-        { url = "%PUBLIC_URL%/opsb.pdf", label = text "Download PDF" }
+        { url = "./opsb.pdf", label = text "Download PDF" }
 
 
 overviewPage : Element Msg

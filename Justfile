@@ -1,9 +1,6 @@
-run:
-	elm-app start
-
 publish: gen-pdf
 	@echo "----> Publishing to netlify"
-	@elm-app build && netlify deploy --prod
+	@npm run build && netlify deploy --prod -d dist
 
 gen-pdf:
 	npm run generate-pdf

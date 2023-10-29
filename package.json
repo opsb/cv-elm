@@ -7,7 +7,9 @@
     "test": "tests"
   },
   "scripts": {
-    "build": "elm-app build",
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview",
     "generate-pdf": "node scripts/generate-pdf.js",
     "test": "elm-test"
   },
@@ -22,8 +24,10 @@
   },
   "homepage": "https://github.com/opsb/cv-elm#readme",
   "devDependencies": {
-    "create-elm-app": "^5.22.0",
+    "finalhandler": "^1.2.0",
     "puppeteer": "^1.10.0",
-    "serve-static": "^1.13.2"
+    "serve-static": "^1.13.2",
+    "vite": "^4.5.0",
+    "vite-plugin-elm": "^2.8.0"
   }
 }
