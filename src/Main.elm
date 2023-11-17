@@ -227,7 +227,7 @@ pagePersonalDetailsSection =
                 , column [ spacing 10, paddingXY 0 10 ]
                     [ el [ Font.light, Font.size 16 ] (text "Passionate full stack leader")
                     , el [ Font.light, Font.size 16 ] (text "Founder, CTO, VP Engineering, Architect")
-                    , el [ Font.light, Font.size 16 ] (text "16 Years experience")
+                    , el [ Font.light, Font.size 16 ] (text "20 Years experience")
                     ]
                 , contentDetails
                 ]
