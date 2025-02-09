@@ -143,7 +143,7 @@ pageColumn attrs body =
             [ width (fillPortion 1)
             , height fill
             , padding 20
-            , spacing 30
+            , spacing 25
             , Background.color Colors.white
             ]
     in

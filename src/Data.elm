@@ -80,7 +80,22 @@ introduction =
 
 
 experience =
-    { tastermonial =
+    { tree3 =
+        { title = "Consultant"
+        , location = "Dallas / Remote"
+        , company = "Tree3"
+        , dates = "Dec 2024-Present"
+        , projects =
+            [ { name = "XP Affiliate Platform"
+              , start = 2024
+              , end = 2025
+              , overview = "Led a development team to launch a new high performance affiliate platform. Was involved in product discovery/strategy and dev team management."
+              , stack = [ "NextJS", "Postgres", "Redis" ]
+              , talkingPoints = []
+              }
+            ]
+        }
+    , tastermonial =
         { title = "Consultant"
         , location = "Cupertino / Remote"
         , company = "Tastermonial"
@@ -180,7 +195,7 @@ experience =
               , start = 2016
               , end = 2017
               , overview = "Led the development of a white-labelled realtime community platform."
-              , stack = [ "Phoenix", "Phoenix-Channels", "Elixir", "Elm", "Javascript", "JWT", "Auth0", "Postgres", "Webpack", "Kanban", "BDD" ]
+              , stack = [ "Phoenix", "Phoenix-Channels", "Elixir", "Elm", "Javascript", "JWT", "Auth0", "Postgres", "Kanban", "BDD" ]
               , talkingPoints =
                     [ "Implemented an Event Sourcing architecture to power the realtime front end built on top of Phoenix's websocket based channels."
                     , "Designed API for embedding product within 3rd party platforms including a variety of widgets and seamless integration with Single Sign On."
@@ -230,7 +245,7 @@ experience =
             [ { name = "Give4Sure"
               , start = 2012
               , end = 2014
-              , overview = "A cross-browser plugin and webapp that helped charities raise money while their supporters shopped online."
+              , overview = "A browser plugin helping shoppers raise money for their chosen charities."
               , stack = [ "Browser extensions", "Ruby on Rails", "Postgres", "Ember.js", "Kanban", "BDD" ]
               , talkingPoints =
                     [ "Built browser extension to handle high volume but with low infrastructure costs."
@@ -242,7 +257,7 @@ experience =
             , { name = "Marks and Spencer School Uniforms"
               , start = 2011
               , end = 2012
-              , overview = "Led the development of an online store allowing schools to customise standard Marks and Spencer uniforms with their school badges and colours."
+              , overview = "An online store for schools to create their own Marks and Spencer uniforms."
               , stack = [ "Ruby on Rails", "Postgres", "Kanban", "BDD" ]
               , talkingPoints =
                     [ "Built online catalogue that allowed schools to sign up and create their own bespoke uniform online."
@@ -251,7 +266,7 @@ experience =
             , { name = "myschooldirect.com"
               , start = 2010
               , end = 2011
-              , overview = "A Quidco style shopping site where parent's could find deals that would raise money for their children's schools"
+              , overview = "A Quidco style site helpers shoppers raise money for their children's school."
               , stack = [ "Ruby on rails", "Postgres", "Kanban", "BDD" ]
               , talkingPoints =
                     [ "Built shopping catalogue."
@@ -271,29 +286,28 @@ experience =
               , start = 2007
               , end = 2006
               , stack = [ "Java", "Spring", "MS Analytics services", "Oracle DB", "Scrum", "TDD" ]
-              , overview = "Created architecture and led team to develop a replacement for Infoerma Telecom's flagship product."
+              , overview = "Led team to develop a replacement for Informa Telecom's flagship product."
               , talkingPoints =
                     [ "Used incremental approach with frequent releases to gradually shift product over to new architecture without disrupting the live service or requiring parallel development."
                     , "Introduced clover to track test coverage and promote a TDD approach"
                     ]
               }
-
-            -- , { name = "World Broadband Information Service"
-            --   , start = 2005
-            --   , end = 2006
-            --   , stack = [ "Java", "Spring", "OLAP", "Mondrian", "Oracle DB", "Scrum", "TDD" ]
-            --   , overview = "Developed a BI portal based on the Mondrian OLAP engine."
-            --   , talkingPoints =
-            --         [ "Developed algorithms to integrate noisy/conflicting data provided by hundreds of different businesses"
-            --         , "Introduced Scrum for more effective project management"
-            --         , "Introduced maven to standardise build process"
-            --         ]
-            --   }
+            , { name = "World Broadband Information Service"
+              , start = 2005
+              , end = 2006
+              , stack = [ "Java", "Spring", "OLAP", "Mondrian", "Oracle DB", "Scrum", "TDD" ]
+              , overview = "Developed a BI portal based on the Mondrian OLAP engine."
+              , talkingPoints =
+                    [ "Developed algorithms to integrate noisy/conflicting data provided by hundreds of different businesses"
+                    , "Introduced Scrum for more effective project management"
+                    , "Introduced maven to standardise build process"
+                    ]
+              }
             , { name = "Intelligence Centre 2"
               , start = 2008
               , end = 2010
               , stack = [ "Java/Spring", "Oracle DB", "Scrum", "BDD" ]
-              , overview = "Devised a webdav based CMS allowing Journalists to write their articles in MS Word, save and see an instant preview of their article on the website."
+              , overview = "Devised a webdav based CMS allowing Journalists to edit articles in MS Word."
               , talkingPoints =
                     [ "Devised a webdav based system that allowed journalists to edit articles directly in MS Word. The system allowed journalists to hit save in Word and instantly see a preview on the live site."
                     ]
@@ -332,11 +346,12 @@ education =
 
 skills : List Skill
 skills =
-    [ { name = "Elixir / Phoenix", years = 5 }
+    [ { name = "Elixir / Phoenix", years = 7 }
     , { name = "Ruby on Rails", years = 8 }
+    , { name = "NextJS", years = 2 }
     , { name = "Elm", years = 5 }
-    , { name = "React", years = 3 }
-    , { name = "Typescript/Javascript", years = 14 }
+    , { name = "React", years = 5 }
+    , { name = "Typescript/Javascript", years = 15 }
     , { name = "Java", years = 6 }
     , { name = "SQL", years = 20 }
     , { name = "Firebase", years = 2 }
@@ -344,12 +359,12 @@ skills =
     , { name = "Event-sourcing/CQRS", years = 2 }
     , { name = "Scrum / Kanban", years = 18 }
     , { name = "BDD / TDD", years = 18 }
-    , { name = "Git", years = 14 }
+    , { name = "Git", years = 15 }
     , { name = "Realtime systems", years = 7 }
-    , { name = "HTML", years = 20 }
+    , { name = "HTML", years = 21 }
     , { name = "CSS / SASS", years = 18 }
     , { name = "OO", years = 20 }
-    , { name = "Functional", years = 8 }
+    , { name = "Functional", years = 10 }
     , { name = "AWS", years = 12 }
     , { name = "Terraform", years = 4 }
     ]

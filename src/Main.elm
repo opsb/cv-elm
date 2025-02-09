@@ -8,7 +8,6 @@ import Element.Background as Background
 import Element.Border as Border
 import Element.Events exposing (onClick)
 import Element.Font as Font
-import Element.Input as Input
 import Html exposing (Html)
 import Html.Attributes exposing (src)
 import Util.List exposing (splitInTwo)
@@ -106,7 +105,8 @@ mobileLayout =
             , Atom.horizontalDivider
             , mobileSection "Experience" <|
                 column [ spacing 80 ]
-                    [ mobilePositionView (Data.experience |> .tastermonial)
+                    [ mobilePositionView (Data.experience |> .tree3)
+                    , mobilePositionView (Data.experience |> .tastermonial)
                     , mobilePositionView (Data.experience |> .boulevard)
                     , mobilePositionView (Data.experience |> .vorwerk)
                     , mobilePositionView (Data.experience |> .ctm)
@@ -264,17 +264,18 @@ experiencePage =
                 )
             , row [ width fill, height fill ]
                 [ Atom.pageColumn []
-                    [ positionView (Data.experience |> .tastermonial)
+                    [ positionView (Data.experience |> .tree3)
+                    , positionView (Data.experience |> .tastermonial)
                     , positionView (Data.experience |> .boulevard)
                     , positionView (Data.experience |> .vorwerk)
                     , positionView (Data.experience |> .ctm)
                     , positionView (Data.experience |> .twentyBn)
                     , positionView (Data.experience |> .liqid)
-                    , positionView (Data.experience |> .zapnito)
                     ]
                 , Atom.verticalDivider
                 , Atom.pageColumn []
-                    [ positionView (Data.experience |> .lytbulb)
+                    [ positionView (Data.experience |> .zapnito)
+                    , positionView (Data.experience |> .lytbulb)
                     , positionView (Data.experience |> .myschooldirect)
                     , positionView (Data.experience |> .informa)
                     , positionView (Data.experience |> .nutshellDevelopment)
@@ -403,7 +404,7 @@ mobilePositionView position =
 positionView : Position -> Element msg
 positionView position =
     row [ width fill, spacing 0 ]
-        [ column [ width (fillPortion 7), spacing 5, alignTop ]
+        [ column [ width (fillPortion 7), spacing 3, alignTop ]
             [ Atom.title3 [ Font.size 16, paddingEach { top = 0, right = 0, bottom = 5, left = 0 } ] position.company
             , Atom.title5 [ Font.size 12, Font.color Colors.red ] <| position.title
             , Atom.bodyText [ Font.size 10, Font.regular ] position.dates
