@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/opsb/cv-elm#readme",
   "devDependencies": {
+    "elm": "^0.19.1-6",
     "finalhandler": "^1.2.0",
     "puppeteer": "^1.10.0",
     "serve-static": "^1.13.2",
