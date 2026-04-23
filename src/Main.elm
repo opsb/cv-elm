@@ -105,7 +105,7 @@ mobileLayout =
             , Atom.horizontalDivider
             , mobileSection "Experience" <|
                 column [ spacing 80 ]
-                    [ mobilePositionView (Data.experience |> .tree3)
+                    [ mobilePositionView (Data.experience |> .xpflow)
                     , mobilePositionView (Data.experience |> .tastermonial)
                     , mobilePositionView (Data.experience |> .boulevard)
                     , mobilePositionView (Data.experience |> .vorwerk)
@@ -116,7 +116,6 @@ mobileLayout =
                     , mobilePositionView (Data.experience |> .lytbulb)
                     , mobilePositionView (Data.experience |> .myschooldirect)
                     , mobilePositionView (Data.experience |> .informa)
-                    , mobilePositionView (Data.experience |> .nutshellDevelopment)
                     ]
             , Atom.horizontalDivider
             , mobileSection "Community" communitySection
@@ -264,21 +263,20 @@ experiencePage =
                 )
             , row [ width fill, height fill ]
                 [ Atom.pageColumn []
-                    [ positionView (Data.experience |> .tree3)
+                    [ positionView (Data.experience |> .xpflow)
                     , positionView (Data.experience |> .tastermonial)
                     , positionView (Data.experience |> .boulevard)
                     , positionView (Data.experience |> .vorwerk)
                     , positionView (Data.experience |> .ctm)
                     , positionView (Data.experience |> .twentyBn)
-                    , positionView (Data.experience |> .liqid)
                     ]
                 , Atom.verticalDivider
                 , Atom.pageColumn []
-                    [ positionView (Data.experience |> .zapnito)
+                    [ positionView (Data.experience |> .liqid)
+                    , positionView (Data.experience |> .zapnito)
                     , positionView (Data.experience |> .lytbulb)
                     , positionView (Data.experience |> .myschooldirect)
                     , positionView (Data.experience |> .informa)
-                    , positionView (Data.experience |> .nutshellDevelopment)
                     ]
                 ]
             ]

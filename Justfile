@@ -1,3 +1,6 @@
+dev:
+	npm run dev
+
 publish: gen-pdf
 	@echo "----> Publishing to netlify"
 	@npm run build && netlify deploy --prod -d dist

@@ -80,16 +80,23 @@ introduction =
 
 
 experience =
-    { tree3 =
-        { title = "Consultant"
+    { xpflow =
+        { title = "Founding Engineer"
         , location = "Dallas / Remote"
-        , company = "Tree3"
-        , dates = "Dec 2024-Present"
+        , company = "XPFlow"
+        , dates = "Dec 2023-Apr 2026"
         , projects =
-            [ { name = "XP Affiliate Platform"
-              , start = 2024
+            [ { name = "Alfie (AI affiliate recruitment)"
+              , start = 2025
+              , end = 2026
+              , overview = "With the original product stalled, ran customer discovery and led the pivot to an AI-powered affiliate partner recruitment platform, shipping the MVP in three weeks and validating strong demand. Scale limits in the on-demand approach informed the company's next phase, now the focus of its current fundraise."
+              , stack = [ "AI/LLMs", "NextJS", "Postgres" ]
+              , talkingPoints = []
+              }
+            , { name = "XP Affiliate Platform"
+              , start = 2023
               , end = 2025
-              , overview = "Led a development team to launch a new high performance affiliate platform. Was involved in product discovery/strategy and dev team management."
+              , overview = "Led engineering to launch a high-performance affiliate platform, owning architecture, delivery, and dev team management."
               , stack = [ "NextJS", "Postgres", "Redis" ]
               , talkingPoints = []
               }
@@ -311,21 +318,6 @@ experience =
               , talkingPoints =
                     [ "Devised a webdav based system that allowed journalists to edit articles directly in MS Word. The system allowed journalists to hit save in Word and instantly see a preview on the live site."
                     ]
-              }
-            ]
-        }
-    , nutshellDevelopment =
-        { title = "Head of dev."
-        , location = "Brighton"
-        , company = "Nutshell Dev."
-        , dates = "2004-2005"
-        , projects =
-            [ { name = "Various local business websites"
-              , start = 2004
-              , end = 2005
-              , stack = [ "Java", "Spring", "JPA", "JSF", "Mysql" ]
-              , overview = "Built custom CMSs for local shops and restaurants. This was when I discovered Extreme Programming and started down the Agile road."
-              , talkingPoints = []
               }
             ]
         }
