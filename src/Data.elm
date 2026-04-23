@@ -81,22 +81,30 @@ introduction =
 
 experience =
     { xpflow =
-        { title = "Founding Engineer"
+        { title = "Founding Engineer\n& CPO"
         , location = "Dallas / Remote"
-        , company = "XPFlow"
-        , dates = "Dec 2023-Apr 2026"
+        , company = "xpflow"
+        , dates = "Feb 2025-Apr 2026"
         , projects =
             [ { name = "Alfie (AI affiliate recruitment)"
               , start = 2025
               , end = 2026
-              , overview = "With the original product stalled, ran customer discovery and led the pivot to an AI-powered affiliate partner recruitment platform, shipping the MVP in three weeks and validating strong demand. Scale limits in the on-demand approach informed the company's next phase, now the focus of its current fundraise."
+              , overview = "Built Alfie, an AI-powered affiliate partner recruitment platform, shipping the MVP in three weeks and validating strong demand. Scale limits in the on-demand approach informed the company's next phase, now its current focus."
               , stack = [ "AI/LLMs", "NextJS", "Postgres" ]
               , talkingPoints = []
               }
-            , { name = "XP Affiliate Platform"
+            ]
+        }
+    , tree3 =
+        { title = "Consultant"
+        , location = "Dallas / Remote"
+        , company = "tree3"
+        , dates = "Dec 2023-Feb 2025"
+        , projects =
+            [ { name = "XP Affiliate Platform"
               , start = 2023
               , end = 2025
-              , overview = "Led engineering to launch a high-performance affiliate platform, owning architecture, delivery, and dev team management."
+              , overview = "Led engineering on a high-performance affiliate platform. When the product stalled, ran customer discovery and proposed an AI-powered affiliate recruitment product, spun out as xpflow with me on the founding team."
               , stack = [ "NextJS", "Postgres", "Redis" ]
               , talkingPoints = []
               }
@@ -111,7 +119,7 @@ experience =
             [ { name = "Tastermonial App"
               , start = 2023
               , end = 2023
-              , overview = "Replaced MVP with a high performance and reliable mobile App using Flutter and Phoenix. Built out AWS infrastructure and supporting build pipelines."
+              , overview = "Replaced MVP with a high-performance Flutter/Phoenix mobile app, running on AWS with supporting build pipelines."
               , stack = [ "Elixir", "Flutter", "Sqlite", "Postgres", "AWS/Terraform" ]
               , talkingPoints = []
               }
@@ -126,7 +134,7 @@ experience =
             [ { name = "API and Platform Services"
               , start = 2023
               , end = 2021
-              , overview = "Joined the API team to scale platform services and integrations with 3rd party services."
+              , overview = "Joined the API team at this health and beauty unicorn to scale platform services and integrations with 3rd party services."
               , stack = [ "Elixir", "Postgres", "React", "Typescript", "AWS/Terraform" ]
               , talkingPoints = []
               }
@@ -141,7 +149,7 @@ experience =
             [ { name = "Kobold"
               , start = 2021
               , end = 2021
-              , overview = "Bootstrapped an Elixir/Phoenix team to provide cloud services and python client for a new line of commercial Robot Vacuum Cleaners."
+              , overview = "Bootstrapped an Elixir/Phoenix team at this global consumer appliance giant to provide cloud services and a Python client for a new line of commercial robot vacuum cleaners."
               , stack = [ "Elixir", "Python", "Postgres", "AWS/Terraform" ]
               , talkingPoints = []
               }
@@ -156,7 +164,7 @@ experience =
             [ { name = "MoneyHub"
               , start = 2019
               , end = 2021
-              , overview = "Rebuilt Bean.com as a high performance elixir service to integrate the majority of UK high street banks using the Open Banking specification."
+              , overview = "Rebuilt Bean.com as a high-performance Elixir service for this leading UK price-comparison site, integrating the majority of high street banks via Open Banking."
               , stack = [ "Elixir", "GraphQL", "Elm", "Javascript", "Ruby", "Postgres", "AWS" ]
               , talkingPoints = []
               }
@@ -171,7 +179,7 @@ experience =
             [ { name = "Video Annotation Editor"
               , start = 2018
               , end = 2018
-              , overview = "Designed and built two Elm apps for collecting video gesture metadata from Amazon Mechanical Turk workers. "
+              , overview = "Designed and built two Elm apps to collect video gesture training data from Amazon Mechanical Turk workers for this computer vision AI company."
               , stack = [ "Elm", "Javascript" ]
               , talkingPoints = []
               }
@@ -186,7 +194,7 @@ experience =
             [ { name = "Salesforce Integration"
               , start = 2018
               , end = 2018
-              , overview = "Integrated a Ruby on Rails app with Salesforce through an Elixir/RabbitMQ microservice."
+              , overview = "Built an Elixir/RabbitMQ microservice to integrate this wealth management fintech's Rails app with Salesforce."
               , stack = [ "Elixir", "Ruby on Rails", "RabbitMQ", "Salesforce", "Docker", "GraphQL" ]
               , talkingPoints = []
               }

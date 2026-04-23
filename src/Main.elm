@@ -106,6 +106,7 @@ mobileLayout =
             , mobileSection "Experience" <|
                 column [ spacing 80 ]
                     [ mobilePositionView (Data.experience |> .xpflow)
+                    , mobilePositionView (Data.experience |> .tree3)
                     , mobilePositionView (Data.experience |> .tastermonial)
                     , mobilePositionView (Data.experience |> .boulevard)
                     , mobilePositionView (Data.experience |> .vorwerk)
@@ -264,6 +265,7 @@ experiencePage =
             , row [ width fill, height fill ]
                 [ Atom.pageColumn []
                     [ positionView (Data.experience |> .xpflow)
+                    , positionView (Data.experience |> .tree3)
                     , positionView (Data.experience |> .tastermonial)
                     , positionView (Data.experience |> .boulevard)
                     , positionView (Data.experience |> .vorwerk)
@@ -415,8 +417,8 @@ positionView position =
 
 projectView : Project -> Element msg
 projectView project =
-    column [ spacing 5 ]
-        [ Atom.title3 [ Font.size 14, Font.medium, paddingEach { top = 0, right = 0, bottom = 2, left = 0 }, centerY ] project.name
+    column [ spacing 3 ]
+        [ Atom.title3 [ Font.size 14, Font.medium, paddingEach { top = 0, right = 0, bottom = 0, left = 0 }, centerY ] project.name
         , Atom.paragraph [ Font.size 12 ] [ text <| projectSummary <| project ]
         , hashTags project.stack
         ]
