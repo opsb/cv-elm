@@ -1,4 +1,4 @@
-module Data exposing (Data, Institution, IntroSection, OpenSourceProject, Position, Project, Skill, education, experience, introduction, name, openSourceProjects, skills, tagline)
+module Data exposing (Data, Institution, IntroSection, OpenSourceProject, Position, Project, Skill, SkillGroup, education, experience, introduction, name, openSourceProjects, skillGroups, tagline)
 
 
 type alias Data =
@@ -50,6 +50,12 @@ type alias Institution =
 type alias Skill =
     { name : String
     , years : Float
+    }
+
+
+type alias SkillGroup =
+    { name : String
+    , skills : List Skill
     }
 
 
@@ -344,30 +350,61 @@ education =
     ]
 
 
-skills : List Skill
-skills =
-    [ { name = "OpenAI API", years = 1 }
-    , { name = "AI agents", years = 1 }
-    , { name = "LangChain / LangSmith", years = 1 }
-    , { name = "Agentic coding", years = 1 }
-    , { name = "Elixir / Phoenix", years = 8 }
-    , { name = "Ruby on Rails", years = 8 }
-    , { name = "NextJS", years = 3 }
-    , { name = "Elm", years = 5 }
-    , { name = "React", years = 10 }
-    , { name = "Typescript/Javascript", years = 17 }
-    , { name = "Java", years = 6 }
-    , { name = "SQL", years = 22 }
-    , { name = "Firebase", years = 2 }
-    , { name = "OLAP / MDX", years = 4 }
-    , { name = "Event-sourcing/CQRS", years = 2 }
-    , { name = "Scrum / Kanban", years = 20 }
-    , { name = "BDD / TDD", years = 18 }
-    , { name = "Realtime systems", years = 9 }
-    , { name = "HTML / CSS / SASS", years = 22 }
-    , { name = "Functional", years = 12 }
-    , { name = "AWS", years = 14 }
-    , { name = "Terraform", years = 4 }
+skillGroups : List SkillGroup
+skillGroups =
+    [ { name = "Leadership"
+      , skills =
+            [ { name = "Team leadership & hiring", years = 15 }
+            , { name = "Technical strategy & architecture", years = 20 }
+            , { name = "Product discovery & delivery", years = 10 }
+            , { name = "Zero-to-one shipping", years = 15 }
+            ]
+      }
+    , { name = "Backend"
+      , skills =
+            [ { name = "Elixir / Phoenix", years = 8 }
+            , { name = "Ruby on Rails", years = 8 }
+            , { name = "NextJS", years = 3 }
+            , { name = "SQL", years = 22 }
+            , { name = "Event-sourcing/CQRS", years = 2 }
+            ]
+      }
+    , { name = "Datastores"
+      , skills =
+            [ { name = "Postgres", years = 20 }
+            , { name = "Redis", years = 15 }
+            , { name = "Snowflake", years = 2 }
+            , { name = "Firebase", years = 4 }
+            ]
+      }
+    , { name = "AI"
+      , skills =
+            [ { name = "OpenAI API", years = 1 }
+            , { name = "AI agents", years = 1 }
+            , { name = "LangChain / LangSmith", years = 1 }
+            , { name = "Agentic coding", years = 1 }
+            ]
+      }
+    , { name = "Frontend"
+      , skills =
+            [ { name = "React", years = 10 }
+            , { name = "Typescript/Javascript", years = 17 }
+            , { name = "Elm", years = 5 }
+            , { name = "HTML / CSS / SASS", years = 22 }
+            ]
+      }
+    , { name = "Infrastructure"
+      , skills =
+            [ { name = "AWS", years = 14 }
+            , { name = "Terraform", years = 4 }
+            ]
+      }
+    , { name = "Methodology"
+      , skills =
+            [ { name = "Scrum / Kanban", years = 20 }
+            , { name = "BDD / TDD", years = 18 }
+            ]
+      }
     ]
 
 
@@ -392,20 +429,6 @@ openSourceProjects =
       , overview = "Integration between Elm and Phoenix channels"
       , shortInvolvement = "core"
       , involvement = "Having used elm-phoenix in production I've contributed several features, bug fixes, documentation and example code"
-      }
-    , { name = "opsb / elm-debouncer-fx"
-      , repo = "https://github.com/opsb/elm-debouncer-fx"
-      , language = "Elm"
-      , overview = "An Elm effect manager for debouncing events"
-      , shortInvolvement = "owner"
-      , involvement = "I created this while working on the Feeds project - it's original use was to debounce scroll input from the mouse"
-      }
-    , { name = "opsb / patchstream"
-      , repo = "https://github.com/opsb/patchstream"
-      , language = "Ruby"
-      , overview = "Emits json patches as rails active records are updated"
-      , shortInvolvement = "owner"
-      , involvement = "I created this while working on the Lytbulb project - it was used while transitioning the project from a pure rails backend to firebase"
       }
     , { name = "opsb / cv-elm"
       , repo = "https://github.com/opsb/cv-elm"

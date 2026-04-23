@@ -197,12 +197,12 @@ overviewPage =
         row
             [ width fill, height fill ]
             [ pagePersonalDetailsSection
-            , Atom.pageColumn [ spacing 35 ]
+            , Atom.pageColumn [ spacing 25 ]
                 [ pageSection "Introduction" introductionSection
                 , pageSection "Skills" skillsSection
                 ]
             , Atom.verticalDivider
-            , Atom.pageColumn [ spacing 50 ]
+            , Atom.pageColumn [ spacing 35 ]
                 [ pageSection "Open Source" openSourceSection
                 , pageSection "Community" communitySection
                 , pageSection "Education" educationSection
@@ -295,7 +295,7 @@ introductionSection =
         [ Atom.paragraph [] [ text "Building software that people actually love to use is what gets me going. With 22 years experience I've delivered successful products for the AI, Fintech, SaaS, Telecoms, Retail, Publishing, Energy, Charity, Health and Beauty, and Domestic appliance sectors." ]
         , Atom.paragraph [] [ text "I've led teams building computer vision training pipelines at TwentyBN, Open Banking integration across UK high street banks at CompareTheMarket, IoT cloud services for commercial robot vacuums at Vorwerk, an event-sourced real-time community platform at Zapnito, and a WebDAV-based CMS that let Informa's journalists edit articles directly in Microsoft Word." ]
         , Atom.paragraph [] [ text "Most recently founding engineer at xpflow; previously co-founded a school e-commerce business later taken in-house by Marks & Spencer." ]
-        , Atom.paragraph [] [ text "Agile from day one: Scrum, Kanban, Lean, BDD, outside-in, pair-programming, you name it. Comfortable owning the engineering function or contributing within an established one; respect for the team's way of working comes before personal preferences." ]
+        , Atom.paragraph [] [ text "Agile from day one; comfortable owning the engineering function or contributing within an established team." ]
         ]
 
 
@@ -304,23 +304,22 @@ openSourceSection =
     column [ spacing 20, width fill ] (List.map openSourceProject Data.openSourceProjects)
 
 
-skillsSection : Element msg
-skillsSection =
-    let
-        ( leftSkills, rightSkills ) =
-            splitInTwo Data.skills
-    in
-    row [ spacing 30, width fill ]
-        [ skillsColumn leftSkills
-        , skillsColumn rightSkills
-        ]
-
-
 communitySection : Element msg
 communitySection =
     column [ spacing 15 ]
-        [ Atom.paragraph [] [ text "I love to meet other developers and hear what they’re getting up to. In Barcelona I’m a regular at the Elixir meetup and run the Elm hack night. I’m also regularly in London and Berlin so I make sure to pop into the local Elixir and Elm meetups there." ]
-        , Atom.paragraph [] [ text "Online you’ll regularly find me in the Elixir and Elm slacks. I’ve found both communities to be really friendly and helpful." ]
+        [ Atom.paragraph [] [ text "A regular at Elixir meetups in Barcelona, London, and Berlin, and active in the Elixir and Elm slacks. Previously ran the Elm hack night in Barcelona. I've found both communities friendly and helpful." ]
+        ]
+
+
+skillsSection : Element msg
+skillsSection =
+    let
+        ( leftGroups, rightGroups ) =
+            splitInTwo Data.skillGroups
+    in
+    row [ spacing 30, width fill ]
+        [ skillGroupsColumn leftGroups
+        , skillGroupsColumn rightGroups
         ]
 
 
@@ -470,24 +469,21 @@ positionDateRange position =
         |> Maybe.withDefault ""
 
 
-skillsColumn : List Skill -> Element msg
-skillsColumn skills =
-    column
-        [ width (fillPortion 1)
-        , spacing 1
-        , above <|
-            el
-                [ alignRight
-                , Font.size 10
-                , Font.color Colors.grey
-                , moveRight 2
-                ]
-                (text "years")
+skillGroupsColumn : List SkillGroup -> Element msg
+skillGroupsColumn groups =
+    column [ width (fillPortion 1), spacing 6, alignTop ] (List.map skillGroupView groups)
+
+
+skillGroupView : SkillGroup -> Element msg
+skillGroupView group =
+    column [ width fill, spacing 3 ]
+        [ Atom.title5 [ Font.size 11, Font.color Colors.red, Font.bold ] group.name
+        , column [ width fill, spacing 1 ]
+            (List.map
+                (\{ name, years } -> Atom.tableOfContentsLine name (String.fromFloat years))
+                group.skills
+            )
         ]
-    <|
-        List.map
-            (\{ name, years } -> Atom.tableOfContentsLine name (String.fromFloat years))
-            skills
 
 
 openSourceProject : OpenSourceProject -> Element msg
