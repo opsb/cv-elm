@@ -197,7 +197,7 @@ overviewPage =
         row
             [ width fill, height fill ]
             [ pagePersonalDetailsSection
-            , Atom.pageColumn [ spacing 50 ]
+            , Atom.pageColumn [ spacing 35 ]
                 [ pageSection "Introduction" introductionSection
                 , pageSection "Skills" skillsSection
                 ]
@@ -227,7 +227,7 @@ pagePersonalDetailsSection =
                 , column [ spacing 10, paddingXY 0 10 ]
                     [ el [ Font.light, Font.size 16 ] (text "Passionate full stack leader")
                     , el [ Font.light, Font.size 16 ] (text "Founder, CTO, VP Engineering, Architect")
-                    , el [ Font.light, Font.size 16 ] (text "20 Years experience")
+                    , el [ Font.light, Font.size 16 ] (text "22 Years experience")
                     ]
                 , contentDetails
                 ]
@@ -291,8 +291,10 @@ experiencePage =
 introductionSection : Element msg
 introductionSection =
     column [ spacing 15 ]
-        [ Atom.paragraph [] [ text "Building software that people actually like to use is what gets me going. With 20 years experience I've delivered successful products for the Telecoms, Retail, Publishing, Energy, Charity, Health and Beauty and Domestric appliance sectors. I've led teams to build a wide variety of projects including realtime social platforms and project management tools, business Intelligence, custom content management systems, online stores and browser extensions." ]
-        , Atom.paragraph [] [ text "From day one I've been an agile practitioner, whether it's Scrum or Kanban, Lean, BDD, outside-in, pair-programming, you name it, I've been doing it for years. I've usually led from the front but I’m comfortable working in many different styles and value project consistency over personal preferences so am equally comfortable working alone or slotting into an existing team." ]
+        [ Atom.paragraph [] [ text "Building software that people actually love to use is what gets me going. With 22 years experience I've delivered successful products for the AI, Fintech, SaaS, Telecoms, Retail, Publishing, Energy, Charity, Health and Beauty, and Domestic appliance sectors." ]
+        , Atom.paragraph [] [ text "I've led teams building computer vision training pipelines at TwentyBN, Open Banking integration across UK high street banks at CompareTheMarket, IoT cloud services for commercial robot vacuums at Vorwerk, an event-sourced real-time community platform at Zapnito, and a WebDAV-based CMS that let Informa's journalists edit articles directly in Microsoft Word." ]
+        , Atom.paragraph [] [ text "Most recently founding engineer at xpflow; previously co-founded a school e-commerce business later taken in-house by Marks & Spencer." ]
+        , Atom.paragraph [] [ text "Agile from day one: Scrum, Kanban, Lean, BDD, outside-in, pair-programming, you name it. Comfortable owning the engineering function or contributing within an established one; respect for the team's way of working comes before personal preferences." ]
         ]
 
 

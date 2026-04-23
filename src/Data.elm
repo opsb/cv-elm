@@ -73,7 +73,7 @@ tagline =
 
 introduction =
     [ { name = "Business focused"
-      , body = "Building software that people actually like to use is what gets me going. With over 12 years experience I've delivered successful products for the Telecoms, Retail, Publishing, Energy and Charity sectors. I've led teams to build a wide variety of projects including realtime social platforms and project management tools, business Intelligence, custom content management systems, online stores and browser extensions. "
+      , body = "Building software that people actually like to use is what gets me going. With over 22 years experience I've delivered successful products for the Telecoms, Retail, Publishing, Energy and Charity sectors. I've led teams to build a wide variety of projects including realtime social platforms and project management tools, business Intelligence, custom content management systems, online stores and browser extensions. "
       }
     , { name = "Agile", body = "From day one I've been an agile practitioner, whether it's Scrum or Kanban, Lean, BDD, outside-in, pair-programming, you name it, I've been doing it for years. I've usually led from the front but I’m comfortable working in many different styles and value project consistency over personal preferences so am equally comfortable working alone or slotting into an existing team." }
     ]
@@ -89,7 +89,7 @@ experience =
             [ { name = "Alfie (AI affiliate recruitment)"
               , start = 2025
               , end = 2026
-              , overview = "Built Alfie, an AI-powered affiliate partner recruitment platform, shipping the MVP in three weeks and validating strong demand. Scale limits in the on-demand approach informed the company's next phase, now its current focus."
+              , overview = "Built Alfie, AI agent scouts that autonomously discover, evaluate, and reach out to affiliate partners, learning user preferences over time. Shipped the MVP in three weeks and validated strong demand. Scale limits in the on-demand approach informed the company's next phase, now its current focus."
               , stack = [ "AI/LLMs", "NextJS", "Postgres" ]
               , talkingPoints = []
               }
@@ -98,7 +98,7 @@ experience =
     , tree3 =
         { title = "Consultant"
         , location = "Dallas / Remote"
-        , company = "tree3"
+        , company = "Tree3"
         , dates = "Dec 2023-Feb 2025"
         , projects =
             [ { name = "XP Affiliate Platform"
@@ -111,7 +111,7 @@ experience =
             ]
         }
     , tastermonial =
-        { title = "Consultant"
+        { title = "Interim CTO"
         , location = "Cupertino / Remote"
         , company = "Tastermonial"
         , dates = "Jun 2023-Nov 2023"
@@ -252,7 +252,7 @@ experience =
             ]
         }
     , myschooldirect =
-        { title = "CTO"
+        { title = "CTO & Co-founder"
         , location = "London / Remote"
         , company = "Myschooldirect"
         , dates = "2010–2014"
@@ -272,7 +272,7 @@ experience =
             , { name = "Marks and Spencer School Uniforms"
               , start = 2011
               , end = 2012
-              , overview = "An online store for schools to create their own Marks and Spencer uniforms."
+              , overview = "An online store for schools to create their own Marks and Spencer uniforms; M&S later bought out the project and took it in-house."
               , stack = [ "Ruby on Rails", "Postgres", "Kanban", "BDD" ]
               , talkingPoints =
                     [ "Built online catalogue that allowed schools to sign up and create their own bespoke uniform online."
@@ -301,7 +301,7 @@ experience =
               , start = 2007
               , end = 2006
               , stack = [ "Java", "Spring", "MS Analytics services", "Oracle DB", "Scrum", "TDD" ]
-              , overview = "Led team to develop a replacement for Informa Telecom's flagship product."
+              , overview = "Led team to replace Informa Telecom's flagship product (WCIS), a mobile markets intelligence platform covering 226 countries."
               , talkingPoints =
                     [ "Used incremental approach with frequent releases to gradually shift product over to new architecture without disrupting the live service or requiring parallel development."
                     , "Introduced clover to track test coverage and promote a TDD approach"
@@ -346,26 +346,27 @@ education =
 
 skills : List Skill
 skills =
-    [ { name = "Elixir / Phoenix", years = 7 }
+    [ { name = "OpenAI API", years = 1 }
+    , { name = "AI agents", years = 1 }
+    , { name = "LangChain / LangSmith", years = 1 }
+    , { name = "Agentic coding", years = 1 }
+    , { name = "Elixir / Phoenix", years = 8 }
     , { name = "Ruby on Rails", years = 8 }
-    , { name = "NextJS", years = 2 }
+    , { name = "NextJS", years = 3 }
     , { name = "Elm", years = 5 }
-    , { name = "React", years = 5 }
-    , { name = "Typescript/Javascript", years = 15 }
+    , { name = "React", years = 10 }
+    , { name = "Typescript/Javascript", years = 17 }
     , { name = "Java", years = 6 }
-    , { name = "SQL", years = 20 }
+    , { name = "SQL", years = 22 }
     , { name = "Firebase", years = 2 }
     , { name = "OLAP / MDX", years = 4 }
     , { name = "Event-sourcing/CQRS", years = 2 }
-    , { name = "Scrum / Kanban", years = 18 }
+    , { name = "Scrum / Kanban", years = 20 }
     , { name = "BDD / TDD", years = 18 }
-    , { name = "Git", years = 15 }
-    , { name = "Realtime systems", years = 7 }
-    , { name = "HTML", years = 21 }
-    , { name = "CSS / SASS", years = 18 }
-    , { name = "OO", years = 20 }
-    , { name = "Functional", years = 10 }
-    , { name = "AWS", years = 12 }
+    , { name = "Realtime systems", years = 9 }
+    , { name = "HTML / CSS / SASS", years = 22 }
+    , { name = "Functional", years = 12 }
+    , { name = "AWS", years = 14 }
     , { name = "Terraform", years = 4 }
     ]
 
