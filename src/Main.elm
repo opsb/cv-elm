@@ -225,10 +225,9 @@ pagePersonalDetailsSection =
             [ column [ alignBottom, moveUp 100, spacing 10 ]
                 [ overviewName
                 , column [ spacing 10, paddingXY 0 10 ]
-                    [ el [ Font.light, Font.size 16 ] (text "Founding engineer & technical leader")
-                    , el [ Font.light, Font.size 16 ] (text "Most recently at xpflow: AI agent platforms")
-                    , el [ Font.light, Font.size 16 ] (text "Previously VP Engineering, CTO, Co-founder")
-                    , el [ Font.light, Font.size 16 ] (text "22 years across AI, Fintech, SaaS")
+                    [ el [ Font.light, Font.size 16 ] (text "Passionate full stack leader")
+                    , el [ Font.light, Font.size 16 ] (text "Founder, CTO, VP Engineering, Architect")
+                    , el [ Font.light, Font.size 16 ] (text "22 Years experience")
                     ]
                 , contentDetails
                 ]

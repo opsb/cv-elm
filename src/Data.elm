@@ -366,7 +366,7 @@ skillGroups =
             , { name = "Ruby on Rails", years = 8 }
             , { name = "NextJS", years = 3 }
             , { name = "SQL", years = 22 }
-            , { name = "Event-sourcing/CQRS", years = 2 }
+            , { name = "Java", years = 8 }
             ]
       }
     , { name = "Datastores"
