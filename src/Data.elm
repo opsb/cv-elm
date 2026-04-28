@@ -87,7 +87,7 @@ introduction =
 
 experience =
     { xpflow =
-        { title = "Co-founder & CPO"
+        { title = "Chief Product Officer"
         , location = "Dallas / Remote"
         , company = "xpflow"
         , dates = "Feb 2025-Apr 2026"
@@ -102,7 +102,7 @@ experience =
             ]
         }
     , tree3 =
-        { title = "Consultant"
+        { title = "Engineering Lead (Contract)"
         , location = "Dallas / Remote"
         , company = "Tree3"
         , dates = "Jan 2024-Feb 2025"
@@ -117,7 +117,7 @@ experience =
             ]
         }
     , tastermonial =
-        { title = "Interim CTO"
+        { title = "Interim Chief Technology Officer"
         , location = "Cupertino / Remote"
         , company = "Tastermonial"
         , dates = "Jul 2023-Dec 2023"
@@ -132,7 +132,7 @@ experience =
             ]
         }
     , boulevard =
-        { title = "Consultant"
+        { title = "Senior Software Engineer Contract"
         , location = "Los Angeles / Remote"
         , company = "Boulevard"
         , dates = "Oct 2021-Jun 2023"
@@ -147,7 +147,7 @@ experience =
             ]
         }
     , vorwerk =
-        { title = "Consultant"
+        { title = "Engineering Lead (Contract)"
         , location = "Wuppertal / Remote"
         , company = "Vorwerk"
         , dates = "Apr 2021-Sep 2021"
@@ -162,7 +162,7 @@ experience =
             ]
         }
     , ctm =
-        { title = "Consultant"
+        { title = "Senior Software Engineer Contract"
         , location = "London / Remote"
         , company = "CompareThe\nMarket.com"
         , dates = "Feb 2019-Apr 2021"
@@ -177,7 +177,7 @@ experience =
             ]
         }
     , twentyBn =
-        { title = "Consultant"
+        { title = "Senior Software Engineer Contract"
         , location = "Berlin / Remote"
         , company = "TwentyBN"
         , dates = "Aug–Dec 2018"
@@ -192,7 +192,7 @@ experience =
             ]
         }
     , liqid =
-        { title = "Consultant"
+        { title = "Senior Software Engineer Contract"
         , location = "Berlin / Remote"
         , company = "Liqid"
         , dates = "Jan–Aug 2018"
@@ -240,7 +240,7 @@ experience =
             ]
         }
     , lytbulb =
-        { title = "CTO"
+        { title = "Chief Technology Officer"
         , location = "London / Remote"
         , company = "Lytbulb"
         , dates = "2014–2015"
@@ -298,7 +298,7 @@ experience =
             ]
         }
     , informa =
-        { title = "Tech lead/Architect"
+        { title = "Tech Lead / Architect"
         , location = "London"
         , company = "Informa"
         , dates = "2005-2010"
