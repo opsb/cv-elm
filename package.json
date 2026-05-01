@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && cp dist/index.html dist/404.html",
     "serve": "vite preview",
     "generate-pdf": "node scripts/generate-pdf.js",
     "test": "elm-test"
