@@ -1,4 +1,65 @@
-module Data exposing (Data, Institution, IntroSection, OpenSourceProject, Position, Project, Skill, SkillGroup, education, experience, introduction, name, openSourceProjects, skillGroups, tagline)
+module Data exposing
+    ( Data
+    , Institution
+    , IntroSection
+    , OpenSourceProject
+    , Position
+    , Project
+    , Skill
+    , SkillGroup
+    , Variant(..)
+    , education
+    , experience
+    , introduction
+    , name
+    , openSourceProjects
+    , pdfFileFor
+    , positionTitle
+    , sidePanelLabels
+    , skillGroupsFor
+    , tagline
+    , taglineFor
+    , variantFromPath
+    , variantPath
+    )
+
+
+type Variant
+    = Leadership
+    | Engineer
+
+
+variantFromPath : String -> Variant
+variantFromPath path =
+    case String.toLower (String.trim path) of
+        "/engineer" ->
+            Engineer
+
+        "/engineer/" ->
+            Engineer
+
+        _ ->
+            Leadership
+
+
+variantPath : Variant -> String
+variantPath variant =
+    case variant of
+        Leadership ->
+            "/"
+
+        Engineer ->
+            "/engineer"
+
+
+pdfFileFor : Variant -> String
+pdfFileFor variant =
+    case variant of
+        Leadership ->
+            "opsb.pdf"
+
+        Engineer ->
+            "opsb-engineer.pdf"
 
 
 type alias Data =
@@ -20,11 +81,62 @@ type alias IntroSection =
 
 type alias Position =
     { title : String
+    , engineerTitle : String
     , location : String
     , company : String
     , projects : List Project
     , dates : String
     }
+
+
+positionTitle : Variant -> Position -> String
+positionTitle variant position =
+    case variant of
+        Leadership ->
+            position.title
+
+        Engineer ->
+            position.engineerTitle
+
+
+taglineFor : Variant -> String
+taglineFor variant =
+    case variant of
+        Leadership ->
+            "Passionate full-stack tech leader"
+
+        Engineer ->
+            "Hands-on full-stack engineer"
+
+
+sidePanelLabels : Variant -> List String
+sidePanelLabels variant =
+    case variant of
+        Leadership ->
+            [ "Passionate full stack leader"
+            , "Founder, CTO, VP Engineering, Architect"
+            , "22 Years experience"
+            ]
+
+        Engineer ->
+            [ "Hands-on full-stack engineer"
+            , "Staff Engineer, Tech Lead, Architect"
+            , "22 years experience"
+            ]
+
+
+skillGroupsFor : Variant -> List SkillGroup
+skillGroupsFor variant =
+    case variant of
+        Leadership ->
+            skillGroups
+
+        Engineer ->
+            let
+                ( leadership, others ) =
+                    List.partition (\group -> group.name == "Leadership") skillGroups
+            in
+            others ++ leadership
 
 
 type alias Project =
@@ -87,7 +199,8 @@ introduction =
 
 experience =
     { xpflow =
-        { title = "Co-founder & CPO"
+        { title = "Founding Engineer & CPO"
+        , engineerTitle = "Founding Engineer"
         , location = "Dallas / Remote"
         , company = "xpflow"
         , dates = "Feb 2025-Apr 2026"
@@ -103,6 +216,7 @@ experience =
         }
     , tree3 =
         { title = "Consultant"
+        , engineerTitle = "Tech Lead"
         , location = "Dallas / Remote"
         , company = "Tree3"
         , dates = "Jan 2024-Feb 2025"
@@ -118,6 +232,7 @@ experience =
         }
     , tastermonial =
         { title = "Interim CTO"
+        , engineerTitle = "Interim CTO"
         , location = "Cupertino / Remote"
         , company = "Tastermonial"
         , dates = "Jul 2023-Dec 2023"
@@ -133,6 +248,7 @@ experience =
         }
     , boulevard =
         { title = "Consultant"
+        , engineerTitle = "Senior Engineer"
         , location = "Los Angeles / Remote"
         , company = "Boulevard"
         , dates = "Oct 2021-Jun 2023"
@@ -148,6 +264,7 @@ experience =
         }
     , vorwerk =
         { title = "Consultant"
+        , engineerTitle = "Tech Lead"
         , location = "Wuppertal / Remote"
         , company = "Vorwerk"
         , dates = "Apr 2021-Sep 2021"
@@ -163,6 +280,7 @@ experience =
         }
     , ctm =
         { title = "Consultant"
+        , engineerTitle = "Senior Engineer"
         , location = "London / Remote"
         , company = "CompareThe\nMarket.com"
         , dates = "Feb 2019-Apr 2021"
@@ -178,6 +296,7 @@ experience =
         }
     , twentyBn =
         { title = "Consultant"
+        , engineerTitle = "Senior Engineer"
         , location = "Berlin / Remote"
         , company = "TwentyBN"
         , dates = "Aug–Dec 2018"
@@ -193,6 +312,7 @@ experience =
         }
     , liqid =
         { title = "Consultant"
+        , engineerTitle = "Senior Backend Engineer"
         , location = "Berlin / Remote"
         , company = "Liqid"
         , dates = "Jan–Aug 2018"
@@ -208,6 +328,7 @@ experience =
         }
     , zapnito =
         { title = "VP Engineering"
+        , engineerTitle = "Engineering Lead"
         , location = "London / Remote"
         , company = "Zapnito"
         , dates = "Jan 2015–Jan 2018"
@@ -241,6 +362,7 @@ experience =
         }
     , lytbulb =
         { title = "CTO"
+        , engineerTitle = "CTO"
         , location = "London / Remote"
         , company = "Lytbulb"
         , dates = "2014–2015"
@@ -259,6 +381,7 @@ experience =
         }
     , myschooldirect =
         { title = "CTO & Co-founder"
+        , engineerTitle = "CTO & Co-founder"
         , location = "London / Remote"
         , company = "Myschooldirect"
         , dates = "2010–2014"
@@ -299,6 +422,7 @@ experience =
         }
     , informa =
         { title = "Tech lead/Architect"
+        , engineerTitle = "Tech Lead / Architect"
         , location = "London"
         , company = "Informa"
         , dates = "2005-2010"

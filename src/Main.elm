@@ -2,6 +2,7 @@ module Main exposing (main)
 
 import Browser
 import Browser.Events exposing (onResize)
+import Browser.Navigation as Nav
 import Data exposing (..)
 import Element exposing (..)
 import Element.Background as Background
@@ -10,6 +11,7 @@ import Element.Events exposing (onClick)
 import Element.Font as Font
 import Html exposing (Html)
 import Html.Attributes exposing (src)
+import Url exposing (Url)
 import Util.List exposing (splitInTwo)
 import View.Atom as Atom exposing (..)
 import View.Colors as Colors
@@ -28,12 +30,16 @@ type alias Flags =
 
 type alias Model =
     { device : Device
+    , variant : Variant
+    , key : Nav.Key
     }
 
 
-init : Flags -> ( Model, Cmd Msg )
-init flags =
+init : Flags -> Url -> Nav.Key -> ( Model, Cmd Msg )
+init flags url key =
     ( { device = Element.classifyDevice flags
+      , variant = Data.variantFromPath url.path
+      , key = key
       }
     , Cmd.none
     )
@@ -45,6 +51,8 @@ init flags =
 
 type Msg
     = DeviceClassified Device
+    | LinkClicked Browser.UrlRequest
+    | UrlChanged Url
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -52,6 +60,17 @@ update msg model =
     case msg of
         DeviceClassified device ->
             ( { model | device = device }
+            , Cmd.none
+            )
+
+        LinkClicked (Browser.Internal url) ->
+            ( model, Nav.pushUrl model.key (Url.toString url) )
+
+        LinkClicked (Browser.External href) ->
+            ( model, Nav.load href )
+
+        UrlChanged url ->
+            ( { model | variant = Data.variantFromPath url.path }
             , Cmd.none
             )
 
@@ -82,41 +101,41 @@ deviceBody : Model -> List (Html Msg)
 deviceBody model =
     case model.device.class of
         Phone ->
-            mobileLayout
+            mobileLayout model.variant
 
         _ ->
-            a4PagesLayout
+            a4PagesLayout model.variant
 
 
 
 ---- MOBILE LAYOUT ----
 
 
-mobileLayout : List (Html Msg)
-mobileLayout =
+mobileLayout : Variant -> List (Html Msg)
+mobileLayout variant =
     [ layout [ Atom.bodyTextFont ]
         (column [ width fill, spacing 20 ]
-            [ mobilePersonalDetailsSection
+            [ mobilePersonalDetailsSection variant
             , mobileSection "Introduction" introductionSection
             , Atom.horizontalDivider
-            , mobileSection "Skills" skillsSection
+            , mobileSection "Skills" (skillsSection variant)
             , Atom.horizontalDivider
             , mobileSection "Open Source" openSourceSection
             , Atom.horizontalDivider
             , mobileSection "Experience" <|
                 column [ spacing 80 ]
-                    [ mobilePositionView (Data.experience |> .xpflow)
-                    , mobilePositionView (Data.experience |> .tree3)
-                    , mobilePositionView (Data.experience |> .tastermonial)
-                    , mobilePositionView (Data.experience |> .boulevard)
-                    , mobilePositionView (Data.experience |> .vorwerk)
-                    , mobilePositionView (Data.experience |> .ctm)
-                    , mobilePositionView (Data.experience |> .twentyBn)
-                    , mobilePositionView (Data.experience |> .liqid)
-                    , mobilePositionView (Data.experience |> .zapnito)
-                    , mobilePositionView (Data.experience |> .lytbulb)
-                    , mobilePositionView (Data.experience |> .myschooldirect)
-                    , mobilePositionView (Data.experience |> .informa)
+                    [ mobilePositionView variant (Data.experience |> .xpflow)
+                    , mobilePositionView variant (Data.experience |> .tree3)
+                    , mobilePositionView variant (Data.experience |> .tastermonial)
+                    , mobilePositionView variant (Data.experience |> .boulevard)
+                    , mobilePositionView variant (Data.experience |> .vorwerk)
+                    , mobilePositionView variant (Data.experience |> .ctm)
+                    , mobilePositionView variant (Data.experience |> .twentyBn)
+                    , mobilePositionView variant (Data.experience |> .liqid)
+                    , mobilePositionView variant (Data.experience |> .zapnito)
+                    , mobilePositionView variant (Data.experience |> .lytbulb)
+                    , mobilePositionView variant (Data.experience |> .myschooldirect)
+                    , mobilePositionView variant (Data.experience |> .informa)
                     ]
             , Atom.horizontalDivider
             , mobileSection "Community" communitySection
@@ -132,11 +151,11 @@ mobileSection title body =
     column [ padding 20, spacing 40, width fill ] [ Atom.title1 [] title, body ]
 
 
-mobilePersonalDetailsSection : Element Msg
-mobilePersonalDetailsSection =
+mobilePersonalDetailsSection : Variant -> Element Msg
+mobilePersonalDetailsSection variant =
     Atom.pageColumn [ spacing 40, Background.color Colors.grey, Font.color Colors.white ]
         [ column [ height (fillPortion 1) ]
-            [ column [ alignBottom, spacing 10 ] [ overviewName, overviewTagline ]
+            [ column [ alignBottom, spacing 10 ] [ overviewName, overviewTagline variant ]
             ]
         , column [ height (fillPortion 1) ]
             [ contentDetails
@@ -149,8 +168,8 @@ mobilePersonalDetailsSection =
 ---- A4 PAGES LAYOUT ----
 
 
-a4PagesLayout : List (Html Msg)
-a4PagesLayout =
+a4PagesLayout : Variant -> List (Html Msg)
+a4PagesLayout variant =
     [ layout
         [ Atom.bodyTextFont
         , inFront
@@ -161,21 +180,25 @@ a4PagesLayout =
                 , moveLeft 10
                 , htmlAttribute <| Html.Attributes.attribute "data-print" "false"
                 ]
-                downloadButton
+                (downloadButton variant)
             )
         ]
         (column
             [ width fill
             ]
-            [ overviewPage
-            , experiencePage
+            [ overviewPage variant
+            , experiencePage variant
             ]
         )
     ]
 
 
-downloadButton : Element Msg
-downloadButton =
+downloadButton : Variant -> Element Msg
+downloadButton variant =
+    let
+        file =
+            Data.pdfFileFor variant
+    in
     link
         [ paddingXY 20 10
         , mouseOver []
@@ -186,20 +209,20 @@ downloadButton =
         , Font.color Colors.white
         , Font.size 16
         , pointer
-        , htmlAttribute <| Html.Attributes.attribute "download" "opsb.pdf"
+        , htmlAttribute <| Html.Attributes.attribute "download" file
         ]
-        { url = "./opsb.pdf", label = text "Download PDF" }
+        { url = "./" ++ file, label = text "Download PDF" }
 
 
-overviewPage : Element Msg
-overviewPage =
+overviewPage : Variant -> Element Msg
+overviewPage variant =
     Atom.a4Page [] <|
         row
             [ width fill, height fill ]
-            [ pagePersonalDetailsSection
+            [ pagePersonalDetailsSection variant
             , Atom.pageColumn [ spacing 25 ]
                 [ pageSection "Introduction" introductionSection
-                , pageSection "Skills" skillsSection
+                , pageSection "Skills" (skillsSection variant)
                 ]
             , Atom.verticalDivider
             , Atom.pageColumn [ spacing 35 ]
@@ -218,17 +241,16 @@ pageSection title body =
         ]
 
 
-pagePersonalDetailsSection : Element msg
-pagePersonalDetailsSection =
+pagePersonalDetailsSection : Variant -> Element msg
+pagePersonalDetailsSection variant =
     Atom.pageColumn [ spacing 40, Background.color Colors.grey, Font.color Colors.white ]
         [ column [ height (fillPortion 10), spacing 10 ]
             [ column [ alignBottom, moveUp 100, spacing 10 ]
                 [ overviewName
                 , column [ spacing 10, paddingXY 0 10 ]
-                    [ el [ Font.light, Font.size 16 ] (text "Passionate full stack leader")
-                    , el [ Font.light, Font.size 16 ] (text "Founder, CTO, VP Engineering, Architect")
-                    , el [ Font.light, Font.size 16 ] (text "22 Years experience")
-                    ]
+                    (Data.sidePanelLabels variant
+                        |> List.map (\label -> el [ Font.light, Font.size 16 ] (text label))
+                    )
                 , contentDetails
                 ]
             ]
@@ -238,17 +260,17 @@ pagePersonalDetailsSection =
         ]
 
 
-overviewTagline : Element msg
-overviewTagline =
+overviewTagline : Variant -> Element msg
+overviewTagline variant =
     el
         [ Font.color Colors.white
         , Font.light
         ]
-        (text "Passionate full-stack tech leader")
+        (text (Data.taglineFor variant))
 
 
-experiencePage : Element msg
-experiencePage =
+experiencePage : Variant -> Element msg
+experiencePage variant =
     Atom.a4Page [] <|
         column [ width fill, height fill ]
             [ el
@@ -264,21 +286,21 @@ experiencePage =
                 )
             , row [ width fill, height fill ]
                 [ Atom.pageColumn []
-                    [ positionView (Data.experience |> .xpflow)
-                    , positionView (Data.experience |> .tree3)
-                    , positionView (Data.experience |> .tastermonial)
-                    , positionView (Data.experience |> .boulevard)
-                    , positionView (Data.experience |> .vorwerk)
-                    , positionView (Data.experience |> .ctm)
-                    , positionView (Data.experience |> .twentyBn)
+                    [ positionView variant (Data.experience |> .xpflow)
+                    , positionView variant (Data.experience |> .tree3)
+                    , positionView variant (Data.experience |> .tastermonial)
+                    , positionView variant (Data.experience |> .boulevard)
+                    , positionView variant (Data.experience |> .vorwerk)
+                    , positionView variant (Data.experience |> .ctm)
+                    , positionView variant (Data.experience |> .twentyBn)
                     ]
                 , Atom.verticalDivider
                 , Atom.pageColumn []
-                    [ positionView (Data.experience |> .liqid)
-                    , positionView (Data.experience |> .zapnito)
-                    , positionView (Data.experience |> .lytbulb)
-                    , positionView (Data.experience |> .myschooldirect)
-                    , positionView (Data.experience |> .informa)
+                    [ positionView variant (Data.experience |> .liqid)
+                    , positionView variant (Data.experience |> .zapnito)
+                    , positionView variant (Data.experience |> .lytbulb)
+                    , positionView variant (Data.experience |> .myschooldirect)
+                    , positionView variant (Data.experience |> .informa)
                     ]
                 ]
             ]
@@ -310,11 +332,11 @@ communitySection =
         ]
 
 
-skillsSection : Element msg
-skillsSection =
+skillsSection : Variant -> Element msg
+skillsSection variant =
     let
         ( leftGroups, rightGroups ) =
-            splitInTwo Data.skillGroups
+            splitInTwo (Data.skillGroupsFor variant)
     in
     row [ spacing 30, width fill ]
         [ skillGroupsColumn leftGroups
@@ -377,8 +399,8 @@ contactDetails =
         ]
 
 
-mobilePositionView : Position -> Element msg
-mobilePositionView position =
+mobilePositionView : Variant -> Position -> Element msg
+mobilePositionView variant position =
     column
         [ spacing 45
         , width fill
@@ -390,7 +412,7 @@ mobilePositionView position =
                     [ column [] []
                     , el [ alignLeft ]
                         (Atom.title2 [] position.company)
-                    , el [ alignLeft ] (Atom.title3 [ Font.color Colors.red ] <| position.title)
+                    , Element.paragraph [ alignLeft, titleFont, Font.size 16, Font.semiBold, letterSpacing -0.2, Font.color Colors.red ] [ text (Data.positionTitle variant position) ]
                     , el [ alignLeft ] (Atom.bodyText [] position.dates)
                     , el [ alignLeft ] (Atom.bodyText [] position.location)
                     ]
@@ -402,12 +424,12 @@ mobilePositionView position =
         ]
 
 
-positionView : Position -> Element msg
-positionView position =
+positionView : Variant -> Position -> Element msg
+positionView variant position =
     row [ width fill, spacing 0 ]
         [ column [ width (fillPortion 7), spacing 3, alignTop ]
             [ Atom.title3 [ Font.size 16, paddingEach { top = 0, right = 0, bottom = 5, left = 0 } ] position.company
-            , Atom.title5 [ Font.size 12, Font.color Colors.red ] <| position.title
+            , Element.paragraph [ titleFont, Font.size 12, Font.color Colors.red ] [ text (Data.positionTitle variant position) ]
             , Atom.bodyText [ Font.size 10, Font.regular ] position.dates
             , Atom.bodyText [ Font.size 10, Font.regular ] position.location
             ]
@@ -517,9 +539,11 @@ overviewName =
 
 main : Program Flags Model Msg
 main =
-    Browser.document
+    Browser.application
         { view = view
         , init = init
         , update = update
         , subscriptions = subscriptions
+        , onUrlRequest = LinkClicked
+        , onUrlChange = UrlChanged
         }
