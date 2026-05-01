@@ -124,19 +124,9 @@ mobileLayout variant =
             , Atom.horizontalDivider
             , mobileSection "Experience" <|
                 column [ spacing 80 ]
-                    [ mobilePositionView variant (Data.experience |> .xpflow)
-                    , mobilePositionView variant (Data.experience |> .tree3)
-                    , mobilePositionView variant (Data.experience |> .tastermonial)
-                    , mobilePositionView variant (Data.experience |> .boulevard)
-                    , mobilePositionView variant (Data.experience |> .vorwerk)
-                    , mobilePositionView variant (Data.experience |> .ctm)
-                    , mobilePositionView variant (Data.experience |> .twentyBn)
-                    , mobilePositionView variant (Data.experience |> .liqid)
-                    , mobilePositionView variant (Data.experience |> .zapnito)
-                    , mobilePositionView variant (Data.experience |> .lytbulb)
-                    , mobilePositionView variant (Data.experience |> .myschooldirect)
-                    , mobilePositionView variant (Data.experience |> .informa)
-                    ]
+                    (Data.experiencePositionsFor variant
+                        |> List.map (mobilePositionView variant)
+                    )
             , Atom.horizontalDivider
             , mobileSection "Community" communitySection
             , Atom.horizontalDivider
@@ -284,24 +274,16 @@ experiencePage variant =
                     ]
                     "Experience"
                 )
-            , row [ width fill, height fill ]
+            , let
+                columns =
+                    Data.experienceColumnsFor variant
+              in
+              row [ width fill, height fill ]
                 [ Atom.pageColumn []
-                    [ positionView variant (Data.experience |> .xpflow)
-                    , positionView variant (Data.experience |> .tree3)
-                    , positionView variant (Data.experience |> .tastermonial)
-                    , positionView variant (Data.experience |> .boulevard)
-                    , positionView variant (Data.experience |> .vorwerk)
-                    , positionView variant (Data.experience |> .ctm)
-                    , positionView variant (Data.experience |> .twentyBn)
-                    ]
+                    (List.map (positionView variant) columns.left)
                 , Atom.verticalDivider
                 , Atom.pageColumn []
-                    [ positionView variant (Data.experience |> .liqid)
-                    , positionView variant (Data.experience |> .zapnito)
-                    , positionView variant (Data.experience |> .lytbulb)
-                    , positionView variant (Data.experience |> .myschooldirect)
-                    , positionView variant (Data.experience |> .informa)
-                    ]
+                    (List.map (positionView variant) columns.right)
                 ]
             ]
 

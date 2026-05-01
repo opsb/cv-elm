@@ -1,5 +1,6 @@
 module Data exposing
     ( Data
+    , ExperienceColumns
     , Institution
     , IntroSection
     , OpenSourceProject
@@ -10,6 +11,8 @@ module Data exposing
     , Variant(..)
     , education
     , experience
+    , experienceColumnsFor
+    , experiencePositionsFor
     , introduction
     , name
     , openSourceProjects
@@ -137,6 +140,73 @@ skillGroupsFor variant =
                     List.partition (\group -> group.name == "Leadership") skillGroups
             in
             others ++ leadership
+
+
+type alias ExperienceColumns =
+    { left : List Position
+    , right : List Position
+    }
+
+
+experienceColumnsFor : Variant -> ExperienceColumns
+experienceColumnsFor variant =
+    case variant of
+        Leadership ->
+            { left =
+                [ experience.xpflow
+                , experience.tree3
+                , experience.tastermonial
+                , experience.boulevard
+                , experience.vorwerk
+                , experience.ctm
+                , experience.twentyBn
+                ]
+            , right =
+                [ experience.liqid
+                , experience.zapnito
+                , experience.lytbulb
+                , experience.myschooldirect
+                , experience.informa
+                ]
+            }
+
+        Engineer ->
+            { left =
+                [ engineerXpflow
+                , experience.tastermonial
+                , experience.boulevard
+                , experience.vorwerk
+                , experience.ctm
+                , experience.twentyBn
+                , experience.liqid
+                ]
+            , right =
+                [ experience.zapnito
+                , experience.lytbulb
+                , experience.myschooldirect
+                , experience.informa
+                ]
+            }
+
+
+experiencePositionsFor : Variant -> List Position
+experiencePositionsFor variant =
+    let
+        columns =
+            experienceColumnsFor variant
+    in
+    columns.left ++ columns.right
+
+
+engineerXpflow : Position
+engineerXpflow =
+    { title = "Tech Lead"
+    , engineerTitle = "Tech Lead"
+    , location = "Dallas / Remote"
+    , company = "Tree3 / xpflow"
+    , dates = "Jan 2024-Apr 2026"
+    , projects = experience.xpflow.projects ++ experience.tree3.projects
+    }
 
 
 type alias Project =
