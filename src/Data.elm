@@ -178,10 +178,10 @@ experienceColumnsFor variant =
                 , experience.vorwerk
                 , experience.ctm
                 , experience.twentyBn
-                , experience.liqid
                 ]
             , right =
-                [ experience.zapnito
+                [ experience.liqid
+                , experience.zapnito
                 , experience.lytbulb
                 , experience.myschooldirect
                 , experience.informa
