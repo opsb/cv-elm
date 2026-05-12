@@ -423,10 +423,10 @@ experience =
               , overview = "Joined the API team at this health & beauty unicorn, shipping core platform infrastructure."
               , stack = [ "Elixir", "Absinthe", "Postgres", "React", "Typescript", "AWS/Terraform" ]
               , talkingPoints =
-                    [ "Led HIPAA logging & compliance."
+                    [ "Led HIPAA compliance across entire platform."
                     , "Designed the API authorization model governing permission evaluation across services."
-                    , "Built the leaky-bucket GraphQL rate limiter with per-application quotas and per-pipeline policies."
                     , "Built the third-party App Store enabling external developer integrations."
+                    , "Built the GraphQL rate limiter with per-application quotas and per-pipeline policies."
                     ]
               }
             ]
