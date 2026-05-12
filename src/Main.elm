@@ -4,6 +4,7 @@ import Browser
 import Browser.Events exposing (onResize)
 import Browser.Navigation as Nav
 import Data exposing (..)
+import Experimental.View
 import Element exposing (..)
 import Element.Background as Background
 import Element.Border as Border
@@ -31,6 +32,7 @@ type alias Flags =
 type alias Model =
     { device : Device
     , variant : Variant
+    , path : String
     , key : Nav.Key
     }
 
@@ -39,10 +41,24 @@ init : Flags -> Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url key =
     ( { device = Element.classifyDevice flags
       , variant = Data.variantFromPath url.path
+      , path = url.path
       , key = key
       }
     , Cmd.none
     )
+
+
+isExperimental : String -> Bool
+isExperimental path =
+    case String.toLower (String.trim path) of
+        "/experimental" ->
+            True
+
+        "/experimental/" ->
+            True
+
+        _ ->
+            False
 
 
 
@@ -70,7 +86,10 @@ update msg model =
             ( model, Nav.load href )
 
         UrlChanged url ->
-            ( { model | variant = Data.variantFromPath url.path }
+            ( { model
+                | variant = Data.variantFromPath url.path
+                , path = url.path
+              }
             , Cmd.none
             )
 
@@ -92,9 +111,13 @@ subscriptions model =
 
 view : Model -> Browser.Document Msg
 view model =
-    { title = "Oliver Searle-Barnes"
-    , body = deviceBody model
-    }
+    if isExperimental model.path then
+        Experimental.View.view
+
+    else
+        { title = "Oliver Searle-Barnes"
+        , body = deviceBody model
+        }
 
 
 deviceBody : Model -> List (Html Msg)
