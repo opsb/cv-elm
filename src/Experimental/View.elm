@@ -33,22 +33,17 @@ textColor =
 
 subtleColor : Color
 subtleColor =
-    rgb255 130 130 138
+    rgb255 110 110 118
 
 
 ruleColor : Color
 ruleColor =
-    rgb255 30 30 34
-
-
-accentColor : Color
-accentColor =
-    rgb255 246 217 39
+    rgb255 200 200 205
 
 
 paperColor : Color
 paperColor =
-    rgb255 250 246 238
+    rgb255 246 244 240
 
 
 outerBg : Color
@@ -56,14 +51,23 @@ outerBg =
     rgb255 232 228 220
 
 
-sans : Element.Attribute msg
-sans =
+displaySerif : Element.Attribute msg
+displaySerif =
     Font.family
-        [ Font.typeface "DM Sans"
-        , Font.typeface "Helvetica Neue"
-        , Font.typeface "Helvetica"
-        , Font.typeface "Arial"
-        , Font.sansSerif
+        [ Font.typeface "Playfair Display"
+        , Font.typeface "EB Garamond"
+        , Font.typeface "Georgia"
+        , Font.serif
+        ]
+
+
+bodySerif : Element.Attribute msg
+bodySerif =
+    Font.family
+        [ Font.typeface "EB Garamond"
+        , Font.typeface "Source Serif Pro"
+        , Font.typeface "Georgia"
+        , Font.serif
         ]
 
 
@@ -83,13 +87,13 @@ lineHeight n =
 
 pageAttrs : List (Attribute msg)
 pageAttrs =
-    [ sans
+    [ bodySerif
     , Font.color textColor
     , Background.color outerBg
     , width fill
     , height fill
-    , Font.size 13
-    , lineHeight 1.5
+    , Font.size 14
+    , lineHeight 1.55
     , paddingXY 0 40
     ]
 
@@ -100,22 +104,18 @@ page =
         [ width (fill |> maximum 960)
         , centerX
         , Background.color paperColor
-        , paddingXY 64 56
-        , spacing 32
+        , paddingXY 70 60
+        , spacing 36
         , Border.shadow
             { offset = ( 0, 4 )
             , size = 0
-            , blur = 20
+            , blur = 22
             , color = rgba 0 0 0 0.08
             }
         ]
         [ header
-        , yellowRule
-        , bodyRow "Profile" aboutBlock
-        , bodyRow "Skills" skillsBlock
-        , bodyRow "Work Experience" experienceBlock
-        , bodyRow "Education" educationBlock
-        , bodyRow "Open Source" openSourceBlock
+        , horizontalRule
+        , twoColumnBody
         ]
 
 
@@ -133,40 +133,22 @@ header =
 
 headerLeft : Element msg
 headerLeft =
-    el
-        [ alignTop
-        , width fill
-        , paddingEach { top = 16, right = 0, bottom = 12, left = 36 }
-        , behindContent yellowCircle
-        ]
-        (column [ spacing 6 ]
-            [ el
-                [ Font.size 46
-                , Font.bold
-                , letterSpacing -0.5
-                ]
-                (text Data.name)
-            , el
-                [ Font.size 16
-                , Font.regular
-                , Font.color textColor
-                ]
-                (text "Senior Elixir Engineer · Tech Lead")
+    column [ alignLeft, spacing 8, width fill, alignBottom ]
+        [ el
+            [ displaySerif
+            , Font.size 58
+            , Font.regular
+            , letterSpacing -0.5
             ]
-        )
-
-
-yellowCircle : Element msg
-yellowCircle =
-    el
-        [ width (px 100)
-        , height (px 100)
-        , Background.color accentColor
-        , Border.rounded 50
-        , alignLeft
-        , alignTop
+            (text Data.name)
+        , el
+            [ Font.size 15
+            , Font.color textColor
+            , letterSpacing 6
+            , Font.italic
+            ]
+            (text (String.toUpper "Senior Elixir Engineer · Tech Lead"))
         ]
-        none
 
 
 headerRight : Element msg
@@ -174,72 +156,99 @@ headerRight =
     column
         [ alignRight
         , alignTop
-        , spacing 12
-        , Font.size 12
-        , paddingEach { top = 8, right = 0, bottom = 0, left = 0 }
+        , spacing 8
+        , Font.size 13
         ]
-        [ contactRow "Email" "oliver@opsb.co.uk"
-        , contactRow "Location" "Barcelona, Spain · UK RTW"
-        , contactRow "GitHub" "github.com/opsb"
-        , contactRow "LinkedIn" "/in/oliversearlebarnes"
+        [ contactRow "+44 phone on request" "☏"
+        , contactRow "oliver@opsb.co.uk" "✉"
+        , contactRow "Barcelona, Spain · UK RTW" "⌂"
+        , contactRow "linkedin.com/in/oliversearlebarnes" "in"
+        , contactRow "github.com/opsb" "↗"
         ]
 
 
 contactRow : String -> String -> Element msg
-contactRow label value =
-    row [ spacing 14, alignRight ]
-        [ el
-            [ Font.size 10
-            , Font.color subtleColor
-            , letterSpacing 1.5
-            , width (px 70)
-            , Font.alignRight
+contactRow value glyph =
+    row [ spacing 12, alignRight ]
+        [ el [ Font.size 13, Font.color textColor ] (text value)
+        , el
+            [ Font.size 13
+            , Font.color textColor
+            , width (px 18)
+            , Font.center
             ]
-            (text (String.toUpper label))
-        , el [ Font.size 12, Font.color textColor ] (text value)
+            (text glyph)
         ]
 
 
 
----- YELLOW RULE ----
+---- RULES ----
 
 
-yellowRule : Element msg
-yellowRule =
+horizontalRule : Element msg
+horizontalRule =
     el
         [ width fill
-        , height (px 3)
-        , Background.color accentColor
+        , height (px 1)
+        , Background.color ruleColor
+        ]
+        none
+
+
+verticalRule : Element msg
+verticalRule =
+    el
+        [ width (px 1)
+        , height fill
+        , Background.color ruleColor
         ]
         none
 
 
 
----- BODY ROW: section label (narrow left) | content (wide right) ----
+---- TWO-COLUMN BODY ----
 
 
-bodyRow : String -> Element msg -> Element msg
-bodyRow label content =
-    row [ width fill, spacing 30, alignTop, paddingEach { top = 8, right = 0, bottom = 0, left = 0 } ]
-        [ el [ width (fillPortion 2), alignTop ] (sectionLabel label)
-        , el [ width (fillPortion 7), alignTop ] content
+twoColumnBody : Element msg
+twoColumnBody =
+    row [ width fill, spacing 36, height fill, alignTop ]
+        [ leftColumn
+        , verticalRule
+        , rightColumn
         ]
 
 
-sectionLabel : String -> Element msg
-sectionLabel s =
-    column [ spacing 6, alignTop ]
+leftColumn : Element msg
+leftColumn =
+    column [ width (fillPortion 3), alignTop, spacing 28 ]
+        [ sidebarSection "Education" educationBlock
+        , sidebarSection "Skills" skillsBlock
+        , sidebarSection "Open Source" openSourceBlock
+        ]
+
+
+rightColumn : Element msg
+rightColumn =
+    column [ width (fillPortion 7), alignTop, spacing 28 ]
+        [ sidebarSection "Profile" aboutBlock
+        , sidebarSection "Experience" experienceBlock
+        ]
+
+
+
+---- SECTION HEADERS ----
+
+
+sidebarSection : String -> Element msg -> Element msg
+sidebarSection title body =
+    column [ spacing 14, width fill, alignTop ]
         [ el
-            [ Font.size 18
-            , Font.bold
+            [ displaySerif
+            , Font.size 22
+            , Font.regular
             ]
-            (text s)
-        , el
-            [ width (px 32)
-            , height (px 2)
-            , Background.color ruleColor
-            ]
-            none
+            (text title)
+        , body
         ]
 
 
@@ -254,47 +263,12 @@ aboutBlock =
             |> List.map
                 (\p ->
                     Element.paragraph
-                        [ Font.size 13
+                        [ Font.size 14
                         , lineHeight 1.55
                         ]
                         [ text p ]
                 )
         )
-
-
-
----- SKILLS ----
-
-
-skillsBlock : Element msg
-skillsBlock =
-    wrappedRow [ spacing 22, width fill ]
-        (List.map skillGroupItem (Data.skillGroupsFor primaryVariant))
-
-
-skillGroupItem : SkillGroup -> Element msg
-skillGroupItem group =
-    column [ spacing 4, alignTop, width (px 170) ]
-        [ el
-            [ Font.size 11
-            , Font.bold
-            , letterSpacing 1.5
-            ]
-            (text (String.toUpper group.name))
-        , column [ spacing 2 ]
-            (group.skills
-                |> List.map
-                    (\s ->
-                        Element.paragraph
-                            [ Font.size 11
-                            , lineHeight 1.45
-                            ]
-                            [ text "• "
-                            , text s.name
-                            ]
-                    )
-            )
-        ]
 
 
 
@@ -309,13 +283,43 @@ educationBlock =
 
 institutionItem : Institution -> Element msg
 institutionItem inst =
-    row [ width fill, spacing 25, alignTop ]
-        [ el [ Font.size 12, width (px 110), alignTop ]
+    column [ spacing 2, width fill ]
+        [ el [ Font.size 13, Font.bold ] (text inst.course)
+        , el [ Font.size 13 ] (text inst.name)
+        , el [ Font.size 12, Font.color subtleColor ]
             (text (String.fromInt inst.startYear ++ " – " ++ String.fromInt inst.endYear))
-        , column [ spacing 2, alignTop, width fill ]
-            [ el [ Font.size 13, Font.bold ] (text inst.course)
-            , el [ Font.size 12, Font.color subtleColor ] (text inst.name)
+        ]
+
+
+
+---- SKILLS ----
+
+
+skillsBlock : Element msg
+skillsBlock =
+    column [ spacing 16, width fill ]
+        (List.map skillGroupItem (Data.skillGroupsFor primaryVariant))
+
+
+skillGroupItem : SkillGroup -> Element msg
+skillGroupItem group =
+    column [ spacing 3, width fill ]
+        [ el
+            [ Font.size 13
+            , Font.bold
             ]
+            (text group.name)
+        , column [ spacing 1 ]
+            (group.skills
+                |> List.map
+                    (\s ->
+                        Element.paragraph
+                            [ Font.size 13
+                            , lineHeight 1.4
+                            ]
+                            [ text s.name ]
+                    )
+            )
         ]
 
 
@@ -325,7 +329,7 @@ institutionItem inst =
 
 openSourceBlock : Element msg
 openSourceBlock =
-    column [ spacing 12, width fill ]
+    column [ spacing 14, width fill ]
         (List.map openSourceItem Data.openSourceProjects)
 
 
@@ -333,11 +337,11 @@ openSourceItem : OpenSourceProject -> Element msg
 openSourceItem proj =
     column [ spacing 2, width fill ]
         [ el
-            [ Font.size 12
+            [ Font.size 13
             , Font.bold
             ]
             (text proj.name)
-        , Element.paragraph [ Font.size 11, Font.color subtleColor, lineHeight 1.4 ]
+        , Element.paragraph [ Font.size 12, Font.color subtleColor, lineHeight 1.4 ]
             [ text proj.shortInvolvement
             , text " · "
             , text proj.language
@@ -351,13 +355,7 @@ openSourceItem proj =
 
 experienceBlock : Element msg
 experienceBlock =
-    column
-        [ spacing 24
-        , width fill
-        , Border.widthEach { top = 0, right = 0, bottom = 0, left = 2 }
-        , Border.color accentColor
-        , paddingEach { top = 0, right = 0, bottom = 0, left = 20 }
-        ]
+    column [ spacing 22, width fill ]
         (Data.experiencePositionsFor primaryVariant
             |> List.map positionBlock
         )
@@ -365,54 +363,31 @@ experienceBlock =
 
 positionBlock : Position -> Element msg
 positionBlock position =
-    row [ width fill, spacing 24, alignTop ]
-        [ positionLeftMeta position
-        , positionRightContent position
+    column [ spacing 8, width fill ]
+        [ positionTitleLine position
+        , companyStackLine position.companyStack
+        , column [ spacing 10, width fill ]
+            (List.map projectBlock position.projects)
         ]
 
 
-positionLeftMeta : Position -> Element msg
-positionLeftMeta position =
-    column
-        [ width (px 130)
-        , alignTop
-        , spacing 3
+positionTitleLine : Position -> Element msg
+positionTitleLine position =
+    Element.paragraph
+        [ Font.size 14
+        , lineHeight 1.4
         ]
-        [ el
-            [ Font.size 12
-            , Font.bold
-            ]
-            (text position.dates)
-        , el
-            [ Font.size 12
-            , Font.color subtleColor
-            ]
-            (text (positionCompanyClean position.company))
-        , el
-            [ Font.size 11
-            , Font.color subtleColor
-            ]
-            (text position.location)
+        [ el [ Font.bold ] (text (Data.positionTitle primaryVariant position))
+        , el [ Font.color subtleColor ] (text "  |  ")
+        , text (positionCompanyClean position.company)
+        , el [ Font.color subtleColor ] (text "  |  ")
+        , text position.dates
         ]
 
 
 positionCompanyClean : String -> String
 positionCompanyClean company =
     String.replace "\n" "" company
-
-
-positionRightContent : Position -> Element msg
-positionRightContent position =
-    column [ spacing 6, alignTop, width fill ]
-        [ el
-            [ Font.size 14
-            , Font.bold
-            ]
-            (text (Data.positionTitle primaryVariant position))
-        , companyStackLine position.companyStack
-        , column [ spacing 10, width fill ]
-            (List.map projectBlock position.projects)
-        ]
 
 
 companyStackLine : List String -> Element msg
@@ -423,24 +398,24 @@ companyStackLine stack =
 
         _ ->
             el
-                [ Font.size 11
+                [ Font.size 12
                 , Font.color subtleColor
-                , letterSpacing 0.5
+                , Font.italic
                 ]
                 (text (String.join " / " stack))
 
 
 projectBlock : Project -> Element msg
 projectBlock project =
-    column [ spacing 5, width fill ]
+    column [ spacing 6, width fill ]
         [ el
-            [ Font.size 12
+            [ Font.size 13
             , Font.bold
             ]
             (text project.name)
         , Element.paragraph
-            [ Font.size 12
-            , lineHeight 1.5
+            [ Font.size 13
+            , lineHeight 1.55
             ]
             [ text project.overview ]
         , talkingPointsBlock project.talkingPoints
@@ -454,16 +429,16 @@ talkingPointsBlock points =
             none
 
         _ ->
-            column [ spacing 3, paddingEach { top = 4, right = 0, bottom = 0, left = 14 }, width fill ]
+            column [ spacing 5, paddingEach { top = 6, right = 0, bottom = 0, left = 12 }, width fill ]
                 (List.map bulletItem points)
 
 
 bulletItem : String -> Element msg
 bulletItem t =
-    row [ spacing 8, alignTop, width fill ]
-        [ el [ Font.size 11, Font.color accentColor, alignTop, Font.bold ] (text "•")
+    row [ spacing 10, alignTop, width fill ]
+        [ el [ Font.size 13, Font.color textColor, alignTop ] (text "•")
         , Element.paragraph
-            [ Font.size 11
+            [ Font.size 13
             , lineHeight 1.5
             ]
             [ text t ]
