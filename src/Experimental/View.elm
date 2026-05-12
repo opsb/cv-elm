@@ -26,38 +26,34 @@ primaryVariant =
     Elixir
 
 
-type alias Theme =
-    { panelBg : Color
-    , textColor : Color
-    , subtleColor : Color
-    , ruleColor : Color
-    , accentColor : Color
-    }
+textColor : Color
+textColor =
+    rgb255 28 28 32
 
 
-lightTheme : Theme
-lightTheme =
-    { panelBg = rgb255 255 255 255
-    , textColor = rgb255 34 34 38
-    , subtleColor = rgb255 130 130 138
-    , ruleColor = rgb255 180 180 188
-    , accentColor = rgb255 34 34 38
-    }
+subtleColor : Color
+subtleColor =
+    rgb255 130 130 138
 
 
-darkTheme : Theme
-darkTheme =
-    { panelBg = rgb255 56 56 64
-    , textColor = rgb255 240 240 244
-    , subtleColor = rgb255 180 180 190
-    , ruleColor = rgb255 100 100 116
-    , accentColor = rgb255 240 240 244
-    }
+ruleColor : Color
+ruleColor =
+    rgb255 30 30 34
 
 
-bgColor : Color
-bgColor =
-    rgb255 245 242 238
+accentColor : Color
+accentColor =
+    rgb255 246 217 39
+
+
+paperColor : Color
+paperColor =
+    rgb255 250 246 238
+
+
+outerBg : Color
+outerBg =
+    rgb255 232 228 220
 
 
 sans : Element.Attribute msg
@@ -88,22 +84,24 @@ lineHeight n =
 pageAttrs : List (Attribute msg)
 pageAttrs =
     [ sans
-    , Font.color lightTheme.textColor
-    , Background.color bgColor
+    , Font.color textColor
+    , Background.color outerBg
     , width fill
     , height fill
     , Font.size 13
-    , lineHeight 1.45
+    , lineHeight 1.5
     , paddingXY 0 40
     ]
 
 
 page : Element msg
 page =
-    row
-        [ width (fill |> maximum 920)
+    column
+        [ width (fill |> maximum 960)
         , centerX
-        , Background.color lightTheme.panelBg
+        , Background.color paperColor
+        , paddingXY 64 56
+        , spacing 32
         , Border.shadow
             { offset = ( 0, 4 )
             , size = 0
@@ -111,49 +109,13 @@ page =
             , color = rgba 0 0 0 0.08
             }
         ]
-        [ leftPanel
-        , rightPanel
-        ]
-
-
-
----- LEFT PANEL (dark) ----
-
-
-leftPanel : Element msg
-leftPanel =
-    column
-        [ width (fillPortion 3)
-        , height fill
-        , Background.color darkTheme.panelBg
-        , Font.color darkTheme.textColor
-        , paddingXY 32 56
-        , spacing 30
-        , alignTop
-        ]
-        [ sidebarSection darkTheme "Contact" (contactBlock darkTheme)
-        , sidebarSection darkTheme "Education" (educationBlock darkTheme)
-        , sidebarSection darkTheme "Open source" (openSourceBlock darkTheme)
-        , sidebarSection darkTheme "Skills" (skillsBlock darkTheme)
-        ]
-
-
-
----- RIGHT PANEL (light) ----
-
-
-rightPanel : Element msg
-rightPanel =
-    column
-        [ width (fillPortion 7)
-        , height fill
-        , paddingXY 44 56
-        , spacing 30
-        , alignTop
-        ]
         [ header
-        , sidebarSection lightTheme "About me" (aboutBlock lightTheme)
-        , sidebarSection lightTheme "Experience" (experienceBlock lightTheme)
+        , yellowRule
+        , bodyRow "Profile" aboutBlock
+        , bodyRow "Skills" skillsBlock
+        , bodyRow "Work Experience" experienceBlock
+        , bodyRow "Education" educationBlock
+        , bodyRow "Open Source" openSourceBlock
         ]
 
 
@@ -163,165 +125,169 @@ rightPanel =
 
 header : Element msg
 header =
-    column [ alignLeft, spacing 10, width fill ]
+    row [ width fill, spacing 30, alignTop ]
+        [ headerLeft
+        , headerRight
+        ]
+
+
+headerLeft : Element msg
+headerLeft =
+    el
+        [ alignTop
+        , width fill
+        , paddingEach { top = 16, right = 0, bottom = 12, left = 36 }
+        , behindContent yellowCircle
+        ]
+        (column [ spacing 6 ]
+            [ el
+                [ Font.size 46
+                , Font.bold
+                , letterSpacing -0.5
+                ]
+                (text Data.name)
+            , el
+                [ Font.size 16
+                , Font.regular
+                , Font.color textColor
+                ]
+                (text "Senior Elixir Engineer · Tech Lead")
+            ]
+        )
+
+
+yellowCircle : Element msg
+yellowCircle =
+    el
+        [ width (px 100)
+        , height (px 100)
+        , Background.color accentColor
+        , Border.rounded 50
+        , alignLeft
+        , alignTop
+        ]
+        none
+
+
+headerRight : Element msg
+headerRight =
+    column
+        [ alignRight
+        , alignTop
+        , spacing 12
+        , Font.size 12
+        , paddingEach { top = 8, right = 0, bottom = 0, left = 0 }
+        ]
+        [ contactRow "Email" "oliver@opsb.co.uk"
+        , contactRow "Location" "Barcelona, Spain · UK RTW"
+        , contactRow "GitHub" "github.com/opsb"
+        , contactRow "LinkedIn" "/in/oliversearlebarnes"
+        ]
+
+
+contactRow : String -> String -> Element msg
+contactRow label value =
+    row [ spacing 14, alignRight ]
         [ el
-            [ Font.size 44
-            , Font.light
-            , letterSpacing 2
-            , Font.color lightTheme.textColor
+            [ Font.size 10
+            , Font.color subtleColor
+            , letterSpacing 1.5
+            , width (px 70)
+            , Font.alignRight
             ]
-            (text (String.toUpper Data.name))
-        , el
-            [ Font.size 11
-            , Font.light
-            , letterSpacing 6
-            , Font.color lightTheme.subtleColor
-            ]
-            (text (String.toUpper "Senior Elixir Engineer · Tech Lead · Architect"))
+            (text (String.toUpper label))
+        , el [ Font.size 12, Font.color textColor ] (text value)
         ]
 
 
 
----- SECTION HEADERS ----
+---- YELLOW RULE ----
 
 
-sidebarSection : Theme -> String -> Element msg -> Element msg
-sidebarSection theme title body =
-    column [ spacing 14, width fill, alignTop ]
-        [ sectionHeader theme title
-        , body
+yellowRule : Element msg
+yellowRule =
+    el
+        [ width fill
+        , height (px 3)
+        , Background.color accentColor
+        ]
+        none
+
+
+
+---- BODY ROW: section label (narrow left) | content (wide right) ----
+
+
+bodyRow : String -> Element msg -> Element msg
+bodyRow label content =
+    row [ width fill, spacing 30, alignTop, paddingEach { top = 8, right = 0, bottom = 0, left = 0 } ]
+        [ el [ width (fillPortion 2), alignTop ] (sectionLabel label)
+        , el [ width (fillPortion 7), alignTop ] content
         ]
 
 
-sectionHeader : Theme -> String -> Element msg
-sectionHeader theme title =
-    column [ spacing 8, width fill ]
+sectionLabel : String -> Element msg
+sectionLabel s =
+    column [ spacing 6, alignTop ]
         [ el
-            [ Font.size 12
-            , Font.light
-            , letterSpacing 6
-            , Font.color theme.subtleColor
+            [ Font.size 18
+            , Font.bold
             ]
-            (text (String.toUpper title))
+            (text s)
         , el
-            [ width fill
-            , height (px 1)
-            , Background.color theme.ruleColor
+            [ width (px 32)
+            , height (px 2)
+            , Background.color ruleColor
             ]
             none
         ]
 
 
 
----- CONTACT ----
+---- ABOUT / PROFILE ----
 
 
-contactBlock : Theme -> Element msg
-contactBlock theme =
+aboutBlock : Element msg
+aboutBlock =
     column [ spacing 10, width fill ]
-        [ contactRow theme "Email" "oliver@opsb.co.uk"
-        , contactRow theme "Location" "Barcelona, Spain"
-        , contactRow theme "Right to work" "UK citizen · UK RTW"
-        , contactRow theme "GitHub" "github.com/opsb"
-        , contactRow theme "LinkedIn" "/in/oliversearlebarnes"
-        ]
-
-
-contactRow : Theme -> String -> String -> Element msg
-contactRow theme label value =
-    column [ spacing 1, width fill ]
-        [ el
-            [ Font.size 9
-            , letterSpacing 1.4
-            , Font.color theme.subtleColor
-            ]
-            (text (String.toUpper label))
-        , el [ Font.size 12, Font.color theme.textColor ] (text value)
-        ]
-
-
-
----- EDUCATION ----
-
-
-educationBlock : Theme -> Element msg
-educationBlock theme =
-    column [ spacing 14, width fill ]
-        (List.map (institutionItem theme) Data.education)
-
-
-institutionItem : Theme -> Institution -> Element msg
-institutionItem theme inst =
-    column [ spacing 2, width fill ]
-        [ el
-            [ Font.size 12
-            , Font.bold
-            , letterSpacing 1.5
-            , Font.color theme.textColor
-            ]
-            (text (String.toUpper inst.name))
-        , el [ Font.size 12, Font.color theme.textColor ] (text inst.course)
-        , el [ Font.size 11, Font.color theme.subtleColor ]
-            (text (String.fromInt inst.startYear ++ " – " ++ String.fromInt inst.endYear))
-        ]
-
-
-
----- OPEN SOURCE ----
-
-
-openSourceBlock : Theme -> Element msg
-openSourceBlock theme =
-    column [ spacing 14, width fill ]
-        (List.map (openSourceItem theme) Data.openSourceProjects)
-
-
-openSourceItem : Theme -> OpenSourceProject -> Element msg
-openSourceItem theme proj =
-    column [ spacing 2, width fill ]
-        [ el
-            [ Font.size 12
-            , Font.bold
-            , letterSpacing 1.2
-            , Font.color theme.textColor
-            ]
-            (text (String.toUpper proj.name))
-        , Element.paragraph [ Font.size 11, Font.color theme.subtleColor, lineHeight 1.4 ]
-            [ text proj.shortInvolvement
-            , text " · "
-            , text proj.language
-            ]
-        ]
+        (Data.introductionParagraphsFor primaryVariant
+            |> List.map
+                (\p ->
+                    Element.paragraph
+                        [ Font.size 13
+                        , lineHeight 1.55
+                        ]
+                        [ text p ]
+                )
+        )
 
 
 
 ---- SKILLS ----
 
 
-skillsBlock : Theme -> Element msg
-skillsBlock theme =
-    column [ spacing 16, width fill ]
-        (List.map (skillGroupItem theme) (Data.skillGroupsFor primaryVariant))
+skillsBlock : Element msg
+skillsBlock =
+    wrappedRow [ spacing 22, width fill ]
+        (List.map skillGroupItem (Data.skillGroupsFor primaryVariant))
 
 
-skillGroupItem : Theme -> SkillGroup -> Element msg
-skillGroupItem theme group =
-    column [ spacing 6, width fill ]
+skillGroupItem : SkillGroup -> Element msg
+skillGroupItem group =
+    column [ spacing 4, alignTop, width (px 170) ]
         [ el
             [ Font.size 11
             , Font.bold
             , letterSpacing 1.5
-            , Font.color theme.textColor
             ]
             (text (String.toUpper group.name))
-        , column [ spacing 3 ]
+        , column [ spacing 2 ]
             (group.skills
                 |> List.map
                     (\s ->
                         Element.paragraph
                             [ Font.size 11
-                            , Font.color theme.textColor
-                            , lineHeight 1.4
+                            , lineHeight 1.45
                             ]
                             [ text "• "
                             , text s.name
@@ -332,71 +298,125 @@ skillGroupItem theme group =
 
 
 
----- ABOUT ----
+---- EDUCATION ----
 
 
-aboutBlock : Theme -> Element msg
-aboutBlock theme =
-    column [ spacing 10, width fill ]
-        (Data.introductionParagraphsFor primaryVariant
-            |> List.map
-                (\p ->
-                    Element.paragraph
-                        [ Font.size 13
-                        , lineHeight 1.55
-                        , Font.color theme.textColor
-                        ]
-                        [ text p ]
-                )
-        )
+educationBlock : Element msg
+educationBlock =
+    column [ spacing 14, width fill ]
+        (List.map institutionItem Data.education)
+
+
+institutionItem : Institution -> Element msg
+institutionItem inst =
+    row [ width fill, spacing 25, alignTop ]
+        [ el [ Font.size 12, width (px 110), alignTop ]
+            (text (String.fromInt inst.startYear ++ " – " ++ String.fromInt inst.endYear))
+        , column [ spacing 2, alignTop, width fill ]
+            [ el [ Font.size 13, Font.bold ] (text inst.course)
+            , el [ Font.size 12, Font.color subtleColor ] (text inst.name)
+            ]
+        ]
+
+
+
+---- OPEN SOURCE ----
+
+
+openSourceBlock : Element msg
+openSourceBlock =
+    column [ spacing 12, width fill ]
+        (List.map openSourceItem Data.openSourceProjects)
+
+
+openSourceItem : OpenSourceProject -> Element msg
+openSourceItem proj =
+    column [ spacing 2, width fill ]
+        [ el
+            [ Font.size 12
+            , Font.bold
+            ]
+            (text proj.name)
+        , Element.paragraph [ Font.size 11, Font.color subtleColor, lineHeight 1.4 ]
+            [ text proj.shortInvolvement
+            , text " · "
+            , text proj.language
+            ]
+        ]
 
 
 
 ---- EXPERIENCE ----
 
 
-experienceBlock : Theme -> Element msg
-experienceBlock theme =
-    column [ spacing 26, width fill ]
+experienceBlock : Element msg
+experienceBlock =
+    column
+        [ spacing 24
+        , width fill
+        , Border.widthEach { top = 0, right = 0, bottom = 0, left = 2 }
+        , Border.color accentColor
+        , paddingEach { top = 0, right = 0, bottom = 0, left = 20 }
+        ]
         (Data.experiencePositionsFor primaryVariant
-            |> List.map (positionBlock theme)
+            |> List.map positionBlock
         )
 
 
-positionBlock : Theme -> Position -> Element msg
-positionBlock theme position =
-    column [ spacing 8, width fill ]
-        [ el
-            [ Font.size 12
-            , Font.bold
-            , letterSpacing 2
-            , alignLeft
-            , Font.color theme.textColor
-            ]
-            (text (String.toUpper (positionCompanyLine position)))
-        , el
-            [ Font.size 13
-            , Font.italic
-            , Font.color theme.textColor
-            ]
-            (text (Data.positionTitle primaryVariant position))
-        , companyStackLine theme position.companyStack
-        , column [ spacing 10, width fill ]
-            (List.map (projectBlock theme) position.projects)
+positionBlock : Position -> Element msg
+positionBlock position =
+    row [ width fill, spacing 24, alignTop ]
+        [ positionLeftMeta position
+        , positionRightContent position
         ]
 
 
-positionCompanyLine : Position -> String
-positionCompanyLine position =
-    let
-        company =
-            position.company |> String.replace "\n" ""
-    in
-    company ++ "  ·  " ++ position.dates
+positionLeftMeta : Position -> Element msg
+positionLeftMeta position =
+    column
+        [ width (px 130)
+        , alignTop
+        , spacing 3
+        ]
+        [ el
+            [ Font.size 12
+            , Font.bold
+            ]
+            (text position.dates)
+        , el
+            [ Font.size 12
+            , Font.color subtleColor
+            ]
+            (text (positionCompanyClean position.company))
+        , el
+            [ Font.size 11
+            , Font.color subtleColor
+            ]
+            (text position.location)
+        ]
 
 
-companyStackLine : Theme -> List String -> Element msg
-companyStackLine theme stack =
+positionCompanyClean : String -> String
+positionCompanyClean company =
+    String.replace "\n" "" company
+
+
+positionRightContent : Position -> Element msg
+positionRightContent position =
+    column [ spacing 6, alignTop, width fill ]
+        [ el
+            [ Font.size 14
+            , Font.bold
+            ]
+            (text (Data.positionTitle primaryVariant position))
+        , companyStackLine position.companyStack
+        , column [ spacing 10, width fill ]
+            (List.map projectBlock position.projects)
+        ]
+
+
+companyStackLine : List String -> Element msg
+companyStackLine stack =
     case stack of
         [] ->
             none
@@ -404,50 +424,47 @@ companyStackLine theme stack =
         _ ->
             el
                 [ Font.size 11
-                , Font.color theme.subtleColor
+                , Font.color subtleColor
                 , letterSpacing 0.5
                 ]
                 (text (String.join " / " stack))
 
 
-projectBlock : Theme -> Project -> Element msg
-projectBlock theme project =
-    column [ spacing 6, width fill ]
+projectBlock : Project -> Element msg
+projectBlock project =
+    column [ spacing 5, width fill ]
         [ el
-            [ Font.size 13
+            [ Font.size 12
             , Font.bold
-            , Font.color theme.textColor
             ]
             (text project.name)
         , Element.paragraph
             [ Font.size 12
             , lineHeight 1.5
-            , Font.color theme.textColor
             ]
             [ text project.overview ]
-        , talkingPointsBlock theme project.talkingPoints
+        , talkingPointsBlock project.talkingPoints
         ]
 
 
-talkingPointsBlock : Theme -> List String -> Element msg
-talkingPointsBlock theme points =
+talkingPointsBlock : List String -> Element msg
+talkingPointsBlock points =
     case points of
         [] ->
             none
 
         _ ->
-            column [ spacing 4, paddingEach { top = 4, right = 0, bottom = 0, left = 14 }, width fill ]
-                (List.map (bulletItem theme) points)
+            column [ spacing 3, paddingEach { top = 4, right = 0, bottom = 0, left = 14 }, width fill ]
+                (List.map bulletItem points)
 
 
-bulletItem : Theme -> String -> Element msg
-bulletItem theme t =
+bulletItem : String -> Element msg
+bulletItem t =
     row [ spacing 8, alignTop, width fill ]
-        [ el [ Font.size 11, Font.color theme.subtleColor, alignTop ] (text "•")
+        [ el [ Font.size 11, Font.color accentColor, alignTop, Font.bold ] (text "•")
         , Element.paragraph
             [ Font.size 11
             , lineHeight 1.5
-            , Font.color theme.textColor
             ]
             [ text t ]
         ]
