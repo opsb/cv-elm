@@ -48,7 +48,7 @@ a4PagesLayout =
 
 overviewPage : Element msg
 overviewPage =
-    Atom.a4Page [ htmlAttribute (Html.Attributes.style "overflow" "visible") ] <|
+    Atom.a4Page [] <|
         row [ width fill, height fill ]
             [ pagePersonalDetailsSection
             , Atom.pageColumn [ spacing 25 ]
@@ -236,7 +236,7 @@ experiencePage1Block =
 
 experiencePage : Element msg
 experiencePage =
-    Atom.a4Page [ htmlAttribute (Html.Attributes.style "overflow" "visible") ] <|
+    Atom.a4Page [] <|
         column [ width fill, height fill ]
             [ el
                 [ width fill
@@ -250,13 +250,13 @@ experiencePage =
                     "Experience — continued"
                 )
             , row [ width fill, height fill ]
-                [ Atom.pageColumn [ spacing 18 ]
+                [ Atom.pageColumn [ spacing 14, paddingXY 20 10 ]
                     (List.map positionView page2Col1Positions)
                 , Atom.verticalDivider
-                , Atom.pageColumn [ spacing 18 ]
+                , Atom.pageColumn [ spacing 14, paddingXY 20 10 ]
                     (List.map positionView page2Col2Positions)
                 , Atom.verticalDivider
-                , Atom.pageColumn [ spacing 18 ]
+                , Atom.pageColumn [ spacing 14, paddingXY 20 10 ]
                     (List.map positionView page2Col3Positions)
                 ]
             ]

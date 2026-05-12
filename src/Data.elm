@@ -356,12 +356,12 @@ experience =
             [ { name = "Alfie (AI affiliate recruitment)"
               , start = 2025
               , end = 2026
-              , overview = "Built Alfie, AI agent scouts that autonomously discover, evaluate, and reach out to affiliate partners, learning user preferences. Shipped MVP in three weeks and validated strong demand. On-demand scale limits informed the company's next phase: building the world's largest affiliate database."
+              , overview = "Co-founded the spin-out and built Alfie — AI agent scouts that autonomously discover, evaluate, and reach out to affiliate partners while learning user preferences."
               , stack = [ "AI/LLMs", "NextJS", "Postgres" ]
               , talkingPoints =
-                    [ "Specified LLM-driven evaluation and personalised outreach pipelines, replacing multi-day manual research with a fully autonomous agent workflow."
+                    [ "Shipped the MVP in three weeks; strong early demand validated the model and informed the company's next phase (the world's largest affiliate database)."
+                    , "Specified LLM-driven evaluation and personalised outreach pipelines, replacing multi-day manual research with a fully autonomous agent workflow."
                     , "Drove integrations with affiliate networks (Everflow) and built the plan-based subscription model on Stripe."
-                    , "Ran the customer discovery that identified the opportunity and proposed the AI-powered direction the company spun out around."
                     ]
               }
             ]
@@ -378,12 +378,11 @@ experience =
             [ { name = "XP Affiliate Platform"
               , start = 2024
               , end = 2025
-              , overview = "Led engineering on a high-performance affiliate platform. When the product stalled, ran customer discovery and proposed an AI-powered affiliate recruitment product, spun out as xpflow with me on the founding team."
+              , overview = "Led engineering on a high-performance affiliate platform, then ran customer discovery that pivoted the company."
               , stack = [ "NextJS", "Postgres", "Redis" ]
               , talkingPoints =
-                    [ "Led the engineering team delivering the affiliate platform on NextJS / Postgres / Redis."
-                    , "Ran the customer discovery process that identified the product-market gap behind the commercial stall."
-                    , "Proposed and architected the AI-powered recruitment direction that became Alfie and spun out as xpflow."
+                    [ "Led the engineering team delivering the platform on NextJS / Postgres / Redis."
+                    , "Proposed and architected the AI-powered recruitment direction that spun out as xpflow."
                     ]
               }
             ]
@@ -400,12 +399,11 @@ experience =
             [ { name = "Tastermonial App"
               , start = 2023
               , end = 2023
-              , overview = "Replaced the previous MVP with a high-performance Flutter/Phoenix mobile app on AWS. Inherited unstable code, slow performance, and no deployment infrastructure; rebuilt the engineering function with CI/CD pipelines from scratch and left the team set up to continue independently."
+              , overview = "Engaged as interim CTO to replace the previous MVP with a production-grade Flutter/Phoenix mobile app on AWS."
               , stack = [ "Elixir", "Flutter", "Sqlite", "Postgres", "AWS/Terraform" ]
               , talkingPoints =
                     [ "Inherited unstable code, slow performance and no deployment infrastructure; left the engineering function stable and scalable."
-                    , "Established CI/CD pipelines from scratch on AWS, managed via Terraform."
-                    , "Closed the engagement cleanly with the team set up to continue independently."
+                    , "Established CI/CD pipelines from scratch and closed the engagement cleanly with the team set up to continue independently."
                     ]
               }
             ]
@@ -422,22 +420,13 @@ experience =
             [ { name = "API and Platform Services"
               , start = 2021
               , end = 2023
-              , overview = "Joined the API team at this health and beauty unicorn. Designed the API authorization model, built the third-party App Store, introduced rate limiting under high-volume load, and resolved performance bottlenecks across the API surface."
+              , overview = "Joined the API team at this health & beauty unicorn, shipping core platform infrastructure."
               , stack = [ "Elixir", "Absinthe", "Postgres", "React", "Typescript", "AWS/Terraform" ]
               , talkingPoints =
-                    [ "Designed and shipped the API authorization model governing how permissions are evaluated across services."
-                    , "Built out the third-party App Store, enabling external developers to integrate with the platform."
-                    , "Introduced rate limiting across the API to protect platform stability under high-volume load."
-                    , "Identified and resolved performance bottlenecks across the API surface."
-                    , "HIPAA logging & compliance — biggest body of work. Introduced Blvd.Hipaa.Logger, log events, user enrichment, ctx graphs; tracked create/find/update/delete on Client, custom-form ops, and shadowing-aware field masking (Absinthe middleware). Tickets: API-635, API-742, API-630."
-                    , "Encrypted appointment notes — multi-PR migration (API-781): introduced encrypted column, migrated clear-text notes/private_notes, updated CalendarEvents view (v2→v3→v4), dropped legacy columns. Also migrated client medications/allergies to Notes."
-                    , "Rate limiting — built the leaky-bucket rate limiter for GraphQL pipelines (API-369), per-API-application quotas, per-pipeline custom policies, throttling feature flag, telemetry attributes, property tests, and corrupt-bucket recovery."
-                    , "Webhooks — migrated webhooks from Exq → Oban (twice — second time stuck), added retries (API-287), appointment.updated event (API-1566)."
-                    , "App platform / developer portal — app suspensions & reinstatement (API-1466), default app quotas (API-1408), sandbox createClient (API-1433), app uninstall cleanup (API-1370), app enrichment for Datadog (API-1415), icons + install counts, dev-portal devn envs."
-                    , "Observability — OpenTelemetry APM (API-288), Absinthe query logging (API-831), login observability (API-1590), flaky-test author notifications, ExtCache.cached_all."
-                    , "GraphQL infra — custom Absinthe response mapping so the rate limiter can return 429s (API-941), TestApi graph, appointment-reschedule mutations in PlatformAdmin (API-284 / API-974), appointmentRescheduleSeries."
-                    , "Auth — passwordless email/SMS cart checkout, Zapier OAuth for multi-business staff (API-676), better multi-client auth errors (API-827), an in-progress security-settings feature (API-1591)."
-                    , "Dev tooling — introduced and grew the justfile, auto AWS SSO login, psql instance routing, replica-DB read paths, dialyzer :contracts enforcement, a credo check to ban :meck in async tests."
+                    [ "Led HIPAA logging & compliance."
+                    , "Designed the API authorization model governing permission evaluation across services."
+                    , "Built the leaky-bucket GraphQL rate limiter with per-application quotas and per-pipeline policies."
+                    , "Built the third-party App Store enabling external developer integrations."
                     ]
               }
             ]
@@ -454,12 +443,10 @@ experience =
             [ { name = "Kobold"
               , start = 2021
               , end = 2021
-              , overview = "Bootstrapped an Elixir team at this global consumer appliance giant to provide cloud services and a Python client library for a new line of commercial robot vacuum cleaners."
+              , overview = "Bootstrapped an Elixir team at this consumer appliance giant, building cloud services for a new line of commercial robot vacuum cleaners."
               , stack = [ "Elixir", "Python", "Postgres", "AWS/Terraform" ]
               , talkingPoints =
-                    [ "Established the Elixir/Phoenix backend from scratch and built the Python client library for the device-side integration."
-                    , "Led the team through the technical foundation work and set up the development workflow."
-                    , "Shipped to production on schedule for the commercial launch."
+                    [ "Established the backend, Python client library, and development workflow from scratch; shipped on schedule for the commercial launch."
                     ]
               }
             ]
@@ -476,12 +463,12 @@ experience =
             [ { name = "MoneyHub"
               , start = 2019
               , end = 2021
-              , overview = "Rebuilt Bean.com as a high-performance Elixir service for this leading UK price-comparison site, integrating the majority of UK high street banks via Open Banking. Navigated the regulatory complexity of FCA-authorised account information services."
+              , overview = "Rebuilt Bean.com as a high-performance Elixir service for this leading UK price-comparison site."
               , stack = [ "Elixir", "GraphQL", "Elm", "Javascript", "Ruby", "Postgres", "AWS" ]
               , talkingPoints =
-                    [ "Navigated the regulatory and technical complexity of FCA-authorised account information services."
-                    , "Took the product from its earlier implementation to a substantially faster, more reliable platform able to support the customer base at scale."
-                    , "Bean lets users manage subscriptions across all their accounts in one place; long-running engagement spanned the rebuild and subsequent feature work."
+                    [ "Integrated the majority of UK high street banks via the Open Banking specification."
+                    , "Navigated the regulatory and technical complexity of FCA-authorised account information services."
+                    , "Took the platform to substantially faster and more reliable at scale."
                     ]
               }
             ]
@@ -498,11 +485,10 @@ experience =
             [ { name = "Video Annotation Editor"
               , start = 2018
               , end = 2018
-              , overview = "Designed and built two Elm apps to collect video gesture training data from Amazon Mechanical Turk workers for this computer vision AI company. Annotation workflows fed directly into the model training pipelines — frontend engineering at the intersection of AI data infrastructure."
+              , overview = "Designed and built two Elm apps to collect video gesture training data from Mechanical Turk workers for this computer vision AI company."
               , stack = [ "Elm", "Javascript" ]
               , talkingPoints =
-                    [ "Designed the annotation workflows and built the interfaces that fed directly into TwentyBN's model training pipelines."
-                    , "Worked at the intersection of front-end engineering and AI data infrastructure, ensuring captured data was structured to support downstream training."
+                    [ "Annotation workflows fed directly into TwentyBN's model training pipelines — frontend engineering at the intersection of AI data infrastructure."
                     ]
               }
             ]
@@ -519,10 +505,10 @@ experience =
             [ { name = "Salesforce Integration"
               , start = 2018
               , end = 2018
-              , overview = "Built an Elixir/RabbitMQ microservice connecting this wealth management fintech's Rails platform to Salesforce, supporting CRM and operational workflows. Used RabbitMQ for asynchronous, reliable message delivery across the integration boundary."
+              , overview = "Built an Elixir/RabbitMQ microservice connecting this wealth management fintech's Rails platform to Salesforce."
               , stack = [ "Elixir", "Ruby on Rails", "RabbitMQ", "Salesforce", "Docker", "GraphQL" ]
               , talkingPoints =
-                    [ "Designed and shipped the microservice connecting the Rails platform to Salesforce, supporting CRM and operational workflows."
+                    [ "Designed and shipped the microservice supporting CRM and operational workflows."
                     , "Used RabbitMQ for asynchronous, reliable message delivery across the integration boundary."
                     ]
               }
@@ -540,12 +526,14 @@ experience =
             [ { name = "Feeds"
               , start = 2016
               , end = 2017
-              , overview = "Led the development of a white-labelled realtime community platform. Implemented an event-sourcing architecture on top of Phoenix Channels for the realtime front end, designed an embedding API with widgets and SSO integration for 3rd-party platforms, and built full-stack testing infrastructure running multiple concurrent browser instances."
+              , overview = "VP Engineering at Zapnito, leading delivery of Feeds — a white-labelled realtime community platform serving multiple B2B publishers."
               , stack = [ "Phoenix", "Phoenix-Channels", "Elixir", "Elm", "Javascript", "JWT", "Auth0", "Postgres", "Kanban", "BDD" ]
               , talkingPoints =
-                    [ "Implemented an Event Sourcing architecture to power the realtime front end built on top of Phoenix's websocket based channels."
-                    , "Designed API for embedding product within 3rd party platforms including a variety of widgets and seamless integration with Single Sign On."
-                    , "Built testing infrastructure that allowed full stack testing in multiple concurrent browser instances."
+                    [ "Implemented an event-sourcing architecture on top of Phoenix Channels powering the realtime front end."
+                    , "Designed an embedding API with widgets and seamless SSO integration for 3rd-party publisher platforms."
+                    , "Built full-stack testing infrastructure running multiple concurrent browser instances."
+                    , "Hired and grew the engineering team across the period."
+                    , "Took the product from prototype to stable multi-tenant SaaS."
                     ]
               }
 
@@ -597,9 +585,15 @@ experience =
             [ { name = "Myschooldirect & Give4Sure (M&S acquisition, 2014)"
               , start = 2010
               , end = 2014
-              , overview = "Quidco-style school-shopping platform with a browser-extension companion (Give4Sure) and a bespoke Marks & Spencer school-uniform store line. The M&S uniform line was acquired by Marks & Spencer in 2014 and taken in-house."
+              , overview = "Co-founded a Quidco-style school-shopping affiliate platform with a browser-extension companion (Give4Sure) and a bespoke Marks & Spencer school-uniform store line."
               , stack = [ "Browser extensions", "Ruby on Rails", "Postgres", "Ember.js" ]
-              , talkingPoints = []
+              , talkingPoints =
+                    [ "M&S uniform line acquired by Marks & Spencer in 2014 and taken in-house."
+                    , "Built browser extension to handle high volume with low infrastructure costs."
+                    , "Developed a monitoring system to detect broken/incorrect affiliate links from third-party networks."
+                    , "Devised a compression-based algorithm for identifying when web pages matched within a given tolerance."
+                    , "Integrated multiple affiliate networks and automated tracking of purchases and payments to schools."
+                    ]
               }
             ]
         }
@@ -616,10 +610,10 @@ experience =
               , start = 2007
               , end = 2008
               , stack = [ "Java", "Spring", "MS Analytics services", "Oracle DB", "Scrum", "TDD" ]
-              , overview = "Led team to replace Informa Telecom's flagship product (WCIS), a mobile markets intelligence platform covering 226 countries."
+              , overview = "Led the team replacing Informa Telecom's flagship product (WCIS) — a mobile markets intelligence platform covering 226 countries."
               , talkingPoints =
-                    [ "Used incremental approach with frequent releases to gradually shift product over to new architecture without disrupting the live service or requiring parallel development."
-                    , "Introduced clover to track test coverage and promote a TDD approach"
+                    [ "Used incremental releases to migrate the live service to a new architecture without disrupting customers or requiring parallel development."
+                    , "Introduced Clover for test coverage and drove the adoption of TDD across the team."
                     ]
               }
             -- , { name = "World Broadband Information Service"
@@ -637,9 +631,9 @@ experience =
               , start = 2008
               , end = 2010
               , stack = [ "Java/Spring", "Oracle DB", "Scrum", "BDD" ]
-              , overview = "Devised a webdav based CMS allowing Journalists to edit articles in MS Word."
+              , overview = "Devised a WebDAV-based CMS allowing journalists to edit articles directly in Microsoft Word."
               , talkingPoints =
-                    [ "Devised a webdav based system that allowed journalists to edit articles directly in MS Word. The system allowed journalists to hit save in Word and instantly see a preview on the live site."
+                    [ "Journalists could hit Save in Word and instantly see a preview on the live site, eliminating editorial workflow friction for time-sensitive publication."
                     ]
               }
             ]
