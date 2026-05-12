@@ -316,16 +316,16 @@ page2Col3Positions =
 
 positionView : Position -> Element msg
 positionView position =
-    column [ spacing 6, width fill, paddingEach { top = 0, right = 0, bottom = 8, left = 0 } ]
+    column [ spacing 4, width fill, paddingEach { top = 0, right = 0, bottom = 8, left = 0 } ]
         [ row [ width fill, spacing 10 ]
-            [ column [ spacing 2, alignTop, width fill ]
-                [ Atom.title3 [ Font.size 15, paddingEach { top = 0, right = 0, bottom = 2, left = 0 } ] (String.replace "\n" "" position.company)
-                , Element.paragraph [ titleFont, Font.size 13, Font.bold, Font.color Colors.red ] [ text (Data.positionTitle primaryVariant position) ]
-                , companyStackLine position.companyStack
-                , Atom.bodyText [ Font.size 10, Font.regular ] (position.dates ++ "  ·  " ++ String.replace "\n" "" position.location)
-                ]
+            [ el [ alignLeft ] (Atom.title3 [ Font.size 15, paddingEach { top = 0, right = 0, bottom = 0, left = 0 } ] (String.replace "\n" "" position.company))
+            , el [ alignRight ] (Element.paragraph [ titleFont, Font.size 13, Font.bold, Font.color Colors.red, Font.alignRight ] [ text (Data.positionTitle primaryVariant position) ])
             ]
-        , column [ spacing 8, width fill ]
+        , row [ width fill, spacing 10 ]
+            [ el [ alignLeft ] (companyStackLine position.companyStack)
+            , el [ alignRight ] (Atom.bodyText [ Font.size 10, Font.regular ] position.dates)
+            ]
+        , column [ spacing 8, width fill, paddingEach { top = 4, right = 0, bottom = 0, left = 0 } ]
             (List.map projectView position.projects)
         ]
 
