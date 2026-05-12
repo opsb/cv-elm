@@ -400,7 +400,7 @@ experience =
             [ { name = "Tastermonial App"
               , start = 2023
               , end = 2023
-              , overview = "Replaced MVP with a high-performance Flutter/Phoenix mobile app, running on AWS with supporting build pipelines."
+              , overview = "Replaced the previous MVP with a high-performance Flutter/Phoenix mobile app on AWS. Inherited unstable code, slow performance, and no deployment infrastructure; rebuilt the engineering function with CI/CD pipelines from scratch and left the team set up to continue independently."
               , stack = [ "Elixir", "Flutter", "Sqlite", "Postgres", "AWS/Terraform" ]
               , talkingPoints =
                     [ "Inherited unstable code, slow performance and no deployment infrastructure; left the engineering function stable and scalable."
@@ -416,14 +416,14 @@ experience =
         , elixirTitle = "Senior 2 Engineer"
         , location = "Los Angeles / Remote"
         , company = "Boulevard"
-        , companyStack = [ "Elixir", "Phoenix", "Absinthe", "React" ]
+        , companyStack = [ "Elixir", "Phoenix", "React" ]
         , dates = "Oct 2021-Jun 2023"
         , projects =
             [ { name = "API and Platform Services"
               , start = 2021
               , end = 2023
-              , overview = "Joined the API team at this health and beauty unicorn to scale platform services and integrations with 3rd party services."
-              , stack = [ "Elixir", "Postgres", "React", "Typescript", "AWS/Terraform" ]
+              , overview = "Joined the API team at this health and beauty unicorn. Designed the API authorization model, built the third-party App Store, introduced rate limiting under high-volume load, and resolved performance bottlenecks across the API surface."
+              , stack = [ "Elixir", "Absinthe", "Postgres", "React", "Typescript", "AWS/Terraform" ]
               , talkingPoints =
                     [ "Designed and shipped the API authorization model governing how permissions are evaluated across services."
                     , "Built out the third-party App Store, enabling external developers to integrate with the platform."
@@ -445,7 +445,7 @@ experience =
             [ { name = "Kobold"
               , start = 2021
               , end = 2021
-              , overview = "Bootstrapped an Elixir/Phoenix team at this global consumer appliance giant to provide cloud services and a Python client for a new line of commercial robot vacuum cleaners."
+              , overview = "Bootstrapped an Elixir/Phoenix team at this global consumer appliance giant to provide cloud services and a Python client library for a new line of commercial robot vacuum cleaners."
               , stack = [ "Elixir", "Python", "Postgres", "AWS/Terraform" ]
               , talkingPoints =
                     [ "Established the Elixir/Phoenix backend from scratch and built the Python client library for the device-side integration."
@@ -467,7 +467,7 @@ experience =
             [ { name = "MoneyHub"
               , start = 2019
               , end = 2021
-              , overview = "Rebuilt Bean.com as a high-performance Elixir service for this leading UK price-comparison site, integrating the majority of high street banks via Open Banking."
+              , overview = "Rebuilt Bean.com as a high-performance Elixir service for this leading UK price-comparison site, integrating the majority of UK high street banks via Open Banking. Navigated the regulatory complexity of FCA-authorised account information services."
               , stack = [ "Elixir", "GraphQL", "Elm", "Javascript", "Ruby", "Postgres", "AWS" ]
               , talkingPoints =
                     [ "Navigated the regulatory and technical complexity of FCA-authorised account information services."
@@ -489,7 +489,7 @@ experience =
             [ { name = "Video Annotation Editor"
               , start = 2018
               , end = 2018
-              , overview = "Designed and built two Elm apps to collect video gesture training data from Amazon Mechanical Turk workers for this computer vision AI company."
+              , overview = "Designed and built two Elm apps to collect video gesture training data from Amazon Mechanical Turk workers for this computer vision AI company. Annotation workflows fed directly into the model training pipelines — frontend engineering at the intersection of AI data infrastructure."
               , stack = [ "Elm", "Javascript" ]
               , talkingPoints =
                     [ "Designed the annotation workflows and built the interfaces that fed directly into TwentyBN's model training pipelines."
@@ -510,7 +510,7 @@ experience =
             [ { name = "Salesforce Integration"
               , start = 2018
               , end = 2018
-              , overview = "Built an Elixir/RabbitMQ microservice to integrate this wealth management fintech's Rails app with Salesforce."
+              , overview = "Built an Elixir/RabbitMQ microservice connecting this wealth management fintech's Rails platform to Salesforce, supporting CRM and operational workflows. Used RabbitMQ for asynchronous, reliable message delivery across the integration boundary."
               , stack = [ "Elixir", "Ruby on Rails", "RabbitMQ", "Salesforce", "Docker", "GraphQL" ]
               , talkingPoints =
                     [ "Designed and shipped the microservice connecting the Rails platform to Salesforce, supporting CRM and operational workflows."
@@ -531,7 +531,7 @@ experience =
             [ { name = "Feeds"
               , start = 2016
               , end = 2017
-              , overview = "Led the development of a white-labelled realtime community platform."
+              , overview = "Led the development of a white-labelled realtime community platform. Implemented an event-sourcing architecture on top of Phoenix Channels for the realtime front end, designed an embedding API with widgets and SSO integration for 3rd-party platforms, and built full-stack testing infrastructure running multiple concurrent browser instances."
               , stack = [ "Phoenix", "Phoenix-Channels", "Elixir", "Elm", "Javascript", "JWT", "Auth0", "Postgres", "Kanban", "BDD" ]
               , talkingPoints =
                     [ "Implemented an Event Sourcing architecture to power the realtime front end built on top of Phoenix's websocket based channels."
@@ -585,37 +585,12 @@ experience =
         , companyStack = [ "Rails", "Postgres", "Ember" ]
         , dates = "2010–2014"
         , projects =
-            [ { name = "Give4Sure"
-              , start = 2012
-              , end = 2014
-              , overview = "A browser plugin helping shoppers raise money for their chosen charities."
-              , stack = [ "Browser extensions", "Ruby on Rails", "Postgres", "Ember.js", "Kanban", "BDD" ]
-              , talkingPoints =
-                    [ "Built browser extension to handle high volume but with low infrastructure costs."
-                    , "Developed a monitoring system to identify broken/incorrect links received from our 3rd party affiliate networks."
-                    , "Devised a compression based algorithm for identifying when web pages matched within a given tolerance."
-                    , "Browser extension designed to receive updates in near realtime so that broken affiliate links were removed before causing any user issues."
-                    ]
-              }
-            , { name = "Marks and Spencer School Uniforms"
-              , start = 2011
-              , end = 2012
-              , overview = "An online store for schools to create their own Marks and Spencer uniforms; M&S later bought out the project and took it in-house."
-              , stack = [ "Ruby on Rails", "Postgres", "Kanban", "BDD" ]
-              , talkingPoints =
-                    [ "Built online catalogue that allowed schools to sign up and create their own bespoke uniform online."
-                    ]
-              }
-            , { name = "myschooldirect.com"
+            [ { name = "Myschooldirect & Give4Sure (M&S acquisition, 2014)"
               , start = 2010
-              , end = 2011
-              , overview = "A Quidco style site helpers shoppers raise money for their children's school."
-              , stack = [ "Ruby on rails", "Postgres", "Kanban", "BDD" ]
-              , talkingPoints =
-                    [ "Built shopping catalogue."
-                    , "Integrated several affiliate networks."
-                    , "Automated tracking of purchases and payment to schools."
-                    ]
+              , end = 2014
+              , overview = "Quidco-style school-shopping platform with a browser-extension companion (Give4Sure) and a bespoke Marks & Spencer school-uniform store line. The M&S uniform line was acquired by Marks & Spencer in 2014 and taken in-house."
+              , stack = [ "Browser extensions", "Ruby on Rails", "Postgres", "Ember.js" ]
+              , talkingPoints = []
               }
             ]
         }
