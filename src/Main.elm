@@ -116,7 +116,7 @@ mobileLayout variant =
     [ layout [ Atom.bodyTextFont ]
         (column [ width fill, spacing 20 ]
             [ mobilePersonalDetailsSection variant
-            , mobileSection "Introduction" introductionSection
+            , mobileSection "Introduction" (introductionSection variant)
             , Atom.horizontalDivider
             , mobileSection "Skills" (skillsSection variant)
             , Atom.horizontalDivider
@@ -211,7 +211,7 @@ overviewPage variant =
             [ width fill, height fill ]
             [ pagePersonalDetailsSection variant
             , Atom.pageColumn [ spacing 25 ]
-                [ pageSection "Introduction" introductionSection
+                [ pageSection "Introduction" (introductionSection variant)
                 , pageSection "Skills" (skillsSection variant)
                 ]
             , Atom.verticalDivider
@@ -292,14 +292,12 @@ experiencePage variant =
 ---- SECTIONS ----
 
 
-introductionSection : Element msg
-introductionSection =
+introductionSection : Variant -> Element msg
+introductionSection variant =
     column [ spacing 15 ]
-        [ Atom.paragraph [] [ text "Building software that people actually love to use is what gets me going. With 22 years experience I've delivered successful products for the AI, Fintech, SaaS, Telecoms, Retail, Publishing, Energy, Charity, Health and Beauty, and Domestic appliance sectors." ]
-        , Atom.paragraph [] [ text "I've led teams building computer vision training pipelines at TwentyBN, Open Banking integration across UK high street banks at CompareTheMarket, IoT cloud services for commercial robot vacuums at Vorwerk, an event-sourced real-time community platform at Zapnito, and a WebDAV-based CMS that let Informa's journalists edit articles directly in Microsoft Word." ]
-        , Atom.paragraph [] [ text "Most recently founding engineer at xpflow; previously co-founded a school e-commerce business later taken in-house by Marks & Spencer." ]
-        , Atom.paragraph [] [ text "Agile from day one; comfortable owning the engineering function or contributing within an established team." ]
-        ]
+        (Data.introductionParagraphsFor variant
+            |> List.map (\paragraph -> Atom.paragraph [] [ text paragraph ])
+        )
 
 
 openSourceSection : Element msg
@@ -395,6 +393,7 @@ mobilePositionView variant position =
                     , el [ alignLeft ]
                         (Atom.title2 [] position.company)
                     , Element.paragraph [ alignLeft, titleFont, Font.size 16, Font.semiBold, letterSpacing -0.2, Font.color Colors.red ] [ text (Data.positionTitle variant position) ]
+                    , el [ alignLeft ] (companyStackLine 13 position.companyStack)
                     , el [ alignLeft ] (Atom.bodyText [] position.dates)
                     , el [ alignLeft ] (Atom.bodyText [] position.location)
                     ]
@@ -408,16 +407,33 @@ mobilePositionView variant position =
 
 positionView : Variant -> Position -> Element msg
 positionView variant position =
-    row [ width fill, spacing 0 ]
+    row [ width fill, spacing 12 ]
         [ column [ width (fillPortion 7), spacing 3, alignTop ]
             [ Atom.title3 [ Font.size 16, paddingEach { top = 0, right = 0, bottom = 5, left = 0 } ] position.company
             , Element.paragraph [ titleFont, Font.size 12, Font.color Colors.red ] [ text (Data.positionTitle variant position) ]
+            , companyStackLine 10 position.companyStack
             , Atom.bodyText [ Font.size 10, Font.regular ] position.dates
             , Atom.bodyText [ Font.size 10, Font.regular ] position.location
             ]
         , column [ spacing 15, width (fillPortion 22) ]
             (List.map projectView position.projects)
         ]
+
+
+companyStackLine : Int -> List String -> Element msg
+companyStackLine size stack =
+    case stack of
+        [] ->
+            Element.none
+
+        _ ->
+            Atom.paragraph
+                [ Font.size size
+                , Font.color Colors.grey
+                , Font.medium
+                , paddingEach { top = 2, right = 0, bottom = 2, left = 0 }
+                ]
+                [ text (String.join " / " stack) ]
 
 
 projectView : Project -> Element msg
