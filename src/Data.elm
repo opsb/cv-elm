@@ -279,7 +279,7 @@ engineerXpflow =
     , elixirTitle = "Tech Lead"
     , location = "Dallas / Remote"
     , company = "Tree3 / xpflow"
-    , companyStack = [ "Next.js", "Postgres", "AI agents" ]
+    , companyStack = [ "Next.js", "AI agents" ]
     , dates = "Jan 2024-Apr 2026"
     , projects = experience.xpflow.projects ++ experience.tree3.projects
     }
@@ -350,7 +350,7 @@ experience =
         , elixirTitle = "Co-founder, Tech Lead"
         , location = "Dallas / Remote"
         , company = "xpflow"
-        , companyStack = [ "Next.js", "Postgres", "AI agents" ]
+        , companyStack = [ "Next.js", "AI agents" ]
         , dates = "Feb 2025-Apr 2026"
         , projects =
             [ { name = "Alfie (AI affiliate recruitment)"
@@ -429,6 +429,15 @@ experience =
                     , "Built out the third-party App Store, enabling external developers to integrate with the platform."
                     , "Introduced rate limiting across the API to protect platform stability under high-volume load."
                     , "Identified and resolved performance bottlenecks across the API surface."
+                    , "HIPAA logging & compliance — biggest body of work. Introduced Blvd.Hipaa.Logger, log events, user enrichment, ctx graphs; tracked create/find/update/delete on Client, custom-form ops, and shadowing-aware field masking (Absinthe middleware). Tickets: API-635, API-742, API-630."
+                    , "Encrypted appointment notes — multi-PR migration (API-781): introduced encrypted column, migrated clear-text notes/private_notes, updated CalendarEvents view (v2→v3→v4), dropped legacy columns. Also migrated client medications/allergies to Notes."
+                    , "Rate limiting — built the leaky-bucket rate limiter for GraphQL pipelines (API-369), per-API-application quotas, per-pipeline custom policies, throttling feature flag, telemetry attributes, property tests, and corrupt-bucket recovery."
+                    , "Webhooks — migrated webhooks from Exq → Oban (twice — second time stuck), added retries (API-287), appointment.updated event (API-1566)."
+                    , "App platform / developer portal — app suspensions & reinstatement (API-1466), default app quotas (API-1408), sandbox createClient (API-1433), app uninstall cleanup (API-1370), app enrichment for Datadog (API-1415), icons + install counts, dev-portal devn envs."
+                    , "Observability — OpenTelemetry APM (API-288), Absinthe query logging (API-831), login observability (API-1590), flaky-test author notifications, ExtCache.cached_all."
+                    , "GraphQL infra — custom Absinthe response mapping so the rate limiter can return 429s (API-941), TestApi graph, appointment-reschedule mutations in PlatformAdmin (API-284 / API-974), appointmentRescheduleSeries."
+                    , "Auth — passwordless email/SMS cart checkout, Zapier OAuth for multi-business staff (API-676), better multi-client auth errors (API-827), an in-progress security-settings feature (API-1591)."
+                    , "Dev tooling — introduced and grew the justfile, auto AWS SSO login, psql instance routing, replica-DB read paths, dialyzer :contracts enforcement, a credo check to ban :meck in async tests."
                     ]
               }
             ]
@@ -439,13 +448,13 @@ experience =
         , elixirTitle = "Tech Lead"
         , location = "Wuppertal / Remote"
         , company = "Vorwerk"
-        , companyStack = [ "Elixir", "Phoenix", "Python" ]
+        , companyStack = [ "Elixir", "Python" ]
         , dates = "Apr 2021-Sep 2021"
         , projects =
             [ { name = "Kobold"
               , start = 2021
               , end = 2021
-              , overview = "Bootstrapped an Elixir/Phoenix team at this global consumer appliance giant to provide cloud services and a Python client library for a new line of commercial robot vacuum cleaners."
+              , overview = "Bootstrapped an Elixir team at this global consumer appliance giant to provide cloud services and a Python client library for a new line of commercial robot vacuum cleaners."
               , stack = [ "Elixir", "Python", "Postgres", "AWS/Terraform" ]
               , talkingPoints =
                     [ "Established the Elixir/Phoenix backend from scratch and built the Python client library for the device-side integration."

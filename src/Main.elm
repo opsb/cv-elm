@@ -392,8 +392,8 @@ mobilePositionView variant position =
                     [ column [] []
                     , el [ alignLeft ]
                         (Atom.title2 [] position.company)
-                    , Element.paragraph [ alignLeft, titleFont, Font.size 16, Font.semiBold, letterSpacing -0.2, Font.color Colors.red ] [ text (Data.positionTitle variant position) ]
-                    , el [ alignLeft ] (companyStackLine 13 position.companyStack)
+                    , Element.paragraph [ alignLeft, titleFont, Font.size 17, Font.semiBold, letterSpacing -0.2, Font.color Colors.red ] [ text (Data.positionTitle variant position) ]
+                    , el [ alignLeft ] (companyStackLine 14 position.companyStack)
                     , el [ alignLeft ] (Atom.bodyText [] position.dates)
                     , el [ alignLeft ] (Atom.bodyText [] position.location)
                     ]
@@ -407,11 +407,11 @@ mobilePositionView variant position =
 
 positionView : Variant -> Position -> Element msg
 positionView variant position =
-    row [ width fill, spacing 12 ]
+    row [ width fill, spacing 6 ]
         [ column [ width (fillPortion 7), spacing 3, alignTop ]
             [ Atom.title3 [ Font.size 16, paddingEach { top = 0, right = 0, bottom = 5, left = 0 } ] position.company
-            , Element.paragraph [ titleFont, Font.size 12, Font.color Colors.red ] [ text (Data.positionTitle variant position) ]
-            , companyStackLine 10 position.companyStack
+            , Element.paragraph [ titleFont, Font.size 13, Font.color Colors.red ] [ text (Data.positionTitle variant position) ]
+            , companyStackLine 11 position.companyStack
             , Atom.bodyText [ Font.size 10, Font.regular ] position.dates
             , Atom.bodyText [ Font.size 10, Font.regular ] position.location
             ]
@@ -430,7 +430,7 @@ companyStackLine size stack =
             Atom.paragraph
                 [ Font.size size
                 , Font.color Colors.grey
-                , Font.medium
+                , Font.bold
                 , paddingEach { top = 2, right = 0, bottom = 2, left = 0 }
                 ]
                 [ text (String.join " / " stack) ]
