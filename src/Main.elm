@@ -415,7 +415,7 @@ positionView variant position =
             , Atom.bodyText [ Font.size 10, Font.regular ] position.dates
             , Atom.bodyText [ Font.size 10, Font.regular ] position.location
             ]
-        , column [ spacing 15, width (fillPortion 22) ]
+        , column [ spacing 15, width (fillPortion 22), alignTop ]
             (List.map projectView position.projects)
         ]
 
