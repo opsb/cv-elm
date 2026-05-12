@@ -5,6 +5,7 @@ import Browser.Events exposing (onResize)
 import Browser.Navigation as Nav
 import Data exposing (..)
 import Experimental.View
+import Experimental2.View
 import Element exposing (..)
 import Element.Background as Background
 import Element.Border as Border
@@ -55,6 +56,19 @@ isExperimental path =
             True
 
         "/experimental/" ->
+            True
+
+        _ ->
+            False
+
+
+isExperimental2 : String -> Bool
+isExperimental2 path =
+    case String.toLower (String.trim path) of
+        "/experimental2" ->
+            True
+
+        "/experimental2/" ->
             True
 
         _ ->
@@ -113,6 +127,9 @@ view : Model -> Browser.Document Msg
 view model =
     if isExperimental model.path then
         Experimental.View.view
+
+    else if isExperimental2 model.path then
+        Experimental2.View.view
 
     else
         { title = "Oliver Searle-Barnes"
