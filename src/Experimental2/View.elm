@@ -369,7 +369,7 @@ positionView position =
             , text (Data.positionTitle primaryVariant position)
             ]
         , companyStackLine position.companyStack
-        , Atom.bodyText [ Font.size 10, Font.regular ] position.dates
+        , Atom.bodyText [ Font.size 10, Font.regular ] (position.dates ++ "  ·  " ++ position.location)
         , column [ spacing 16, width fill, paddingEach { top = 8, right = 0, bottom = 0, left = 0 } ]
             (List.map projectView position.projects)
         ]
@@ -387,7 +387,7 @@ companyStackLine stack =
                 , Font.color Colors.grey
                 , Font.bold
                 ]
-                (text (String.join " / " stack))
+                (text (String.join "  ·  " stack))
 
 
 projectView : Project -> Element msg

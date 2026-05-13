@@ -369,7 +369,8 @@ experience =
               , overview = "Led engineering on a high-performance affiliate platform; customer discovery pivoted the company into xpflow."
               , stack = [ "NextJS", "Postgres", "Redis" ]
               , talkingPoints =
-                    [ "Led delivery on NextJS / Postgres / Redis."
+                    [ "Built the MVP in 3 weeks."
+                    , "Led development on NextJS / Postgres / Redis."
                     , "Architected the AI-powered pivot that became Alfie."
                     ]
               }
