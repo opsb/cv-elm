@@ -173,7 +173,6 @@ introductionParagraphsFor variant =
 elixirIntroductionParagraphs : List String
 elixirIntroductionParagraphs =
     [ "Building software that people actually love to use is what gets me going. With 22 years experience I've delivered successful products for the AI, Fintech, SaaS, Telecoms, Retail, Publishing, Energy, Charity, Health and Beauty, and Domestic appliance sectors."
-    , "Agentic affiliate discovery at xpflow — co-founded the company around Alfie, AI agent scouts that autonomously discover, evaluate, and reach out to affiliate partners. Shipped MVP in three weeks."
     , "10+ years shipping production Elixir / Phoenix at scale — API authorization and rate-limiting at Boulevard, IoT cloud services on Phoenix at Vorwerk, an event-sourced real-time community platform at Zapnito, and Open Banking integration across UK high street banks at CompareTheMarket."
     , "Comfortable owning supervision-tree design, telemetry / observability, and Ecto-heavy data layers. Agile from day one."
     ]
