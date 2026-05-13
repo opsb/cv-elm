@@ -27,6 +27,8 @@ module Experimental.Data exposing
     , variantPath
     )
 
+import Data.Skills
+
 
 type Variant
     = Leadership
@@ -186,17 +188,13 @@ skillGroupsFor : Variant -> List SkillGroup
 skillGroupsFor variant =
     case variant of
         Leadership ->
-            skillGroups
+            Data.Skills.leadershipFirst
 
         Engineer ->
-            let
-                ( leadership, others ) =
-                    List.partition (\group -> group.name == "Leadership") skillGroups
-            in
-            others ++ leadership
+            Data.Skills.leadershipLast
 
         Elixir ->
-            elixirSkillGroups
+            Data.Skills.leadershipFirst
 
 
 type alias ExperienceColumns =
@@ -306,15 +304,11 @@ type alias Institution =
 
 
 type alias Skill =
-    { name : String
-    , years : Float
-    }
+    Data.Skills.Skill
 
 
 type alias SkillGroup =
-    { name : String
-    , skills : List Skill
-    }
+    Data.Skills.SkillGroup
 
 
 type alias OpenSourceProject =
@@ -655,96 +649,6 @@ education =
       , result = "2/1"
       , startYear = 2001
       , endYear = 2004
-      }
-    ]
-
-
-skillGroups : List SkillGroup
-skillGroups =
-    [ { name = "Leadership"
-      , skills =
-            [ { name = "Team leadership", years = 10 }
-            , { name = "Hiring", years = 10 }
-            , { name = "Architecture & strategy", years = 20 }
-            , { name = "Zero-to-one shipping", years = 10 }
-            ]
-      }
-    , { name = "Backend"
-      , skills =
-            [ { name = "Elixir / Phoenix", years = 8 }
-            , { name = "Ruby on Rails", years = 8 }
-            , { name = "NextJS", years = 3 }
-            , { name = "SQL", years = 22 }
-            , { name = "Java", years = 8 }
-            ]
-      }
-    , { name = "Datastores"
-      , skills =
-            [ { name = "Postgres", years = 20 }
-            , { name = "Redis", years = 15 }
-            , { name = "Snowflake", years = 2 }
-            , { name = "Firebase", years = 4 }
-            ]
-      }
-    , { name = "AI"
-      , skills =
-            [ { name = "OpenAI API", years = 1 }
-            , { name = "AI agents", years = 1 }
-            , { name = "LangChain / LangSmith", years = 1 }
-            , { name = "Agentic coding", years = 1 }
-            ]
-      }
-    , { name = "Frontend"
-      , skills =
-            [ { name = "React", years = 10 }
-            , { name = "Typescript/Javascript", years = 17 }
-            , { name = "Elm", years = 5 }
-            , { name = "HTML / CSS / SASS", years = 22 }
-            ]
-      }
-    , { name = "Infrastructure"
-      , skills =
-            [ { name = "AWS", years = 14 }
-            , { name = "Terraform", years = 4 }
-            ]
-      }
-    , { name = "Methodology"
-      , skills =
-            [ { name = "Scrum / Kanban", years = 20 }
-            , { name = "BDD / TDD", years = 18 }
-            ]
-      }
-    ]
-
-
-elixirSkillGroups : List SkillGroup
-elixirSkillGroups =
-    [ { name = "Stack"
-      , skills =
-            [ { name = "Elixir / Phoenix", years = 10 }
-            , { name = "Postgres", years = 20 }
-            , { name = "Typescript / JS", years = 17 }
-            , { name = "NextJS", years = 3 }
-            , { name = "React", years = 10 }
-            , { name = "Ruby on Rails", years = 8 }
-            , { name = "Elm", years = 5 }
-            , { name = "AWS", years = 14 }
-            , { name = "Terraform", years = 4 }
-            ]
-      }
-    , { name = "AI"
-      , skills =
-            [ { name = "OpenAI API", years = 2 }
-            , { name = "AI agents", years = 2 }
-            , { name = "LangChain / LangSmith", years = 2 }
-            , { name = "Agentic coding", years = 2 }
-            ]
-      }
-    , { name = "Methodology"
-      , skills =
-            [ { name = "Scrum / Kanban", years = 20 }
-            , { name = "BDD / TDD", years = 18 }
-            ]
       }
     ]
 
