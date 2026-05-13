@@ -3,7 +3,7 @@ module Main exposing (main)
 import Browser
 import Browser.Events exposing (onResize)
 import Browser.Navigation as Nav
-import Data exposing (..)
+import LeadershipData as Data exposing (..)
 import Experimental.View
 import Experimental2.View
 import Experimental3.View
