@@ -349,7 +349,7 @@ experience =
               , talkingPoints =
                     [ "LLM-driven evaluation and personalised outreach, replacing multi-day manual research."
                     , "Integrated affiliate networks (Everflow) and Stripe subscriptions."
-                    , "Customer discovery identified the opportunity the company spun out around."
+                    , "Agentic learning system based on interactions with user."
                     ]
               }
             ]
