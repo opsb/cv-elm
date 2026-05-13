@@ -585,7 +585,6 @@ experience =
                     [ "Built browser extension to handle high volume with low infrastructure costs."
                     , "Developed a monitoring system to detect broken/incorrect affiliate links from third-party networks."
                     , "Devised a compression-based algorithm for identifying when web pages matched within a given tolerance."
-                    , "Integrated multiple affiliate networks and automated tracking of purchases and payments to schools."
                     ]
               }
             ]

@@ -308,13 +308,13 @@ experiencePage : Element msg
 experiencePage =
     Atom.a4Page [] <|
         row [ width fill, height fill ]
-            [ Atom.pageColumn [ spacing 12, paddingEach { top = 22, right = 20, bottom = 10, left = 20 } ]
+            [ Atom.pageColumn [ spacing 22, paddingEach { top = 22, right = 20, bottom = 10, left = 20 } ]
                 (List.map positionView page2Col1Positions)
             , Atom.verticalDivider
-            , Atom.pageColumn [ spacing 12, paddingEach { top = 22, right = 20, bottom = 10, left = 20 } ]
+            , Atom.pageColumn [ spacing 22, paddingEach { top = 22, right = 20, bottom = 10, left = 20 } ]
                 (List.map positionView page2Col2Positions)
             , Atom.verticalDivider
-            , Atom.pageColumn [ spacing 12, paddingEach { top = 22, right = 20, bottom = 10, left = 20 } ]
+            , Atom.pageColumn [ spacing 22, paddingEach { top = 22, right = 20, bottom = 10, left = 20 } ]
                 (List.map positionView page2Col3Positions
                     ++ [ pageSection "Open Source" openSourceSection
                        , el [ height (px 12) ] none
