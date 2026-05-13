@@ -167,7 +167,15 @@ introductionParagraphsFor variant =
             sharedIntroductionParagraphs
 
         Elixir ->
-            sharedIntroductionParagraphs
+            elixirIntroductionParagraphs
+
+
+elixirIntroductionParagraphs : List String
+elixirIntroductionParagraphs =
+    [ "Agentic affiliate discovery at xpflow — co-founded the company around Alfie, AI agent scouts that autonomously discover, evaluate, and reach out to affiliate partners. Shipped MVP in three weeks."
+    , "10+ years shipping production Elixir / Phoenix at scale — API authorization and rate-limiting at Boulevard, IoT cloud services on Phoenix at Vorwerk, an event-sourced real-time community platform at Zapnito, and Open Banking integration across UK high street banks at CompareTheMarket."
+    , "Comfortable owning supervision-tree design, telemetry / observability, and Ecto-heavy data layers. Agile from day one."
+    ]
 
 
 sharedIntroductionParagraphs : List String
