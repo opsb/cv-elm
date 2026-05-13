@@ -57,6 +57,7 @@ server.on("listening", function () {
         const outputPath = path.join(distDir, variant.file);
         console.log("Rendering " + url + " -> " + outputPath);
         await page.goto(url, { waitUntil: "networkidle2" });
+        await page.evaluate(() => document.fonts.ready);
         await page.pdf({
           path: outputPath,
           format: "A4",

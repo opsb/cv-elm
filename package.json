@@ -26,7 +26,7 @@
   "devDependencies": {
     "elm": "^0.19.1-6",
     "finalhandler": "^1.2.0",
-    "puppeteer": "^1.10.0",
+    "puppeteer": "^24.0.0",
     "serve-static": "^1.13.2",
     "vite": "^4.5.0",
     "vite-plugin-elm": "^2.8.0"

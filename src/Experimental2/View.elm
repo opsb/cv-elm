@@ -242,16 +242,14 @@ skillRow : Skill -> Element msg
 skillRow s =
     row [ width fill ]
         [ el [ Font.size 12, Font.color Colors.grey ] (text s.name)
-        , el
-            [ width fill
-            , height (px 15)
-            , paddingXY 10 0
-            , htmlAttribute (Html.Attributes.style "background-image" "radial-gradient(circle, rgba(140,140,148,0.7) 0.7px, transparent 0.9px)")
-            , htmlAttribute (Html.Attributes.style "background-size" "3px 3px")
-            , htmlAttribute (Html.Attributes.style "background-position" "left bottom 1px")
-            , htmlAttribute (Html.Attributes.style "background-repeat" "repeat-x")
-            ]
-            Element.none
+        , el [ width fill, paddingXY 8 0 ]
+            (el
+                [ width fill
+                , height (px 9)
+                , htmlAttribute (Html.Attributes.style "border-bottom" "1px dotted rgba(140,140,148,0.7)")
+                ]
+                Element.none
+            )
         , el [ Font.size 12, Font.color Colors.grey, alignRight ] (text (formatYears s.years))
         ]
 
