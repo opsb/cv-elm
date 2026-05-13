@@ -120,8 +120,6 @@ pagePersonalDetailsSection =
         , el [ height fill ] none
         , contentDetails
         , el [ height fill ] none
-        , darkOpenSourceSection
-        , el [ height fill ] none
         , contactDetails
         ]
 
@@ -309,33 +307,38 @@ experiencePage1Block =
 experiencePage : Element msg
 experiencePage =
     Atom.a4Page [] <|
-        column [ width fill, height fill ]
-            [ el
-                [ width fill
-                , paddingXY 20 10
-                , Background.color Colors.grey
-                ]
-                (Atom.title1
-                    [ Font.color Colors.white
-                    , paddingEach { top = 0, right = 0, bottom = 3, left = 0 }
-                    ]
-                    "Experience — continued"
+        row [ width fill, height fill ]
+            [ Atom.pageColumn [ spacing 12, paddingEach { top = 22, right = 20, bottom = 10, left = 20 } ]
+                (List.map positionView page2Col1Positions)
+            , Atom.verticalDivider
+            , Atom.pageColumn [ spacing 12, paddingEach { top = 22, right = 20, bottom = 10, left = 20 } ]
+                (List.map positionView page2Col2Positions)
+            , Atom.verticalDivider
+            , Atom.pageColumn [ spacing 12, paddingEach { top = 22, right = 20, bottom = 10, left = 20 } ]
+                (List.map positionView page2Col3Positions
+                    ++ [ pageSection "Open Source" openSourceSection
+                       , el [ height (px 12) ] none
+                       , pageSection "Education" educationSection
+                       ]
                 )
-            , row [ width fill, height fill ]
-                [ Atom.pageColumn [ spacing 12, paddingXY 20 10 ]
-                    (List.map positionView page2Col1Positions)
-                , Atom.verticalDivider
-                , Atom.pageColumn [ spacing 12, paddingXY 20 10 ]
-                    (List.map positionView page2Col2Positions)
-                , Atom.verticalDivider
-                , Atom.pageColumn [ spacing 12, paddingXY 20 10 ]
-                    (List.map positionView page2Col3Positions
-                        ++ [ el [ height fill ] none
-                           , pageSection "Education" educationSection
-                           ]
-                    )
-                ]
             ]
+
+
+openSourceSection : Element msg
+openSourceSection =
+    column [ spacing 12, width fill ]
+        (List.map openSourceProject Data.openSourceProjects)
+
+
+openSourceProject : OpenSourceProject -> Element msg
+openSourceProject project =
+    column [ spacing 4, width fill ]
+        [ newTabLink [ width fill ]
+            { url = project.repo
+            , label = Atom.title3 [ Font.size 13, Font.medium ] project.name
+            }
+        , Atom.paragraph [ Font.size 12, Font.regular, Atom.lineHeight 17 ] [ text project.overview ]
+        ]
 
 
 chronologicalPositions : List Position
@@ -348,6 +351,7 @@ chronologicalPositions =
     , Data.experience.twentyBn
     , Data.experience.liqid
     , Data.experience.zapnito
+    , Data.experience.lytbulb
     , Data.experience.myschooldirect
     , Data.experience.informa
     ]
@@ -406,7 +410,15 @@ positionView position =
         , companyStackLine position.companyStack
         , Atom.bodyText [ Font.size 10, Font.regular, Font.italic ] (position.dates ++ "  ·  " ++ position.location)
         , column [ spacing 16, width fill, paddingEach { top = 8, right = 0, bottom = 0, left = 0 } ]
-            (List.map projectView (visibleProjectsFor position))
+            (let
+                projects =
+                    visibleProjectsFor position
+
+                showTitle =
+                    List.length projects > 1
+             in
+             List.map (projectView { showTitle = showTitle }) projects
+            )
         ]
 
 
@@ -438,10 +450,18 @@ companyStackLine stack =
                 (text (String.join ", " stack))
 
 
-projectView : Project -> Element msg
-projectView project =
+projectView : { showTitle : Bool } -> Project -> Element msg
+projectView { showTitle } project =
+    let
+        titleNode =
+            if showTitle then
+                Atom.title3 [ Font.size 13, Font.medium, Font.color Colors.red ] project.name
+
+            else
+                none
+    in
     column [ spacing 5, width fill ]
-        [ Atom.title3 [ Font.size 13, Font.medium, Font.color Colors.red ] project.name
+        [ titleNode
         , Atom.paragraph [ Font.size 12, Font.regular, Atom.lineHeight 17 ] [ text project.overview ]
         , talkingPointsBlock project.talkingPoints
         ]

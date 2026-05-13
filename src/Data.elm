@@ -347,10 +347,10 @@ experience =
               , overview = "Built and shipped a fleet of LLM agents that discover, evaluate, and contact affiliate partners on behalf of growth teams."
               , stack = [ "AI/LLMs", "NextJS", "Postgres" ]
               , talkingPoints =
-                    [ "Per-tenant agent pipeline: discovery, evaluation, outreach."
+                    [ "Devised discovery engine for matching brands to affiliates (web scraping with multi-stage LLM)."
+                    , "Built custom chat stack supporting in-chat widgets."
                     , "Designed agentic learning loop on LangGraph."
                     , "Created harness for regression testing LLM prompts."
-                    , "Built custom chat stack supporting in-chat widgets."
                     , "Integrated Stripe payments."
                     ]
               }
@@ -439,7 +439,7 @@ experience =
               , overview = "Bootstrapped an Elixir team at this consumer appliance giant, building cloud services for a new line of commercial robot vacuum cleaners."
               , stack = [ "Elixir", "Python", "Postgres", "AWS/Terraform" ]
               , talkingPoints =
-                    [ "Established the Elixir backend and Python client library from scratch."
+                    [ "Established the Elixir backend and Python client library."
                     , "Set up the development workflow and shipped to production on schedule for the commercial launch."
                     ]
               }
@@ -582,8 +582,7 @@ experience =
               , overview = "Co-founded a Quidco-style school-shopping affiliate platform with a browser-extension companion (Give4Sure) and a bespoke Marks & Spencer school-uniform store line."
               , stack = [ "Browser extensions", "Ruby on Rails", "Postgres", "Ember.js" ]
               , talkingPoints =
-                    [ "M&S uniform line acquired by Marks & Spencer in 2014 and taken in-house."
-                    , "Built browser extension to handle high volume with low infrastructure costs."
+                    [ "Built browser extension to handle high volume with low infrastructure costs."
                     , "Developed a monitoring system to detect broken/incorrect affiliate links from third-party networks."
                     , "Devised a compression-based algorithm for identifying when web pages matched within a given tolerance."
                     , "Integrated multiple affiliate networks and automated tracking of purchases and payments to schools."
