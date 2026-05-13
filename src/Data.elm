@@ -274,9 +274,9 @@ experiencePositionsFor variant =
 
 engineerXpflow : Position
 engineerXpflow =
-    { title = "Founding Engineer"
-    , engineerTitle = "Founding Engineer"
-    , elixirTitle = "Founding Engineer"
+    { title = "Founding AI Engineer"
+    , engineerTitle = "Founding AI Engineer"
+    , elixirTitle = "Founding AI Engineer"
     , location = "Dallas / Remote"
     , company = "xpflow & Tree3"
     , companyStack = [ "Next.js", "AI agents" ]
@@ -341,8 +341,8 @@ introduction =
 
 experience =
     { xpflow =
-        { title = "Founding Engineer & CPO"
-        , engineerTitle = "Founding Engineer"
+        { title = "Founding AI Engineer & CPO"
+        , engineerTitle = "Founding AI Engineer"
         , elixirTitle = "Co-founder, Tech Lead"
         , location = "Dallas / Remote"
         , company = "xpflow"

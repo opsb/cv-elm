@@ -308,8 +308,8 @@ experience :
     }
 experience =
     { xpflow =
-        { title = "Founding Engineer & CPO"
-        , engineerTitle = "Founding Engineer"
+        { title = "Founding AI Engineer & CPO"
+        , engineerTitle = "Founding AI Engineer"
         , location = "Dallas / Remote"
         , company = "xpflow"
         , companyStack = []

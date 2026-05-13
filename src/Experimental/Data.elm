@@ -339,8 +339,8 @@ introduction =
 
 experience =
     { xpflow =
-        { title = "Founding Engineer & CPO"
-        , engineerTitle = "Founding Engineer"
+        { title = "Founding AI Engineer & CPO"
+        , engineerTitle = "Founding AI Engineer"
         , elixirTitle = "Co-founder, Tech Lead"
         , location = "Dallas / Remote"
         , company = "xpflow"
