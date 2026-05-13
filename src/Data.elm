@@ -344,7 +344,7 @@ experience =
             [ { name = "Alfie (AI affiliate recruitment)"
               , start = 2025
               , end = 2026
-              , overview = "Built Alfie — AI agent scouts that autonomously discover, evaluate, and reach out to affiliate partners. Shipped MVP in three weeks."
+              , overview = "Built Alfie, AI agent scouts that autonomously discover, evaluate, and reach out to affiliate partners. Shipped MVP in three weeks."
               , stack = [ "AI/LLMs", "NextJS", "Postgres" ]
               , talkingPoints =
                     [ "LLM-driven evaluation and personalised outreach, replacing multi-day manual research."
