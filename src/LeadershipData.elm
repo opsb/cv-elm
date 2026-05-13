@@ -146,7 +146,6 @@ sharedIntroductionParagraphs : List String
 sharedIntroductionParagraphs =
     [ "Building software that people actually love to use is what gets me going. With 22 years experience I've delivered successful products for the AI, Fintech, SaaS, Telecoms, Retail, Publishing, Energy, Charity, Health and Beauty, and Domestic appliance sectors."
     , "I've led teams building computer vision training pipelines at TwentyBN, Open Banking integration across UK high street banks at CompareTheMarket, IoT cloud services for commercial robot vacuums at Vorwerk, an event-sourced real-time community platform at Zapnito, and a WebDAV-based CMS that let Informa's journalists edit articles directly in Microsoft Word."
-    , "Most recently founding engineer at xpflow; previously co-founded a school e-commerce business later taken in-house by Marks & Spencer."
     , "Agile from day one; comfortable owning the engineering function or contributing within an established team."
     ]
 

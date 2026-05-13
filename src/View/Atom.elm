@@ -193,7 +193,7 @@ tableOfContentsLine leftText rightText =
                 Colors.grey
             , paddingEach { bottom = 0, left = 0, top = 0, right = 5 }
             ]
-            (title4 [ Font.family [], Font.size 11 ] leftText)
+            (title4 [ Font.family [], Font.size 11, Font.regular ] leftText)
         , el
             [ width fill
             , Border.dotted
@@ -207,7 +207,7 @@ tableOfContentsLine leftText rightText =
             [ Font.color Colors.grey
             , paddingEach { bottom = 0, left = 5, top = 0, right = 0 }
             ]
-            (title4 [ Font.letterSpacing 0.1, Font.size 10 ] rightText)
+            (title4 [ Font.letterSpacing 0.1, Font.size 10, Font.regular ] rightText)
         ]
 
 

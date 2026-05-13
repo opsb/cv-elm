@@ -202,7 +202,7 @@ introductionSection : Element msg
 introductionSection =
     column [ spacing 14 ]
         (Data.introductionParagraphsFor primaryVariant
-            |> List.map (\p -> Atom.paragraph [ Font.regular ] [ text p ])
+            |> List.map (\p -> Atom.paragraph [ Font.regular, Font.size 12 ] [ text p ])
         )
 
 
