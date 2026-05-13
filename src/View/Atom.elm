@@ -145,6 +145,7 @@ pageColumn attrs body =
             , padding 20
             , spacing 25
             , Background.color Colors.white
+            , htmlAttribute (Html.Attributes.style "min-width" "0")
             ]
     in
     column (defaultAttrs ++ attrs) body

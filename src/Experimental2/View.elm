@@ -1,7 +1,7 @@
 module Experimental2.View exposing (view)
 
 import Browser
-import Data exposing (Institution, OpenSourceProject, Position, Project, SkillGroup, Variant(..))
+import Data exposing (Institution, OpenSourceProject, Position, Project, Skill, SkillGroup, Variant(..))
 import Element exposing (..)
 import Element.Background as Background
 import Element.Border as Border
@@ -51,14 +51,15 @@ overviewPage =
     Atom.a4Page [] <|
         row [ width fill, height fill ]
             [ pagePersonalDetailsSection
-            , Atom.pageColumn [ spacing 25 ]
+            , Atom.verticalDivider
+            , Atom.pageColumn [ spacing 20 ]
                 [ pageSection "Introduction" introductionSection
                 , pageSection "Skills" skillsSection
-                , pageSection "Education" educationSection
                 ]
             , Atom.verticalDivider
-            , Atom.pageColumn [ spacing 18 ]
-                [ pageSection "Experience" experiencePage1Block
+            , Atom.pageColumn [ spacing 36 ]
+                [ pageSection "Education" educationSection
+                , pageSection "Experience" experiencePage1Block
                 ]
             ]
 
@@ -77,16 +78,19 @@ pageSection title body =
 
 pagePersonalDetailsSection : Element msg
 pagePersonalDetailsSection =
-    Atom.pageColumn [ spacing 30, Background.color Colors.grey, Font.color Colors.white ]
-        [ column [ spacing 14 ]
+    Atom.pageColumn [ spacing 0, Background.color Colors.grey, Font.color Colors.white ]
+        [ column [ spacing 14, paddingEach { top = 80, right = 0, bottom = 0, left = 0 } ]
             [ overviewName
             , column [ spacing 10, paddingXY 0 4 ]
                 (Data.sidePanelLabels primaryVariant
                     |> List.map (\label -> el [ Font.light, Font.size 16 ] (text label))
                 )
             ]
+        , el [ height fill ] none
         , contentDetails
+        , el [ height fill ] none
         , darkOpenSourceSection
+        , el [ height fill ] none
         , contactDetails
         ]
 
@@ -145,7 +149,7 @@ darkOpenSourceSection =
 
 darkOpenSourceItem : OpenSourceProject -> Element msg
 darkOpenSourceItem proj =
-    column [ spacing 1, width fill ]
+    column [ spacing 2, width fill ]
         [ newTabLink []
             { url = proj.repo
             , label =
@@ -156,8 +160,8 @@ darkOpenSourceItem proj =
                     ]
                     (text proj.name)
             }
-        , el [ Font.size 10, Font.color Colors.white, alpha 0.65 ]
-            (text (proj.shortInvolvement ++ " · " ++ proj.language))
+        , Element.paragraph [ Font.size 10, Font.color Colors.white, alpha 0.7, Atom.lineHeight 13 ]
+            [ text proj.overview ]
         ]
 
 
@@ -167,7 +171,7 @@ darkOpenSourceItem proj =
 
 introductionSection : Element msg
 introductionSection =
-    column [ spacing 12 ]
+    column [ spacing 14 ]
         (Data.introductionParagraphsFor primaryVariant
             |> List.map (\p -> Atom.paragraph [ Font.regular ] [ text p ])
         )
@@ -187,19 +191,56 @@ skillsSection =
 
 skillGroupsColumn : List SkillGroup -> Element msg
 skillGroupsColumn groups =
-    column [ width (fillPortion 1), spacing 6, alignTop ] (List.map skillGroupView groups)
+    column [ width (fillPortion 1), spacing 10, alignTop ] (List.map skillGroupView groups)
 
 
 skillGroupView : SkillGroup -> Element msg
 skillGroupView group =
-    column [ width fill, spacing 3 ]
-        [ Atom.title5 [ Font.size 11, Font.color Colors.red, Font.bold ] group.name
-        , column [ width fill, spacing 1 ]
-            (List.map
-                (\{ name, years } -> Atom.tableOfContentsLine name (String.fromFloat years))
-                group.skills
-            )
+    column [ width fill, spacing 8 ]
+        [ el
+            [ Atom.titleFont
+            , Font.size 12
+            , Font.color Colors.red
+            , Font.bold
+            ]
+            (text group.name)
+        , column [ width fill, spacing 8 ]
+            (List.map skillRow group.skills)
         ]
+
+
+skillRow : Skill -> Element msg
+skillRow s =
+    row [ width fill ]
+        [ el [ Font.size 12, Font.bold, Font.color Colors.grey ] (text s.name)
+        , el
+            [ width fill
+            , height (px 15)
+            , paddingXY 10 0
+            , htmlAttribute (Html.Attributes.style "background-image" "radial-gradient(circle, rgba(140,140,148,0.7) 0.7px, transparent 0.9px)")
+            , htmlAttribute (Html.Attributes.style "background-size" "3px 3px")
+            , htmlAttribute (Html.Attributes.style "background-position" "left bottom 1px")
+            , htmlAttribute (Html.Attributes.style "background-repeat" "repeat-x")
+            ]
+            Element.none
+        , el [ Font.size 12, Font.bold, Font.color Colors.grey, alignRight ] (text (formatYears s.years))
+        ]
+
+
+formatYears : Float -> String
+formatYears y =
+    let
+        i =
+            floor y
+
+        base =
+            if toFloat i == y then
+                String.fromInt i
+
+            else
+                String.fromFloat y
+    in
+    base ++ "y"
 
 
 educationSection : Element msg
@@ -230,7 +271,7 @@ institutionView inst =
 
 experiencePage1Block : Element msg
 experiencePage1Block =
-    column [ spacing 18, width fill ]
+    column [ spacing 26, width fill ]
         (List.map positionView page1Positions)
 
 
@@ -245,18 +286,18 @@ experiencePage =
                 ]
                 (Atom.title1
                     [ Font.color Colors.white
-                    , paddingEach { top = 5, right = 0, bottom = 0, left = 0 }
+                    , paddingEach { top = 0, right = 0, bottom = 3, left = 0 }
                     ]
                     "Experience — continued"
                 )
             , row [ width fill, height fill ]
-                [ Atom.pageColumn [ spacing 14, paddingXY 20 10 ]
+                [ Atom.pageColumn [ spacing 12, paddingXY 20 10 ]
                     (List.map positionView page2Col1Positions)
                 , Atom.verticalDivider
-                , Atom.pageColumn [ spacing 14, paddingXY 20 10 ]
+                , Atom.pageColumn [ spacing 12, paddingXY 20 10 ]
                     (List.map positionView page2Col2Positions)
                 , Atom.verticalDivider
-                , Atom.pageColumn [ spacing 14, paddingXY 20 10 ]
+                , Atom.pageColumn [ spacing 12, paddingXY 20 10 ]
                     (List.map positionView page2Col3Positions)
                 ]
             ]
@@ -316,16 +357,20 @@ page2Col3Positions =
 
 positionView : Position -> Element msg
 positionView position =
-    column [ spacing 4, width fill, paddingEach { top = 0, right = 0, bottom = 8, left = 0 } ]
-        [ row [ width fill, spacing 10 ]
-            [ el [ alignLeft ] (Atom.title3 [ Font.size 15, paddingEach { top = 0, right = 0, bottom = 0, left = 0 } ] (String.replace "\n" "" position.company))
-            , el [ alignRight ] (Element.paragraph [ titleFont, Font.size 13, Font.bold, Font.color Colors.red, Font.alignRight ] [ text (Data.positionTitle primaryVariant position) ])
+    column [ spacing 3, width fill, paddingEach { top = 0, right = 0, bottom = 8, left = 0 } ]
+        [ Element.paragraph
+            [ titleFont
+            , Font.size 17
+            , Font.bold
+            , Font.color Colors.grey
             ]
-        , row [ width fill, spacing 10 ]
-            [ el [ alignLeft ] (companyStackLine position.companyStack)
-            , el [ alignRight ] (Atom.bodyText [ Font.size 10, Font.regular ] position.dates)
+            [ text (String.replace "\n" "" position.company)
+            , el [ Atom.letterSpacing -2, paddingXY 8 0 ] (text "//")
+            , text (Data.positionTitle primaryVariant position)
             ]
-        , column [ spacing 8, width fill, paddingEach { top = 4, right = 0, bottom = 0, left = 0 } ]
+        , companyStackLine position.companyStack
+        , Atom.bodyText [ Font.size 10, Font.regular ] position.dates
+        , column [ spacing 16, width fill, paddingEach { top = 8, right = 0, bottom = 0, left = 0 } ]
             (List.map projectView position.projects)
         ]
 
@@ -347,9 +392,9 @@ companyStackLine stack =
 
 projectView : Project -> Element msg
 projectView project =
-    column [ spacing 4, width fill ]
-        [ Atom.title3 [ Font.size 13, Font.medium ] project.name
-        , Atom.paragraph [ Font.size 12, Font.regular ] [ text project.overview ]
+    column [ spacing 5, width fill ]
+        [ Atom.title3 [ Font.size 13, Font.medium, Font.color Colors.red ] project.name
+        , Atom.paragraph [ Font.size 12, Font.regular, Atom.lineHeight 17 ] [ text project.overview ]
         , talkingPointsBlock project.talkingPoints
         ]
 
@@ -362,8 +407,8 @@ talkingPointsBlock points =
 
         _ ->
             column
-                [ spacing 3
-                , paddingEach { top = 4, right = 0, bottom = 0, left = 8 }
+                [ spacing 5
+                , paddingEach { top = 5, right = 0, bottom = 0, left = 8 }
                 , width fill
                 ]
                 (List.map bulletItem points)
@@ -371,7 +416,7 @@ talkingPointsBlock points =
 
 bulletItem : String -> Element msg
 bulletItem t =
-    row [ spacing 6, alignTop, width fill ]
-        [ el [ Font.size 11, Font.color Colors.red, alignTop, Font.bold ] (text "•")
-        , Atom.paragraph [ Font.size 11, Font.regular ] [ text t ]
+    row [ spacing 8, alignTop, width fill ]
+        [ el [ Font.size 12, Font.color Colors.red, alignTop, Font.bold ] (text "•")
+        , Atom.paragraph [ Font.size 12, Font.regular, Atom.lineHeight 17 ] [ text t ]
         ]

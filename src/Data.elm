@@ -166,18 +166,13 @@ introductionParagraphsFor variant =
             sharedIntroductionParagraphs
 
         Elixir ->
-            [ "Barcelona-based · UK citizen, full UK RTW · operating via Thoughtclay Ltd (UK) · EU-TZ, London-hours overlap."
-            , "Senior Elixir / Phoenix engineer with 10+ years shipping production OTP at scale. Built Open Banking integration across UK high street banks at CompareTheMarket (Bean), API authorization and rate-limiting at Boulevard (US salon-SaaS unicorn), IoT cloud services on Phoenix at Vorwerk, and an event-sourced real-time community platform at Zapnito."
-            , "Comfortable owning supervision-tree design, telemetry / observability, and Ecto-heavy data layers. Most recently co-founder and tech lead at xpflow, building production AI agents on Next.js."
-            , "All client engagements delivered through Thoughtclay Ltd, my UK Ltd Co. Available for senior Elixir IC, tech-lead, or fractional CTO engagements."
-            ]
+            sharedIntroductionParagraphs
 
 
 sharedIntroductionParagraphs : List String
 sharedIntroductionParagraphs =
     [ "Building software that people actually love to use is what gets me going. With 22 years experience I've delivered successful products for the AI, Fintech, SaaS, Telecoms, Retail, Publishing, Energy, Charity, Health and Beauty, and Domestic appliance sectors."
     , "I've led teams building computer vision training pipelines at TwentyBN, Open Banking integration across UK high street banks at CompareTheMarket, IoT cloud services for commercial robot vacuums at Vorwerk, an event-sourced real-time community platform at Zapnito, and a WebDAV-based CMS that let Informa's journalists edit articles directly in Microsoft Word."
-    , "Most recently founding engineer at xpflow; previously co-founded a school e-commerce business later taken in-house by Marks & Spencer."
     , "Agile from day one; comfortable owning the engineering function or contributing within an established team."
     ]
 
@@ -278,7 +273,7 @@ engineerXpflow =
     , engineerTitle = "Founding Engineer"
     , elixirTitle = "Founding Engineer"
     , location = "Dallas / Remote"
-    , company = "Tree3 / xpflow"
+    , company = "xpflow & Tree3"
     , companyStack = [ "Next.js", "AI agents" ]
     , dates = "Jan 2024-Apr 2026"
     , projects = experience.xpflow.projects ++ experience.tree3.projects
@@ -356,12 +351,12 @@ experience =
             [ { name = "Alfie (AI affiliate recruitment)"
               , start = 2025
               , end = 2026
-              , overview = "Co-founded the spin-out and built Alfie — AI agent scouts that autonomously discover, evaluate, and reach out to affiliate partners while learning user preferences."
+              , overview = "Co-founded xpflow and built Alfie — AI agent scouts that autonomously discover, evaluate, and reach out to affiliate partners."
               , stack = [ "AI/LLMs", "NextJS", "Postgres" ]
               , talkingPoints =
-                    [ "Shipped the MVP in three weeks; strong early demand validated the model and informed the company's next phase (the world's largest affiliate database)."
-                    , "Specified LLM-driven evaluation and personalised outreach pipelines, replacing multi-day manual research with a fully autonomous agent workflow."
-                    , "Drove integrations with affiliate networks (Everflow) and built the plan-based subscription model on Stripe."
+                    [ "Built agentic affiliate scout and assistant."
+                    , "Matched merchants to affiliates using web scraping and an LLM recommendation engine."
+                    , "Integrated Stripe."
                     ]
               }
             ]
@@ -378,11 +373,11 @@ experience =
             [ { name = "XP Affiliate Platform"
               , start = 2024
               , end = 2025
-              , overview = "Led engineering on a high-performance affiliate platform, then ran customer discovery that pivoted the company."
+              , overview = "Led engineering on a high-performance affiliate platform; customer discovery pivoted the company into xpflow."
               , stack = [ "NextJS", "Postgres", "Redis" ]
               , talkingPoints =
-                    [ "Led the engineering team delivering the platform on NextJS / Postgres / Redis."
-                    , "Proposed and architected the AI-powered recruitment direction that spun out as xpflow."
+                    [ "Led delivery on NextJS / Postgres / Redis."
+                    , "Architected the AI-powered pivot that became Alfie."
                     ]
               }
             ]
@@ -402,8 +397,7 @@ experience =
               , overview = "Engaged as interim CTO to replace the previous MVP with a production-grade Flutter/Phoenix mobile app on AWS."
               , stack = [ "Elixir", "Flutter", "Sqlite", "Postgres", "AWS/Terraform" ]
               , talkingPoints =
-                    [ "Inherited unstable code, slow performance and no deployment infrastructure; left the engineering function stable and scalable."
-                    , "Established CI/CD pipelines from scratch and closed the engagement cleanly with the team set up to continue independently."
+                    [ "Inherited unstable code with no CI/CD; established pipelines and left the engineering function stable, scalable, and set up to continue independently."
                     ]
               }
             ]
@@ -414,7 +408,7 @@ experience =
         , elixirTitle = "Senior 2 Engineer"
         , location = "Los Angeles / Remote"
         , company = "Boulevard"
-        , companyStack = [ "Elixir", "Phoenix", "React" ]
+        , companyStack = [ "Elixir", "Phoenix", "Absinthe", "React" ]
         , dates = "Oct 2021-Jun 2023"
         , projects =
             [ { name = "API and Platform Services"
@@ -427,6 +421,7 @@ experience =
                     , "Designed the API authorization model governing permission evaluation across services."
                     , "Built the third-party App Store enabling external developer integrations."
                     , "Built the GraphQL rate limiter with per-application quotas and per-pipeline policies."
+                    , "Migrated job queues to Oban."
                     ]
               }
             ]
@@ -446,7 +441,8 @@ experience =
               , overview = "Bootstrapped an Elixir team at this consumer appliance giant, building cloud services for a new line of commercial robot vacuum cleaners."
               , stack = [ "Elixir", "Python", "Postgres", "AWS/Terraform" ]
               , talkingPoints =
-                    [ "Established the backend, Python client library, and development workflow from scratch; shipped on schedule for the commercial launch."
+                    [ "Established the Elixir backend and Python client library from scratch."
+                    , "Set up the development workflow and shipped to production on schedule for the commercial launch."
                     ]
               }
             ]
@@ -454,7 +450,7 @@ experience =
     , ctm =
         { title = "Consultant"
         , engineerTitle = "Senior Engineer"
-        , elixirTitle = "Senior Elixir Engineer"
+        , elixirTitle = "Tech Lead"
         , location = "London / Remote"
         , company = "CompareThe\nMarket.com"
         , companyStack = [ "Elixir", "Phoenix" ]
@@ -468,7 +464,7 @@ experience =
               , talkingPoints =
                     [ "Integrated the majority of UK high street banks via the Open Banking specification."
                     , "Navigated the regulatory and technical complexity of FCA-authorised account information services."
-                    , "Took the platform to substantially faster and more reliable at scale."
+                    , "Replacement platform enabled scale to support the substantial CompareTheMarket.com customer base."
                     ]
               }
             ]
@@ -488,7 +484,8 @@ experience =
               , overview = "Designed and built two Elm apps to collect video gesture training data from Mechanical Turk workers for this computer vision AI company."
               , stack = [ "Elm", "Javascript" ]
               , talkingPoints =
-                    [ "Annotation workflows fed directly into TwentyBN's model training pipelines — frontend engineering at the intersection of AI data infrastructure."
+                    [ "Annotation workflows fed directly into TwentyBN's model training pipelines."
+                    , "Worked at the intersection of frontend engineering and AI data infrastructure."
                     ]
               }
             ]
@@ -496,16 +493,16 @@ experience =
     , liqid =
         { title = "Consultant"
         , engineerTitle = "Senior Backend Engineer"
-        , elixirTitle = "Senior Elixir Engineer"
+        , elixirTitle = "Senior Engineer"
         , location = "Berlin / Remote"
         , company = "Liqid"
-        , companyStack = [ "Elixir", "RabbitMQ", "Rails" ]
+        , companyStack = [ "Elixir", "RabbitMQ", "Rails", "Salesforce" ]
         , dates = "Jan–Aug 2018"
         , projects =
             [ { name = "Salesforce Integration"
               , start = 2018
               , end = 2018
-              , overview = "Built an Elixir/RabbitMQ microservice connecting this wealth management fintech's Rails platform to Salesforce."
+              , overview = "Integrated this wealth management fintech's Rails platform with Salesforce using an elixir microservice."
               , stack = [ "Elixir", "Ruby on Rails", "RabbitMQ", "Salesforce", "Docker", "GraphQL" ]
               , talkingPoints =
                     [ "Designed and shipped the microservice supporting CRM and operational workflows."
@@ -517,21 +514,21 @@ experience =
     , zapnito =
         { title = "VP Engineering"
         , engineerTitle = "Engineering Lead"
-        , elixirTitle = "Engineering Lead"
+        , elixirTitle = "VP Engineering"
         , location = "London / Remote"
         , company = "Zapnito"
-        , companyStack = [ "Elixir", "Phoenix", "Elm" ]
+        , companyStack = [ "Elixir", "Phoenix Channels", "Elm" ]
         , dates = "Jan 2015–Jan 2018"
         , projects =
             [ { name = "Feeds"
               , start = 2016
               , end = 2017
-              , overview = "VP Engineering at Zapnito, leading delivery of Feeds — a white-labelled realtime community platform serving multiple B2B publishers."
+              , overview = "Hands-on VP Engineering at Zapnito, leading delivery of Feeds, a white-labelled realtime community platform serving multiple B2B publishers."
               , stack = [ "Phoenix", "Phoenix-Channels", "Elixir", "Elm", "Javascript", "JWT", "Auth0", "Postgres", "Kanban", "BDD" ]
               , talkingPoints =
-                    [ "Implemented an event-sourcing architecture on top of Phoenix Channels powering the realtime front end."
+                    [ "Built and integrated an event-sourcing architecture with Phoenix Channels."
                     , "Designed an embedding API with widgets and seamless SSO integration for 3rd-party publisher platforms."
-                    , "Built full-stack testing infrastructure running multiple concurrent browser instances."
+                    , "Built end-to-end testing infrastructure allowing multiple instances of the app to run in parallel in a single BEAM VM."
                     , "Hired and grew the engineering team across the period."
                     , "Took the product from prototype to stable multi-tenant SaaS."
                     ]
@@ -579,7 +576,7 @@ experience =
         , elixirTitle = "CTO & Co-founder"
         , location = "London / Remote"
         , company = "Myschooldirect"
-        , companyStack = [ "Rails", "Postgres", "Ember" ]
+        , companyStack = [ "Rails", "Browser extensions", "Ember" ]
         , dates = "2010–2014"
         , projects =
             [ { name = "Myschooldirect & Give4Sure (M&S acquisition, 2014)"
@@ -599,8 +596,8 @@ experience =
         }
     , informa =
         { title = "Tech lead/Architect"
-        , engineerTitle = "Tech Lead / Architect"
-        , elixirTitle = "Tech Lead / Architect"
+        , engineerTitle = "Tech Lead & Architect"
+        , elixirTitle = "Tech Lead & Architect"
         , location = "London"
         , company = "Informa"
         , companyStack = [ "Java", "Spring", "Oracle" ]
@@ -657,10 +654,10 @@ skillGroups : List SkillGroup
 skillGroups =
     [ { name = "Leadership"
       , skills =
-            [ { name = "Team leadership & hiring", years = 15 }
-            , { name = "Technical strategy & architecture", years = 20 }
-            , { name = "Product discovery & delivery", years = 10 }
-            , { name = "Zero-to-one shipping", years = 15 }
+            [ { name = "Team leadership", years = 10 }
+            , { name = "Hiring", years = 10 }
+            , { name = "Architecture & strategy", years = 20 }
+            , { name = "Zero-to-one shipping", years = 10 }
             ]
       }
     , { name = "Backend"
@@ -713,25 +710,53 @@ skillGroups =
 
 elixirSkillGroups : List SkillGroup
 elixirSkillGroups =
-    [ { name = "Stack"
+    [ { name = "Leadership"
+      , skills =
+            [ { name = "Team leadership", years = 10 }
+            , { name = "Hiring", years = 10 }
+            , { name = "Architecture", years = 20 }
+            , { name = "Strategy", years = 20 }
+            , { name = "Zero-to-one shipping", years = 10 }
+            ]
+      }
+    , { name = "Backend"
       , skills =
             [ { name = "Elixir / Phoenix", years = 10 }
-            , { name = "Postgres", years = 20 }
-            , { name = "Typescript / JS", years = 17 }
-            , { name = "NextJS", years = 3 }
-            , { name = "React", years = 10 }
             , { name = "Ruby on Rails", years = 8 }
-            , { name = "Elm", years = 5 }
-            , { name = "AWS", years = 14 }
-            , { name = "Terraform", years = 4 }
+            , { name = "NextJS", years = 3 }
+            , { name = "SQL", years = 22 }
+            , { name = "Java", years = 8 }
+            ]
+      }
+    , { name = "Datastores"
+      , skills =
+            [ { name = "Postgres", years = 20 }
+            , { name = "Redis", years = 15 }
+            , { name = "Snowflake", years = 2 }
+            , { name = "Firebase", years = 4 }
             ]
       }
     , { name = "AI"
       , skills =
             [ { name = "OpenAI API", years = 2 }
             , { name = "AI agents", years = 2 }
-            , { name = "LangChain / LangSmith", years = 2 }
+            , { name = "LangChain", years = 2 }
+            , { name = "LangSmith", years = 2 }
             , { name = "Agentic coding", years = 2 }
+            ]
+      }
+    , { name = "Frontend"
+      , skills =
+            [ { name = "React", years = 10 }
+            , { name = "Typescript", years = 17 }
+            , { name = "Elm", years = 5 }
+            , { name = "HTML / CSS / SASS", years = 22 }
+            ]
+      }
+    , { name = "Infrastructure"
+      , skills =
+            [ { name = "AWS", years = 14 }
+            , { name = "Terraform", years = 4 }
             ]
       }
     , { name = "Methodology"
@@ -747,28 +772,28 @@ openSourceProjects =
     [ { name = "fncasts / fnchess"
       , repo = "https://github.com/fncasts/fnchess"
       , language = "Elm/Elixir"
-      , overview = "Paired with a friend on youtube to build a chess game in Elm backend by Phoenix-Channels for realtime. See https://fncasts.io for the episodes."
+      , overview = "The chess game built on the FnCasts channel"
       , shortInvolvement = "owner"
       , involvement = ""
       }
     , { name = "orbitjs / orbit"
       , repo = "https://github.com/orbitjs/orbit"
       , language = "javascript"
-      , overview = "A javascript library for orchestrating data synchronization. See http://orbitjs.com for more information."
+      , overview = "Data syncing framework"
       , shortInvolvement = "core"
       , involvement = "For 2 years I was a core contributor working with Dan Gebhard (co-author of the jsonapi spec), contributing code and discussing architectural direction"
       }
     , { name = "saschatimme / elm-phoenix"
       , repo = "https://github.com/saschatimme/elm-phoenix"
       , language = "Elm"
-      , overview = "Integration between Elm and Phoenix channels"
+      , overview = "Integration between Phoenix channels and Elm"
       , shortInvolvement = "core"
       , involvement = "Having used elm-phoenix in production I've contributed several features, bug fixes, documentation and example code"
       }
     , { name = "opsb / cv-elm"
       , repo = "https://github.com/opsb/cv-elm"
       , language = "Elm"
-      , overview = "The code used to generate the CV you're reading right now"
+      , overview = "The CV you're reading"
       , shortInvolvement = "owner"
       , involvement = "I wanted a CV that made it convenient to update the content or design so I built this one in Elm."
       }

@@ -65,10 +65,10 @@ isExperimental path =
 isExperimental2 : String -> Bool
 isExperimental2 path =
     case String.toLower (String.trim path) of
-        "/experimental2" ->
+        "/elixir" ->
             True
 
-        "/experimental2/" ->
+        "/elixir/" ->
             True
 
         _ ->

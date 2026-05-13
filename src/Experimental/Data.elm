@@ -663,10 +663,10 @@ skillGroups : List SkillGroup
 skillGroups =
     [ { name = "Leadership"
       , skills =
-            [ { name = "Team leadership & hiring", years = 15 }
-            , { name = "Technical strategy & architecture", years = 20 }
-            , { name = "Product discovery & delivery", years = 10 }
-            , { name = "Zero-to-one shipping", years = 15 }
+            [ { name = "Team leadership", years = 10 }
+            , { name = "Hiring", years = 10 }
+            , { name = "Architecture & strategy", years = 20 }
+            , { name = "Zero-to-one shipping", years = 10 }
             ]
       }
     , { name = "Backend"
