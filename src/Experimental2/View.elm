@@ -445,7 +445,7 @@ companyStackLine stack =
         _ ->
             el
                 [ Font.size 12
-                , Font.color Colors.grey
+                , Font.color Colors.red
                 ]
                 (text (String.join ", " stack))
 
@@ -455,7 +455,7 @@ projectView { showTitle } project =
     let
         titleNode =
             if showTitle then
-                Atom.title3 [ Font.size 13, Font.medium, Font.color Colors.red ] project.name
+                Atom.title3 [ Font.size 13, Font.medium, Font.color Colors.grey ] project.name
 
             else
                 none
