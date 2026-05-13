@@ -5,7 +5,8 @@ import Element exposing (..)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
-import Experimental.Data as Data exposing (Institution, OpenSourceProject, Position, Project, SkillGroup, Variant(..))
+import Data
+import Experimental.Data as ExpData
 import Html exposing (Html)
 import Html.Attributes
 
@@ -13,17 +14,59 @@ import Html.Attributes
 view : Browser.Document msg
 view =
     { title = "Oliver Searle-Barnes — CV"
-    , body = [ Element.layout pageAttrs page ]
+    , body =
+        [ Html.node "style"
+            []
+            [ Html.text "html, body { background-color: rgb(232, 230, 224) !important; } @media print { [data-print=\"false\"] { display: none !important; } }" ]
+        , downloadLinkHtml
+        , Element.layout pageAttrs page
+        ]
     }
+
+
+pdfFileName : String
+pdfFileName =
+    "Oliver-Searle-Barnes-Elixir-Editorial-2026.pdf"
+
+
+downloadLinkHtml : Html msg
+downloadLinkHtml =
+    Html.a
+        [ Html.Attributes.href ("/" ++ pdfFileName)
+        , Html.Attributes.attribute "download" pdfFileName
+        , Html.Attributes.attribute "data-print" "false"
+        , Html.Attributes.style "position" "fixed"
+        , Html.Attributes.style "top" "16px"
+        , Html.Attributes.style "right" "20px"
+        , Html.Attributes.style "font-family" "DM Sans, Helvetica, Arial, sans-serif"
+        , Html.Attributes.style "font-size" "12px"
+        , Html.Attributes.style "color" "#1c1c20"
+        , Html.Attributes.style "text-decoration" "none"
+        , Html.Attributes.style "background" "rgba(255,255,255,0.92)"
+        , Html.Attributes.style "border" "1px solid #d8d8dd"
+        , Html.Attributes.style "border-radius" "4px"
+        , Html.Attributes.style "padding" "6px 10px"
+        , Html.Attributes.style "z-index" "100"
+        ]
+        [ Html.text "↓ Download PDF" ]
 
 
 
 ---- TOKENS ----
 
 
-primaryVariant : Variant
+{-| The variant for the experimental (sidebar) content — drives Profile/Skills/etc. -}
+primaryVariant : ExpData.Variant
 primaryVariant =
-    Elixir
+    ExpData.Elixir
+
+
+{-| The variant for the canonical /elixir experience content. Structurally the same as
+`primaryVariant` but a distinct Elm type, so we keep a parallel value.
+-}
+primaryVariantData : Data.Variant
+primaryVariantData =
+    Data.Elixir
 
 
 textColor : Color
@@ -124,7 +167,7 @@ page2 =
         ]
         [ page2Header
         , horizontalRule
-        , section "Experience" experienceBlock
+        , section "Experience (continued)" experienceBlockPage2
         ]
 
 
@@ -301,6 +344,8 @@ rightColumn : Element msg
 rightColumn =
     column [ width (fillPortion 5), alignTop, spacing 28 ]
         [ section "Profile" aboutBlock
+        , sectionDivider
+        , section "Experience" experienceBlockPage1
         ]
 
 
@@ -356,7 +401,7 @@ metaLabel s =
 aboutBlock : Element msg
 aboutBlock =
     column [ spacing 10, width fill ]
-        (Data.introductionParagraphsFor primaryVariant
+        (ExpData.introductionParagraphsFor primaryVariant
             |> List.map
                 (\p ->
                     Element.paragraph
@@ -376,10 +421,10 @@ aboutBlock =
 educationBlock : Element msg
 educationBlock =
     column [ spacing 16, width fill ]
-        (List.map institutionItem Data.education)
+        (List.map institutionItem ExpData.education)
 
 
-institutionItem : Institution -> Element msg
+institutionItem : ExpData.Institution -> Element msg
 institutionItem inst =
     column [ spacing 4, width fill ]
         [ subSectionHeader inst.course
@@ -396,10 +441,10 @@ institutionItem inst =
 skillsBlock : Element msg
 skillsBlock =
     column [ spacing 18, width fill ]
-        (List.map skillGroupItem (Data.skillGroupsFor primaryVariant))
+        (List.map skillGroupItem (ExpData.skillGroupsFor primaryVariant))
 
 
-skillGroupItem : SkillGroup -> Element msg
+skillGroupItem : ExpData.SkillGroup -> Element msg
 skillGroupItem group =
     column [ spacing 6, width fill ]
         [ subSectionHeader group.name
@@ -437,10 +482,10 @@ formatYears y =
 openSourceBlock : Element msg
 openSourceBlock =
     column [ spacing 14, width fill ]
-        (List.map openSourceItem Data.openSourceProjects)
+        (List.map openSourceItem ExpData.openSourceProjects)
 
 
-openSourceItem : OpenSourceProject -> Element msg
+openSourceItem : ExpData.OpenSourceProject -> Element msg
 openSourceItem proj =
     column [ spacing 3, width fill ]
         [ subSectionHeader proj.name
@@ -453,18 +498,42 @@ openSourceItem proj =
 ---- EXPERIENCE ----
 
 
-experienceBlock : Element msg
-experienceBlock =
+{-| How many positions render on page 1 (under Profile, in the right column).
+The remainder flows onto page 2. Tune visually if the page 1 right column overflows
+or runs short.
+-}
+page1ExperienceCount : Int
+page1ExperienceCount =
+    1
+
+
+experiencePositionsAll : List Data.Position
+experiencePositionsAll =
+    Data.experiencePositionsFor primaryVariantData
+
+
+experienceBlockPage1 : Element msg
+experienceBlockPage1 =
     column [ spacing 26, width fill ]
-        (Data.experiencePositionsFor primaryVariant
+        (experiencePositionsAll
+            |> List.take page1ExperienceCount
             |> List.map positionBlock
         )
 
 
-positionBlock : Position -> Element msg
+experienceBlockPage2 : Element msg
+experienceBlockPage2 =
+    column [ spacing 26, width fill ]
+        (experiencePositionsAll
+            |> List.drop page1ExperienceCount
+            |> List.map positionBlock
+        )
+
+
+positionBlock : Data.Position -> Element msg
 positionBlock position =
     column [ spacing 8, width fill ]
-        [ subSectionHeader (Data.positionTitle primaryVariant position)
+        [ subSectionHeader (Data.positionTitle primaryVariantData position)
         , metaLabel
             (positionCompanyClean position.company
                 ++ "   |   "
@@ -497,7 +566,7 @@ companyStackLine stack =
                 (text (String.join " / " stack))
 
 
-projectBlock : Project -> Element msg
+projectBlock : Data.Project -> Element msg
 projectBlock project =
     column [ spacing 6, width fill ]
         [ el

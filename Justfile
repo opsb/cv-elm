@@ -1,9 +1,12 @@
 dev:
 	npm run dev
 
-publish: gen-pdf
+publish:
+	@npm run build
+	@npm run generate-pdf
 	@echo "----> Publishing to netlify"
-	@npm run build && netlify deploy --prod -d dist
+	@netlify deploy --prod -d dist
 
 gen-pdf:
+	npm run build
 	npm run generate-pdf

@@ -35,7 +35,7 @@ master =
             , { name = "Hiring", years = 10 }
             , { name = "Architecture", years = 20 }
             , { name = "Strategy", years = 20 }
-            , { name = "Zero-to-one shipping", years = 10 }
+            , { name = "Zero-to-one", years = 10 }
             ]
       }
     , { name = "Backend"
@@ -45,6 +45,14 @@ master =
             , { name = "NextJS", years = 3 }
             , { name = "SQL", years = 22 }
             , { name = "Java", years = 8 }
+            ]
+      }
+    , { name = "Frontend"
+      , skills =
+            [ { name = "React", years = 10 }
+            , { name = "Typescript", years = 17 }
+            , { name = "Elm", years = 5 }
+            , { name = "HTML / CSS / SASS", years = 22 }
             ]
       }
     , { name = "Datastores"
@@ -62,14 +70,6 @@ master =
             , { name = "LangChain", years = 2 }
             , { name = "LangSmith", years = 2 }
             , { name = "Agentic coding", years = 2 }
-            ]
-      }
-    , { name = "Frontend"
-      , skills =
-            [ { name = "React", years = 10 }
-            , { name = "Typescript", years = 17 }
-            , { name = "Elm", years = 5 }
-            , { name = "HTML / CSS / SASS", years = 22 }
             ]
       }
     , { name = "Infrastructure"

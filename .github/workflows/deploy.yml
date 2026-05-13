@@ -39,6 +39,8 @@ jobs:
         run: npm ci
       - name: Build
         run: npm run build
+      - name: Generate PDFs for each variant
+        run: npm run generate-pdf
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Upload artifact

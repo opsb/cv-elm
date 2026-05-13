@@ -246,9 +246,9 @@ experienceColumnsFor variant =
                 , experience.ctm
                 ]
             , right =
-                [ experience.liqid
+                [ experience.twentyBn
+                , experience.liqid
                 , experience.zapnito
-                , experience.twentyBn
                 , experience.myschooldirect
                 , experience.informa
                 ]
@@ -341,15 +341,17 @@ experience =
         , companyStack = [ "Next.js", "AI agents" ]
         , dates = "Feb 2025-Apr 2026"
         , projects =
-            [ { name = "Alfie (AI affiliate recruitment)"
+            [ { name = "Alfie (AI affiliate-recruitment agent)"
               , start = 2025
               , end = 2026
-              , overview = "Built Alfie, AI agent scouts that autonomously discover, evaluate, and reach out to affiliate partners. Shipped MVP in three weeks."
+              , overview = "Built and shipped a fleet of LLM agents that discover, evaluate, and contact affiliate partners on behalf of growth teams."
               , stack = [ "AI/LLMs", "NextJS", "Postgres" ]
               , talkingPoints =
-                    [ "LLM-driven evaluation and personalised outreach, replacing multi-day manual research."
-                    , "Integrated affiliate networks (Everflow) and Stripe subscriptions."
-                    , "Agentic learning system based on interactions with user."
+                    [ "Per-tenant agent pipeline: discovery, evaluation, outreach."
+                    , "Designed agentic learning loop on LangGraph."
+                    , "Created harness for regression testing LLM prompts."
+                    , "Built custom chat stack supporting in-chat widgets."
+                    , "Integrated Stripe payments."
                     ]
               }
             ]
@@ -366,13 +368,12 @@ experience =
             [ { name = "XP Affiliate Platform"
               , start = 2024
               , end = 2025
-              , overview = "Led engineering on a high-performance affiliate platform. Customer discovery surfaced an AI-powered recruitment direction, spun out as xpflow with me on the founding team."
+              , overview = "Led engineering on a high-performance affiliate platform."
               , stack = [ "NextJS", "Postgres", "Redis" ]
               , talkingPoints =
-                    [ "Built the MVP in 3 weeks."
-                    , "Led development on NextJS / Postgres / Redis."
-                    , "Ran the customer discovery that identified the AI-powered direction."
-                    , "Architected the recruitment product that spun out as xpflow."
+                    [ "Owned the platform architecture across click capture, attribution, and reliable postback delivery to partner endpoints."
+                    , "Built dashboards for both Brands and Affiliates."
+                    , "Ran the customer-discovery sprint that surfaced the underlying gap and proposed AI-powered affiliate recruitment as the response."
                     ]
               }
             ]
@@ -389,12 +390,13 @@ experience =
             [ { name = "Tastermonial App"
               , start = 2023
               , end = 2023
-              , overview = "Replaced the previous MVP with a production-grade Flutter/Phoenix mobile app on AWS."
+              , overview = "Rebuilt the platform end-to-end: an unstable iOS MVP became a production-grade Phoenix/Flutter app on iOS + Android."
               , stack = [ "Elixir", "Flutter", "Sqlite", "Postgres", "AWS/Terraform" ]
               , talkingPoints =
-                    [ "Inherited unstable code, slow performance, and no CI/CD."
-                    , "Established CI/CD on AWS via Terraform."
-                    , "Left the engineering function stable and the team running independently."
+                    [ "Inherited customers with active reliability complaints."
+                    , "Rebuilt the backend on Phoenix/Elixir for production-grade reliability."
+                    , "Rebuilt the mobile app on Flutter, iOS + Android."
+                    , "Established development practices Kanban, BDD, CI, Terraform infra, etc."
                     ]
               }
             ]
@@ -405,20 +407,19 @@ experience =
         , elixirTitle = "Senior 2 Engineer"
         , location = "Los Angeles / Remote"
         , company = "Boulevard"
-        , companyStack = [ "Elixir", "Phoenix", "Absinthe", "React" ]
+        , companyStack = [ "Elixir", "Phoenix", "React" ]
         , dates = "Oct 2021-Jun 2023"
         , projects =
             [ { name = "API and Platform Services"
               , start = 2021
               , end = 2023
               , overview = "Joined the API team at this health & beauty unicorn, shipping core platform infrastructure."
-              , stack = [ "Elixir", "Absinthe", "Postgres", "React", "Typescript", "AWS/Terraform" ]
+              , stack = [ "Elixir", "Postgres", "React", "Typescript", "AWS/Terraform" ]
               , talkingPoints =
                     [ "Led HIPAA compliance across entire platform."
                     , "Designed the API authorization model governing permission evaluation across services."
                     , "Built the third-party App Store enabling external developer integrations."
                     , "Built the GraphQL rate limiter with per-application quotas and per-pipeline policies."
-                    , "Migrated job queues to Oban."
                     ]
               }
             ]
@@ -523,11 +524,10 @@ experience =
               , overview = "Hands-on VP Engineering at Zapnito, leading delivery of Feeds, a white-labelled realtime community platform serving multiple B2B publishers."
               , stack = [ "Phoenix", "Phoenix-Channels", "Elixir", "Elm", "Javascript", "JWT", "Auth0", "Postgres", "Kanban", "BDD" ]
               , talkingPoints =
-                    [ "Built and integrated an event-sourcing architecture with Phoenix Channels."
-                    , "Designed an embedding API with widgets and seamless SSO integration for 3rd-party publisher platforms."
+                    [ "Built slack like experience built on Phoenix Channels."
+                    , "Created multi widget kit for embedding within client apps."
                     , "Built end-to-end testing infrastructure allowing multiple instances of the app to run in parallel in a single BEAM VM."
                     , "Hired and grew the engineering team across the period."
-                    , "Took the product from prototype to stable multi-tenant SaaS."
                     ]
               }
 

@@ -646,7 +646,7 @@ education =
     [ { name = "Sussex University"
       , link = "https://www.sussex.ac.uk/"
       , course = "Artificial Intelligence"
-      , result = "2/1"
+      , result = "2:1"
       , startYear = 2001
       , endYear = 2004
       }

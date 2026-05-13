@@ -6,6 +6,7 @@ import Browser.Navigation as Nav
 import Data exposing (..)
 import Experimental.View
 import Experimental2.View
+import Experimental3.View
 import Element exposing (..)
 import Element.Background as Background
 import Element.Border as Border
@@ -75,6 +76,19 @@ isExperimental2 path =
             False
 
 
+isElixirAts : String -> Bool
+isElixirAts path =
+    case String.toLower (String.trim path) of
+        "/elixir-ats" ->
+            True
+
+        "/elixir-ats/" ->
+            True
+
+        _ ->
+            False
+
+
 
 ---- UPDATE ----
 
@@ -130,6 +144,9 @@ view model =
 
     else if isExperimental2 model.path then
         Experimental2.View.view
+
+    else if isElixirAts model.path then
+        Experimental3.View.view
 
     else
         { title = "Oliver Searle-Barnes"

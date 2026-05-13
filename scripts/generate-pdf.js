@@ -1,19 +1,29 @@
+// Generates one PDF per variant by serving the built `dist/` directory and
+// driving headless Chromium via Puppeteer over each route. Each PDF is written
+// back into `dist/` so it ships with the deployment artifact (GitHub Pages /
+// Netlify) and the in-page "Download PDF" links resolve at the root path.
+//
+// `preferCSSPageSize: true` makes Puppeteer respect each variant's own
+// `@page { size: A4 ... }` rule. The original landscape variants declare it in
+// `main.css`; `/elixir-ats` declares portrait via an inline <style>.
+//
+// SPA fallback: the static server below mirrors what GitHub Pages does via
+// `404.html` and what Netlify does via the redirects rule — any unknown path
+// returns `index.html` so the Elm router can pick the variant up.
+
 const puppeteer = require("puppeteer");
+const finalhandler = require("finalhandler");
+const http = require("http");
+const path = require("path");
+const fs = require("fs");
+const serveStatic = require("serve-static");
 
-var finalhandler = require("finalhandler");
-var http = require("http");
-var path = require("path");
-var fs = require("fs");
-var serveStatic = require("serve-static");
+const distDir = "dist";
+const serve = serveStatic(distDir, { index: ["index.html", "index.htm"] });
+const indexHtml = fs.readFileSync(path.join(distDir, "index.html"));
 
-var distDir = "dist";
-var serve = serveStatic(distDir, { index: ["index.html", "index.htm"] });
-var indexHtml = fs.readFileSync(path.join(distDir, "index.html"));
-
-// SPA fallback: any path that serve-static can't resolve returns index.html
-// so the Elm app can read the URL on first load.
-var server = http.createServer(function onRequest(req, res) {
-  serve(req, res, function fallback(err) {
+const server = http.createServer((req, res) => {
+  serve(req, res, (err) => {
     if (err) {
       finalhandler(req, res)(err);
       return;
@@ -23,9 +33,12 @@ var server = http.createServer(function onRequest(req, res) {
   });
 });
 
-var variants = [
-  { path: "/", file: "public/opsb.pdf" },
-  { path: "/engineer", file: "public/opsb-engineer.pdf" },
+const variants = [
+  { path: "/", file: "Oliver-Searle-Barnes-CTO-2026.pdf" },
+  { path: "/engineer", file: "Oliver-Searle-Barnes-Engineer-2026.pdf" },
+  { path: "/elixir", file: "Oliver-Searle-Barnes-Senior-Elixir-Engineer-2026.pdf" },
+  { path: "/experimental", file: "Oliver-Searle-Barnes-Elixir-Editorial-2026.pdf" },
+  { path: "/elixir-ats", file: "Oliver-Searle-Barnes-Senior-Elixir-Engineer-ATS-2026.pdf" },
 ];
 
 server.on("listening", function () {
@@ -35,9 +48,15 @@ server.on("listening", function () {
       for (const variant of variants) {
         const page = await browser.newPage();
         const url = "http://localhost:3001" + variant.path;
-        console.log("Rendering " + url + " -> " + variant.file);
+        const outputPath = path.join(distDir, variant.file);
+        console.log("Rendering " + url + " -> " + outputPath);
         await page.goto(url, { waitUntil: "networkidle2" });
-        await page.pdf({ path: variant.file, format: "A4" });
+        await page.pdf({
+          path: outputPath,
+          format: "A4",
+          printBackground: true,
+          preferCSSPageSize: true,
+        });
         await page.close();
       }
     } finally {

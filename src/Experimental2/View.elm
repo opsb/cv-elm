@@ -17,8 +17,40 @@ import View.Icon as Icon
 view : Browser.Document msg
 view =
     { title = "Oliver Searle-Barnes — CV"
-    , body = a4PagesLayout
+    , body =
+        Html.node "style"
+            []
+            [ Html.text "@media print { [data-print=\"false\"] { display: none !important; } }" ]
+            :: downloadLinkHtml
+            :: a4PagesLayout
     }
+
+
+pdfFileName : String
+pdfFileName =
+    "Oliver-Searle-Barnes-Senior-Elixir-Engineer-2026.pdf"
+
+
+downloadLinkHtml : Html msg
+downloadLinkHtml =
+    Html.a
+        [ Html.Attributes.href ("/" ++ pdfFileName)
+        , Html.Attributes.attribute "download" pdfFileName
+        , Html.Attributes.attribute "data-print" "false"
+        , Html.Attributes.style "position" "fixed"
+        , Html.Attributes.style "top" "16px"
+        , Html.Attributes.style "right" "20px"
+        , Html.Attributes.style "font-family" "Helvetica, Arial, sans-serif"
+        , Html.Attributes.style "font-size" "12px"
+        , Html.Attributes.style "color" "#1c1c20"
+        , Html.Attributes.style "text-decoration" "none"
+        , Html.Attributes.style "background" "rgba(255,255,255,0.92)"
+        , Html.Attributes.style "border" "1px solid #d8d8dd"
+        , Html.Attributes.style "border-radius" "4px"
+        , Html.Attributes.style "padding" "6px 10px"
+        , Html.Attributes.style "z-index" "100"
+        ]
+        [ Html.text "↓ Download PDF" ]
 
 
 primaryVariant : Variant
@@ -57,9 +89,8 @@ overviewPage =
                 , pageSection "Skills" skillsSection
                 ]
             , Atom.verticalDivider
-            , Atom.pageColumn [ spacing 36 ]
-                [ pageSection "Education" educationSection
-                , pageSection "Experience" experiencePage1Block
+            , Atom.pageColumn [ spacing 26 ]
+                [ pageSection "Experience" experiencePage1Block
                 ]
             ]
 
@@ -212,7 +243,7 @@ skillGroupView group =
 skillRow : Skill -> Element msg
 skillRow s =
     row [ width fill ]
-        [ el [ Font.size 12, Font.bold, Font.color Colors.grey ] (text s.name)
+        [ el [ Font.size 12, Font.color Colors.grey ] (text s.name)
         , el
             [ width fill
             , height (px 15)
@@ -223,7 +254,7 @@ skillRow s =
             , htmlAttribute (Html.Attributes.style "background-repeat" "repeat-x")
             ]
             Element.none
-        , el [ Font.size 12, Font.bold, Font.color Colors.grey, alignRight ] (text (formatYears s.years))
+        , el [ Font.size 12, Font.color Colors.grey, alignRight ] (text (formatYears s.years))
         ]
 
 
@@ -298,7 +329,11 @@ experiencePage =
                     (List.map positionView page2Col2Positions)
                 , Atom.verticalDivider
                 , Atom.pageColumn [ spacing 12, paddingXY 20 10 ]
-                    (List.map positionView page2Col3Positions)
+                    (List.map positionView page2Col3Positions
+                        ++ [ el [ height fill ] none
+                           , pageSection "Education" educationSection
+                           ]
+                    )
                 ]
             ]
 
@@ -357,7 +392,7 @@ page2Col3Positions =
 
 positionView : Position -> Element msg
 positionView position =
-    column [ spacing 3, width fill, paddingEach { top = 0, right = 0, bottom = 8, left = 0 } ]
+    column [ spacing 6, width fill, paddingEach { top = 0, right = 0, bottom = 8, left = 0 } ]
         [ Element.paragraph
             [ titleFont
             , Font.size 17
@@ -369,10 +404,24 @@ positionView position =
             , text (Data.positionTitle primaryVariant position)
             ]
         , companyStackLine position.companyStack
-        , Atom.bodyText [ Font.size 10, Font.regular ] (position.dates ++ "  ·  " ++ position.location)
+        , Atom.bodyText [ Font.size 10, Font.regular, Font.italic ] (position.dates ++ "  ·  " ++ position.location)
         , column [ spacing 16, width fill, paddingEach { top = 8, right = 0, bottom = 0, left = 0 } ]
-            (List.map projectView position.projects)
+            (List.map projectView (visibleProjectsFor position))
         ]
+
+
+{-| Per-variant project visibility for /elixir. Informa is kept on the timeline
+as a position-level entry (it's the earliest big-engineering chapter), but the
+project bullets — Java / Mondrian / Oracle / WebDAV — are not on-target for an
+Elixir-engineer audience and are hidden here.
+-}
+visibleProjectsFor : Position -> List Project
+visibleProjectsFor position =
+    if position.company == "Informa" then
+        []
+
+    else
+        position.projects
 
 
 companyStackLine : List String -> Element msg
@@ -383,11 +432,10 @@ companyStackLine stack =
 
         _ ->
             el
-                [ Font.size 11
+                [ Font.size 12
                 , Font.color Colors.grey
-                , Font.bold
                 ]
-                (text (String.join "  ·  " stack))
+                (text (String.join ", " stack))
 
 
 projectView : Project -> Element msg
