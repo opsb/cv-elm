@@ -344,12 +344,12 @@ experience =
             [ { name = "Alfie (AI affiliate recruitment)"
               , start = 2025
               , end = 2026
-              , overview = "Co-founded xpflow and built Alfie — AI agent scouts that autonomously discover, evaluate, and reach out to affiliate partners."
+              , overview = "Built Alfie — AI agent scouts that autonomously discover, evaluate, and reach out to affiliate partners. Shipped MVP in three weeks."
               , stack = [ "AI/LLMs", "NextJS", "Postgres" ]
               , talkingPoints =
-                    [ "Built agentic affiliate scout and assistant."
-                    , "Matched merchants to affiliates using web scraping and an LLM recommendation engine."
-                    , "Integrated Stripe."
+                    [ "LLM-driven evaluation and personalised outreach, replacing multi-day manual research."
+                    , "Integrated affiliate networks (Everflow) and Stripe subscriptions."
+                    , "Customer discovery identified the opportunity the company spun out around."
                     ]
               }
             ]
@@ -366,12 +366,13 @@ experience =
             [ { name = "XP Affiliate Platform"
               , start = 2024
               , end = 2025
-              , overview = "Led engineering on a high-performance affiliate platform; customer discovery pivoted the company into xpflow."
+              , overview = "Led engineering on a high-performance affiliate platform. Customer discovery surfaced an AI-powered recruitment direction, spun out as xpflow with me on the founding team."
               , stack = [ "NextJS", "Postgres", "Redis" ]
               , talkingPoints =
                     [ "Built the MVP in 3 weeks."
                     , "Led development on NextJS / Postgres / Redis."
-                    , "Architected the AI-powered pivot that became Alfie."
+                    , "Ran the customer discovery that identified the AI-powered direction."
+                    , "Architected the recruitment product that spun out as xpflow."
                     ]
               }
             ]
@@ -388,10 +389,12 @@ experience =
             [ { name = "Tastermonial App"
               , start = 2023
               , end = 2023
-              , overview = "Engaged as interim CTO to replace the previous MVP with a production-grade Flutter/Phoenix mobile app on AWS."
+              , overview = "Replaced the previous MVP with a production-grade Flutter/Phoenix mobile app on AWS."
               , stack = [ "Elixir", "Flutter", "Sqlite", "Postgres", "AWS/Terraform" ]
               , talkingPoints =
-                    [ "Inherited unstable code with no CI/CD; established pipelines and left the engineering function stable, scalable, and set up to continue independently."
+                    [ "Inherited unstable code, slow performance, and no CI/CD."
+                    , "Established CI/CD on AWS via Terraform."
+                    , "Left the engineering function stable and the team running independently."
                     ]
               }
             ]
