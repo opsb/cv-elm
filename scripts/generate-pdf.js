@@ -43,7 +43,13 @@ const variants = [
 
 server.on("listening", function () {
   (async () => {
-    const browser = await puppeteer.launch();
+    // --no-sandbox / --disable-setuid-sandbox are needed on GitHub Actions
+    // Ubuntu runners where Chromium's SUID sandbox helper isn't available.
+    // Safe here: the generator hits our own static site on a localhost
+    // server, running on an ephemeral CI VM.
+    const browser = await puppeteer.launch({
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
     try {
       for (const variant of variants) {
         const page = await browser.newPage();
