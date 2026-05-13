@@ -349,7 +349,7 @@ experience =
               , talkingPoints =
                     [ "Devised discovery engine for matching brands to affiliates (web scraping with multi-stage LLM)."
                     , "Built custom chat stack supporting in-chat widgets."
-                    , "Designed agentic learning loop on LangGraph."
+                    , "Designed agentic learning loop on LangGraph / LangChain."
                     , "Created harness for regression testing LLM prompts."
                     , "Integrated Stripe payments."
                     ]
