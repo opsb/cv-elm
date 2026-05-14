@@ -78,7 +78,7 @@ pdfFileFor variant =
             "Oliver-Searle-Barnes-Engineer-2026.pdf"
 
         Elixir ->
-            "Oliver-Searle-Barnes-Staff-Principal-Elixir-Engineer-2026.pdf"
+            "Oliver-Searle-Barnes-Staff-Elixir-Engineer-2026.pdf"
 
 
 type alias Data =
@@ -133,7 +133,7 @@ taglineFor variant =
             "Hands-on full-stack engineer"
 
         Elixir ->
-            "Staff / Principal Elixir engineer · 10+ years production OTP"
+            "Staff Elixir engineer · 10+ years production OTP"
 
 
 sidePanelLabels : Variant -> List String
@@ -152,7 +152,7 @@ sidePanelLabels variant =
             ]
 
         Elixir ->
-            [ "Staff / Principal Elixir engineer · Tech Lead · Architect"
+            [ "Staff Elixir engineer · Tech Lead · Architect"
             , "22 years across SaaS, fintech, AI"
             ]
 
