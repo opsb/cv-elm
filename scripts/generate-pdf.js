@@ -36,7 +36,7 @@ const server = http.createServer((req, res) => {
 const variants = [
   { path: "/", file: "Oliver-Searle-Barnes-CTO-2026.pdf" },
   { path: "/engineer", file: "Oliver-Searle-Barnes-Engineer-2026.pdf" },
-  { path: "/elixir", file: "Oliver-Searle-Barnes-Senior-Elixir-Engineer-2026.pdf" },
+  { path: "/elixir", file: "Oliver-Searle-Barnes-Staff-Principal-Elixir-Engineer-2026.pdf" },
   { path: "/experimental", file: "Oliver-Searle-Barnes-Elixir-Editorial-2026.pdf" },
   { path: "/elixir-ats", file: "Oliver-Searle-Barnes-Senior-Elixir-Engineer-ATS-2026.pdf" },
 ];
