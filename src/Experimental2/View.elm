@@ -28,7 +28,7 @@ view =
 
 pdfFileName : String
 pdfFileName =
-    "Oliver-Searle-Barnes-Senior-Elixir-Engineer-2026.pdf"
+    "Oliver-Searle-Barnes-Staff-Elixir-Engineer-2026.pdf"
 
 
 downloadLinkHtml : Html msg
