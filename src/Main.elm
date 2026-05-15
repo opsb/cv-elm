@@ -7,6 +7,7 @@ import LeadershipData as Data exposing (..)
 import Experimental.View
 import Experimental2.View
 import Experimental3.View
+import Node.View
 import Element exposing (..)
 import Element.Background as Background
 import Element.Border as Border
@@ -89,6 +90,19 @@ isElixirAts path =
             False
 
 
+isNode : String -> Bool
+isNode path =
+    case String.toLower (String.trim path) of
+        "/node" ->
+            True
+
+        "/node/" ->
+            True
+
+        _ ->
+            False
+
+
 
 ---- UPDATE ----
 
@@ -147,6 +161,9 @@ view model =
 
     else if isElixirAts model.path then
         Experimental3.View.view
+
+    else if isNode model.path then
+        Node.View.view
 
     else
         { title = "Oliver Searle-Barnes"

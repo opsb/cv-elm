@@ -8,7 +8,7 @@ module Data.Skills exposing
 
 {-| Single source of truth for the skills shown on every CV variant.
 
-The `master` list reflects the Elixir variant's view of the skills — the
+The `master` list reflects the Elixir variant's view of the skills: the
 canonical numbers and groupings. Other variants reorder it but never
 diverge on the underlying data.
 

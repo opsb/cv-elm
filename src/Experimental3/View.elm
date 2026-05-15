@@ -12,7 +12,7 @@ the layout decorations that confuse Applicant Tracking Systems:
   - standard `•` bullets only
   - skills as comma-separated runs per group, not a column grid
   - no tables, no images, no headers/footers
-  - selectable text throughout — fonts fall back to Helvetica/Arial so that
+  - selectable text throughout; fonts fall back to Helvetica/Arial so that
     a stripped-PDF parser still sees the unicode
 
 Data sources mirror /experimental: `Data` (canonical /elixir module) drives
@@ -35,7 +35,7 @@ import View.Colors as Colors
 
 view : Browser.Document msg
 view =
-    { title = "Oliver Searle-Barnes — CV"
+    { title = "Oliver Searle-Barnes CV"
     , body =
         [ Html.node "style"
             []
@@ -452,5 +452,5 @@ openSourceItem proj =
     Element.paragraph
         [ Font.size 12, lineHeight 1.5 ]
         [ el [ Font.bold ] (text proj.name)
-        , text (" — " ++ proj.shortInvolvement ++ " | " ++ proj.language)
+        , text (" (" ++ proj.shortInvolvement ++ ") | " ++ proj.language)
         ]

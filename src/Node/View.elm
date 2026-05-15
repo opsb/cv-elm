@@ -1,13 +1,24 @@
-module Experimental2.View exposing (view)
+module Node.View exposing (view)
+
+{-| Node / Next.js Staff Engineer view. Layout cloned from
+`Experimental2.View` (the polished /elixir design: dark sidebar,
+3-column experience grid, sidebar Open Source + Education) but driven
+from `Node.Data`, which carries Node-flavoured copy and no Variant
+plumbing.
+
+xpflow and Tree3 are shown as separate position entries here, so the
+12-position chronology is sliced as 3 on the overview page + 3-3-3 on
+page two (the last column also carries Open Source and Education).
+
+-}
 
 import Browser
-import Data exposing (Institution, OpenSourceProject, Position, Project, Skill, SkillGroup, Variant(..))
 import Element exposing (..)
 import Element.Background as Background
-import Element.Border as Border
 import Element.Font as Font
 import Html exposing (Html)
 import Html.Attributes
+import Node.Data as Data exposing (Institution, OpenSourceProject, Position, Project, Skill, SkillGroup)
 import Util.List exposing (splitInTwo)
 import View.Atom as Atom exposing (..)
 import View.Colors as Colors
@@ -26,16 +37,11 @@ view =
     }
 
 
-pdfFileName : String
-pdfFileName =
-    "Oliver-Searle-Barnes-Staff-Elixir-Engineer-2026.pdf"
-
-
 downloadLinkHtml : Html msg
 downloadLinkHtml =
     Html.a
-        [ Html.Attributes.href ("/" ++ pdfFileName)
-        , Html.Attributes.attribute "download" pdfFileName
+        [ Html.Attributes.href ("/" ++ Data.pdfFileName)
+        , Html.Attributes.attribute "download" Data.pdfFileName
         , Html.Attributes.attribute "data-print" "false"
         , Html.Attributes.style "position" "fixed"
         , Html.Attributes.style "top" "16px"
@@ -51,11 +57,6 @@ downloadLinkHtml =
         , Html.Attributes.style "z-index" "100"
         ]
         [ Html.text "↓ Download PDF" ]
-
-
-primaryVariant : Variant
-primaryVariant =
-    Elixir
 
 
 
@@ -104,7 +105,7 @@ pageSection title body =
 
 
 
----- DARK SIDEBAR (col 1); now includes Open Source ----
+---- DARK SIDEBAR ----
 
 
 pagePersonalDetailsSection : Element msg
@@ -113,7 +114,7 @@ pagePersonalDetailsSection =
         [ column [ spacing 14, paddingEach { top = 80, right = 0, bottom = 0, left = 0 } ]
             [ overviewName
             , column [ spacing 10, paddingXY 0 4 ]
-                (Data.sidePanelLabels primaryVariant
+                (Data.sidePanelLabels
                     |> List.map (\label -> el [ Font.light, Font.size 16 ] (text label))
                 )
             ]
@@ -160,48 +161,14 @@ contactDetails =
         ]
 
 
-darkOpenSourceSection : Element msg
-darkOpenSourceSection =
-    column [ spacing 10, width fill ]
-        [ el
-            [ Font.color Colors.white
-            , Font.size 14
-            , Font.bold
-            , Atom.titleFont
-            , Atom.letterSpacing 1.5
-            ]
-            (text "OPEN SOURCE")
-        , column [ spacing 8, width fill ]
-            (List.map darkOpenSourceItem Data.openSourceProjects)
-        ]
 
-
-darkOpenSourceItem : OpenSourceProject -> Element msg
-darkOpenSourceItem proj =
-    column [ spacing 2, width fill ]
-        [ newTabLink []
-            { url = proj.repo
-            , label =
-                el
-                    [ Font.color Colors.white
-                    , Font.size 12
-                    , Font.medium
-                    ]
-                    (text proj.name)
-            }
-        , Element.paragraph [ Font.size 10, Font.color Colors.white, alpha 0.7, Atom.lineHeight 13 ]
-            [ text proj.overview ]
-        ]
-
-
-
----- SECTIONS reused from main design ----
+---- INTRODUCTION + SKILLS ----
 
 
 introductionSection : Element msg
 introductionSection =
     column [ spacing 14 ]
-        (Data.introductionParagraphsFor primaryVariant
+        (Data.introductionParagraphs
             |> List.map (\p -> Atom.paragraph [ Font.regular, Font.size 12 ] [ text p ])
         )
 
@@ -210,7 +177,7 @@ skillsSection : Element msg
 skillsSection =
     let
         ( leftGroups, rightGroups ) =
-            splitInTwo (Data.skillGroupsFor primaryVariant)
+            splitInTwo Data.skillGroups
     in
     row [ spacing 30, width fill ]
         [ skillGroupsColumn leftGroups
@@ -270,6 +237,10 @@ formatYears y =
     base ++ "y"
 
 
+
+---- EDUCATION + OPEN SOURCE ----
+
+
 educationSection : Element msg
 educationSection =
     column [ width fill ] (List.map institutionView Data.education)
@@ -293,9 +264,30 @@ institutionView inst =
         }
 
 
+openSourceSection : Element msg
+openSourceSection =
+    column [ spacing 12, width fill ]
+        (List.map openSourceProject Data.openSourceProjects)
+
+
+openSourceProject : OpenSourceProject -> Element msg
+openSourceProject project =
+    column [ spacing 4, width fill ]
+        [ newTabLink [ width fill ]
+            { url = project.repo
+            , label = Atom.title3 [ Font.size 13, Font.medium ] project.name
+            }
+        , Atom.paragraph [ Font.size 12, Font.regular, Atom.lineHeight 17 ] [ text project.overview ]
+        ]
+
+
+
 ---- EXPERIENCE SPLIT ----
 
 
+{-| 12 positions total. Page 1 carries the most-recent two (xpflow, Tree3);
+page 2 carries the rest split across three columns.
+-}
 experiencePage1Block : Element msg
 experiencePage1Block =
     column [ spacing 26, width fill ]
@@ -314,63 +306,19 @@ experiencePage =
             , Atom.verticalDivider
             , Atom.pageColumn [ spacing 22, paddingEach { top = 22, right = 20, bottom = 10, left = 20 } ]
                 (List.map positionView page2Col3Positions
-                    ++ [ pageSection "Open Source" openSourceSection
-                       , el [ height (px 12) ] none
-                       , pageSection "Education" educationSection
-                       ]
+                    ++ [ pageSection "Education" educationSection ]
                 )
             ]
 
 
-openSourceSection : Element msg
-openSourceSection =
-    column [ spacing 12, width fill ]
-        (List.map openSourceProject Data.openSourceProjects)
-
-
-openSourceProject : OpenSourceProject -> Element msg
-openSourceProject project =
-    column [ spacing 4, width fill ]
-        [ newTabLink [ width fill ]
-            { url = project.repo
-            , label = Atom.title3 [ Font.size 13, Font.medium ] project.name
-            }
-        , Atom.paragraph [ Font.size 12, Font.regular, Atom.lineHeight 17 ] [ text project.overview ]
-        ]
-
-
-chronologicalPositions : List Position
-chronologicalPositions =
-    [ engineerXpflowMerged
-    , Data.experience.tastermonial
-    , Data.experience.boulevard
-    , Data.experience.vorwerk
-    , Data.experience.ctm
-    , Data.experience.twentyBn
-    , Data.experience.liqid
-    , Data.experience.zapnito
-    , Data.experience.lytbulb
-    , Data.experience.myschooldirect
-    , Data.experience.informa
-    ]
-
-
-engineerXpflowMerged : Position
-engineerXpflowMerged =
-    Data.experienceColumnsFor primaryVariant
-        |> .left
-        |> List.head
-        |> Maybe.withDefault Data.experience.xpflow
-
-
 page1Positions : List Position
 page1Positions =
-    List.take 2 chronologicalPositions
+    List.take 2 Data.experiencePositions
 
 
 page2Positions : List Position
 page2Positions =
-    List.drop 2 chronologicalPositions
+    List.drop 2 Data.experiencePositions
 
 
 page2Col1Positions : List Position
@@ -403,7 +351,7 @@ positionView position =
             ]
             [ text (String.replace "\n" "" position.company)
             , el [ Atom.letterSpacing -2, paddingXY 8 0 ] (text "//")
-            , text (Data.positionTitle primaryVariant position)
+            , text (Data.positionTitle position)
             ]
         , companyStackLine position.companyStack
         , Atom.bodyText [ Font.size 10, Font.regular, Font.italic ] (position.dates ++ "  ·  " ++ position.location)
@@ -420,18 +368,27 @@ positionView position =
         ]
 
 
-{-| Per-variant project visibility for /elixir. Informa is kept on the timeline
-as a position-level entry (it's the earliest big-engineering chapter), but the
-project bullets (Java / Mondrian / Oracle / WebDAV) are not on-target for an
-Elixir-engineer audience and are hidden here.
+{-| Informa stays on the timeline as a position-level entry (it's the
+earliest big-engineering chapter), but the project bullets are Java /
+Oracle / WebDAV and aren't on-target for a Next.js audience, so they're
+hidden here. Myschooldirect keeps its overview but drops bullets to
+ease pressure on the third column of page 2.
 -}
 visibleProjectsFor : Position -> List Project
 visibleProjectsFor position =
     if position.company == "Informa" then
         []
 
+    else if position.company == "Myschooldirect" then
+        List.map clearTalkingPoints position.projects
+
     else
         position.projects
+
+
+clearTalkingPoints : Project -> Project
+clearTalkingPoints project =
+    { project | talkingPoints = [] }
 
 
 companyStackLine : List String -> Element msg

@@ -13,7 +13,7 @@ import Html.Attributes
 
 view : Browser.Document msg
 view =
-    { title = "Oliver Searle-Barnes — CV"
+    { title = "Oliver Searle-Barnes CV"
     , body =
         [ Html.node "style"
             []
@@ -55,7 +55,7 @@ downloadLinkHtml =
 ---- TOKENS ----
 
 
-{-| The variant for the experimental (sidebar) content — drives Profile/Skills/etc. -}
+{-| The variant for the experimental (sidebar) content; drives Profile/Skills/etc. -}
 primaryVariant : ExpData.Variant
 primaryVariant =
     ExpData.Elixir

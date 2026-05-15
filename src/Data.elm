@@ -173,9 +173,18 @@ introductionParagraphsFor variant =
 elixirIntroductionParagraphs : List String
 elixirIntroductionParagraphs =
     [ "Building software that people actually love to use is what gets me going. With 22 years experience I've delivered successful products for the AI, Fintech, SaaS, Telecoms, Retail, Publishing, Energy, Charity, Health and Beauty, and Domestic appliance sectors."
-    , "10+ years shipping production Elixir / Phoenix at scale — API authorization and rate-limiting at Boulevard, IoT cloud services on Phoenix at Vorwerk, an event-sourced real-time community platform at Zapnito, and Open Banking integration across UK high street banks at CompareTheMarket."
-    , "Comfortable owning supervision-tree design, telemetry / observability, and Ecto-heavy data layers. Agile from day one."
+    , "10+ years shipping production Elixir / Phoenix at scale: API authorization and rate-limiting at Boulevard, IoT cloud services on Phoenix at Vorwerk, an event-sourced real-time community platform at Zapnito, and Open Banking integration across UK high street banks at CompareTheMarket."
+    , originalAgileSignoff
     ]
+
+
+{-| Original signoff paragraph from the pre-reshape main CV (last present
+on 2026-04-23, commit fffe811). Used as paragraph 3 on both /elixir and
+/node so the closing voice matches what reviewers may already recognise.
+-}
+originalAgileSignoff : String
+originalAgileSignoff =
+    "Agile practitioner from day one: Scrum, Kanban, Lean, BDD, you name it. Comfortable leading from the front or slotting into an established team, valuing project consistency over personal preferences."
 
 
 sharedIntroductionParagraphs : List String
@@ -610,7 +619,7 @@ experience =
               , start = 2007
               , end = 2008
               , stack = [ "Java", "Spring", "MS Analytics services", "Oracle DB", "Scrum", "TDD" ]
-              , overview = "Led the team replacing Informa Telecom's flagship product (WCIS) — a mobile markets intelligence platform covering 226 countries."
+              , overview = "Led the team replacing Informa Telecom's flagship product (WCIS), a mobile markets intelligence platform covering 226 countries."
               , talkingPoints =
                     [ "Used incremental releases to migrate the live service to a new architecture without disrupting customers or requiring parallel development."
                     , "Introduced Clover for test coverage and drove the adoption of TDD across the team."

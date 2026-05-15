@@ -8,7 +8,7 @@
 // `main.css`; `/elixir-ats` declares portrait via an inline <style>.
 //
 // SPA fallback: the static server below mirrors what GitHub Pages does via
-// `404.html` and what Netlify does via the redirects rule — any unknown path
+// `404.html` and what Netlify does via the redirects rule: any unknown path
 // returns `index.html` so the Elm router can pick the variant up.
 
 const puppeteer = require("puppeteer");
@@ -39,6 +39,7 @@ const variants = [
   { path: "/elixir", file: "Oliver-Searle-Barnes-Staff-Elixir-Engineer-2026.pdf" },
   { path: "/experimental", file: "Oliver-Searle-Barnes-Elixir-Editorial-2026.pdf" },
   { path: "/elixir-ats", file: "Oliver-Searle-Barnes-Senior-Elixir-Engineer-ATS-2026.pdf" },
+  { path: "/node", file: "Oliver-Searle-Barnes-Staff-NodeJS-Engineer-2026.pdf" },
 ];
 
 server.on("listening", function () {
