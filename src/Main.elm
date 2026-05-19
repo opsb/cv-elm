@@ -36,6 +36,7 @@ type alias Model =
     { device : Device
     , variant : Variant
     , path : String
+    , query : Maybe String
     , key : Nav.Key
     }
 
@@ -45,10 +46,23 @@ init flags url key =
     ( { device = Element.classifyDevice flags
       , variant = Data.variantFromPath url.path
       , path = url.path
+      , query = url.query
       , key = key
       }
     , Cmd.none
     )
+
+
+nodeLeaderFlag : Maybe String -> Bool
+nodeLeaderFlag query =
+    case query of
+        Nothing ->
+            False
+
+        Just q ->
+            q
+                |> String.split "&"
+                |> List.member "leader=true"
 
 
 isExperimental : String -> Bool
@@ -131,6 +145,7 @@ update msg model =
             ( { model
                 | variant = Data.variantFromPath url.path
                 , path = url.path
+                , query = url.query
               }
             , Cmd.none
             )
@@ -163,7 +178,7 @@ view model =
         Experimental3.View.view
 
     else if isNode model.path then
-        Node.View.view
+        Node.View.view { leader = nodeLeaderFlag model.query }
 
     else
         { title = "Oliver Searle-Barnes"

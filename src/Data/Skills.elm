@@ -43,6 +43,7 @@ master =
             [ { name = "Elixir / Phoenix", years = 10 }
             , { name = "Ruby on Rails", years = 8 }
             , { name = "NextJS", years = 3 }
+            , { name = "NodeJS", years = 5 }
             , { name = "SQL", years = 22 }
             , { name = "Java", years = 8 }
             ]

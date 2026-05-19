@@ -9,6 +9,7 @@ module Node.Data exposing
     , experiencePositions
     , introductionParagraphs
     , name
+    , leaderPdfFileName
     , openSourceProjects
     , pdfFileName
     , positionTitle
@@ -124,6 +125,11 @@ originalAgileSignoff =
 pdfFileName : String
 pdfFileName =
     "Oliver-Searle-Barnes-Staff-NodeJS-Engineer-2026.pdf"
+
+
+leaderPdfFileName : String
+leaderPdfFileName =
+    "Oliver-Searle-Barnes-CPO-NodeJS-2026.pdf"
 
 
 positionTitle : Position -> String
@@ -276,14 +282,14 @@ boulevard =
     { title = "Senior 2 Engineer"
     , location = "Los Angeles / Remote"
     , company = "Boulevard"
-    , companyStack = [ "GraphQL", "React", "TypeScript", "AWS" ]
+    , companyStack = [ "GraphQL", "NestJS", "React", "TypeScript", "AWS" ]
     , dates = "Oct 2021-Jun 2023"
     , projects =
         [ { name = "API and Platform Services"
           , start = 2021
           , end = 2023
           , overview = "Joined the API team at this health & beauty unicorn, shipping cross-cutting platform infrastructure consumed by both the React/TypeScript web app and external developers."
-          , stack = [ "GraphQL", "React", "TypeScript", "Postgres", "AWS/Terraform" ]
+          , stack = [ "GraphQL", "NestJS", "React", "TypeScript", "Postgres", "AWS/Terraform" ]
           , talkingPoints =
                 [ "Built the third-party App Store and developer portal."
                 , "Shipped the platform-wide GraphQL rate limiter (leaky-bucket, per-app quotas)."

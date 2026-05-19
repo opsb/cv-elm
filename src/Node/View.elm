@@ -25,23 +25,40 @@ import View.Colors as Colors
 import View.Icon as Icon
 
 
-view : Browser.Document msg
-view =
+type alias Options =
+    { leader : Bool }
+
+
+view : Options -> Browser.Document msg
+view options =
     { title = "Oliver Searle-Barnes CV"
     , body =
         Html.node "style"
             []
             [ Html.text "@media print { [data-print=\"false\"] { display: none !important; } }" ]
-            :: downloadLinkHtml
-            :: a4PagesLayout
+            :: downloadLinkHtml options
+            :: a4PagesLayout options
     }
 
 
-downloadLinkHtml : Html msg
-downloadLinkHtml =
+pdfFileNameFor : Options -> String
+pdfFileNameFor options =
+    if options.leader then
+        Data.leaderPdfFileName
+
+    else
+        Data.pdfFileName
+
+
+downloadLinkHtml : Options -> Html msg
+downloadLinkHtml options =
+    let
+        file =
+            pdfFileNameFor options
+    in
     Html.a
-        [ Html.Attributes.href ("/" ++ Data.pdfFileName)
-        , Html.Attributes.attribute "download" Data.pdfFileName
+        [ Html.Attributes.href ("/" ++ file)
+        , Html.Attributes.attribute "download" file
         , Html.Attributes.attribute "data-print" "false"
         , Html.Attributes.style "position" "fixed"
         , Html.Attributes.style "top" "16px"
@@ -63,13 +80,13 @@ downloadLinkHtml =
 ---- PAGE LAYOUT ----
 
 
-a4PagesLayout : List (Html msg)
-a4PagesLayout =
+a4PagesLayout : Options -> List (Html msg)
+a4PagesLayout options =
     [ Element.layout
         [ Atom.bodyTextFont ]
         (column [ width fill ]
-            [ overviewPage
-            , experiencePage
+            [ overviewPage options
+            , experiencePage options
             ]
         )
     ]
@@ -79,8 +96,8 @@ a4PagesLayout =
 ---- PAGE 1: overview + experience kick-off ----
 
 
-overviewPage : Element msg
-overviewPage =
+overviewPage : Options -> Element msg
+overviewPage options =
     Atom.a4Page [] <|
         row [ width fill, height fill ]
             [ pagePersonalDetailsSection
@@ -91,7 +108,7 @@ overviewPage =
                 ]
             , Atom.verticalDivider
             , Atom.pageColumn [ spacing 26 ]
-                [ pageSection "Experience" experiencePage1Block
+                [ pageSection "Experience" (experiencePage1Block options)
                 ]
             ]
 
@@ -288,52 +305,69 @@ openSourceProject project =
 {-| 12 positions total. Page 1 carries the most-recent two (xpflow, Tree3);
 page 2 carries the rest split across three columns.
 -}
-experiencePage1Block : Element msg
-experiencePage1Block =
+experiencePage1Block : Options -> Element msg
+experiencePage1Block options =
     column [ spacing 26, width fill ]
-        (List.map positionView page1Positions)
+        (List.map positionView (page1Positions options))
 
 
-experiencePage : Element msg
-experiencePage =
+experiencePage : Options -> Element msg
+experiencePage options =
     Atom.a4Page [] <|
         row [ width fill, height fill ]
             [ Atom.pageColumn [ spacing 22, paddingEach { top = 22, right = 20, bottom = 10, left = 20 } ]
-                (List.map positionView page2Col1Positions)
+                (List.map positionView (page2Col1Positions options))
             , Atom.verticalDivider
             , Atom.pageColumn [ spacing 22, paddingEach { top = 22, right = 20, bottom = 10, left = 20 } ]
-                (List.map positionView page2Col2Positions)
+                (List.map positionView (page2Col2Positions options))
             , Atom.verticalDivider
             , Atom.pageColumn [ spacing 22, paddingEach { top = 22, right = 20, bottom = 10, left = 20 } ]
-                (List.map positionView page2Col3Positions
+                (List.map positionView (page2Col3Positions options)
                     ++ [ pageSection "Education" educationSection ]
                 )
             ]
 
 
-page1Positions : List Position
-page1Positions =
-    List.take 2 Data.experiencePositions
+experiencePositions : Options -> List Position
+experiencePositions options =
+    List.map (applyLeaderOverrides options) Data.experiencePositions
 
 
-page2Positions : List Position
-page2Positions =
-    List.drop 2 Data.experiencePositions
+{-| When `?leader=true` is set on the `/node` route, xpflow is presented
+as a CPO role rather than a Founding Engineer / Tech Lead role.
+-}
+applyLeaderOverrides : Options -> Position -> Position
+applyLeaderOverrides options position =
+    if options.leader && position.company == "xpflow" then
+        { position | title = "CPO" }
+
+    else
+        position
 
 
-page2Col1Positions : List Position
-page2Col1Positions =
-    List.take 3 page2Positions
+page1Positions : Options -> List Position
+page1Positions options =
+    List.take 2 (experiencePositions options)
 
 
-page2Col2Positions : List Position
-page2Col2Positions =
-    page2Positions |> List.drop 3 |> List.take 3
+page2Positions : Options -> List Position
+page2Positions options =
+    List.drop 2 (experiencePositions options)
 
 
-page2Col3Positions : List Position
-page2Col3Positions =
-    List.drop 6 page2Positions
+page2Col1Positions : Options -> List Position
+page2Col1Positions options =
+    List.take 3 (page2Positions options)
+
+
+page2Col2Positions : Options -> List Position
+page2Col2Positions options =
+    page2Positions options |> List.drop 3 |> List.take 3
+
+
+page2Col3Positions : Options -> List Position
+page2Col3Positions options =
+    List.drop 6 (page2Positions options)
 
 
 
