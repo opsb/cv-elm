@@ -12,6 +12,7 @@ module Node.Data exposing
     , leaderPdfFileName
     , openSourceProjects
     , pdfFileName
+    , leaderSidePanelLabels
     , positionTitle
     , sidePanelLabels
     , skillGroups
@@ -100,6 +101,14 @@ tagline =
 sidePanelLabels : List String
 sidePanelLabels =
     [ "Staff full-stack engineer · Tech Lead · Architect"
+    , "Next.js, React, TypeScript, Node, Postgres, AWS"
+    , "22 years across SaaS, fintech, AI"
+    ]
+
+
+leaderSidePanelLabels : List String
+leaderSidePanelLabels =
+    [ "Hands-on CTO · Staff Engineer"
     , "Next.js, React, TypeScript, Node, Postgres, AWS"
     , "22 years across SaaS, fintech, AI"
     ]

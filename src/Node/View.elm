@@ -100,7 +100,7 @@ overviewPage : Options -> Element msg
 overviewPage options =
     Atom.a4Page [] <|
         row [ width fill, height fill ]
-            [ pagePersonalDetailsSection
+            [ pagePersonalDetailsSection options
             , Atom.verticalDivider
             , Atom.pageColumn [ spacing 20 ]
                 [ pageSection "Introduction" introductionSection
@@ -125,13 +125,13 @@ pageSection title body =
 ---- DARK SIDEBAR ----
 
 
-pagePersonalDetailsSection : Element msg
-pagePersonalDetailsSection =
+pagePersonalDetailsSection : Options -> Element msg
+pagePersonalDetailsSection options =
     Atom.pageColumn [ spacing 0, Background.color Colors.grey, Font.color Colors.white ]
         [ column [ spacing 14, paddingEach { top = 80, right = 0, bottom = 0, left = 0 } ]
             [ overviewName
             , column [ spacing 10, paddingXY 0 4 ]
-                (Data.sidePanelLabels
+                (sidePanelLabelsFor options
                     |> List.map (\label -> el [ Font.light, Font.size 16 ] (text label))
                 )
             ]
@@ -333,13 +333,24 @@ experiencePositions options =
     List.map (applyLeaderOverrides options) Data.experiencePositions
 
 
-{-| When `?leader=true` is set on the `/node` route, XP Flow is presented
-as a CPO role rather than a Founding Engineer / Tech Lead role.
+sidePanelLabelsFor : Options -> List String
+sidePanelLabelsFor options =
+    if options.leader then
+        Data.leaderSidePanelLabels
+
+    else
+        Data.sidePanelLabels
+
+
+{-| When `?leader=true` is set on the `/node` route, the CV is reframed
+as a hands-on CTO pitch: XP Flow leads with the CPO + Founding Engineer
+title, and the sidebar headline switches to "Hands-on CTO · Staff Engineer"
+(see `sidePanelLabelsFor`).
 -}
 applyLeaderOverrides : Options -> Position -> Position
 applyLeaderOverrides options position =
     if options.leader && position.company == "XP Flow" then
-        { position | title = "CPO" }
+        { position | title = "CPO and Founding Engineer" }
 
     else
         position
