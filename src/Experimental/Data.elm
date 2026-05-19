@@ -170,7 +170,7 @@ introductionParagraphsFor variant =
         Elixir ->
             [ "Barcelona-based · UK citizen, full UK RTW · operating via Thoughtclay Ltd (UK) · EU-TZ, London-hours overlap."
             , "Senior Elixir / Phoenix engineer with 10+ years shipping production OTP at scale. Built Open Banking integration across UK high street banks at CompareTheMarket (Bean), API authorization and rate-limiting at Boulevard (US salon-SaaS unicorn), IoT cloud services on Phoenix at Vorwerk, and an event-sourced real-time community platform at Zapnito."
-            , "Comfortable owning supervision-tree design, telemetry / observability, and Ecto-heavy data layers. Most recently co-founder and tech lead at xpflow, building production AI agents on Next.js."
+            , "Comfortable owning supervision-tree design, telemetry / observability, and Ecto-heavy data layers. Most recently co-founder and tech lead at XP Flow, building production AI agents on Next.js."
             , "All client engagements delivered through Thoughtclay Ltd, my UK Ltd Co. Available for senior Elixir IC, tech-lead, or fractional CTO engagements."
             ]
 
@@ -179,7 +179,7 @@ sharedIntroductionParagraphs : List String
 sharedIntroductionParagraphs =
     [ "Building software that people actually love to use is what gets me going. With 22 years experience I've delivered successful products for the AI, Fintech, SaaS, Telecoms, Retail, Publishing, Energy, Charity, Health and Beauty, and Domestic appliance sectors."
     , "I've led teams building computer vision training pipelines at TwentyBN, Open Banking integration across UK high street banks at CompareTheMarket, IoT cloud services for commercial robot vacuums at Vorwerk, an event-sourced real-time community platform at Zapnito, and a WebDAV-based CMS that let Informa's journalists edit articles directly in Microsoft Word."
-    , "Most recently founding engineer at xpflow; previously co-founded a school e-commerce business later taken in-house by Marks & Spencer."
+    , "Most recently founding engineer at XP Flow; previously co-founded a school e-commerce business later taken in-house by Marks & Spencer."
     , "Agile from day one; comfortable owning the engineering function or contributing within an established team."
     ]
 
@@ -276,7 +276,7 @@ engineerXpflow =
     , engineerTitle = "Tech Lead"
     , elixirTitle = "Tech Lead"
     , location = "Dallas / Remote"
-    , company = "Tree3 / xpflow"
+    , company = "Tree3 / XP Flow"
     , companyStack = [ "Next.js", "AI agents" ]
     , dates = "Jan 2024-Apr 2026"
     , projects = experience.xpflow.projects ++ experience.tree3.projects
@@ -343,7 +343,7 @@ experience =
         , engineerTitle = "Founding AI Engineer"
         , elixirTitle = "Co-founder, Tech Lead"
         , location = "Dallas / Remote"
-        , company = "xpflow"
+        , company = "XP Flow"
         , companyStack = [ "Next.js", "AI agents" ]
         , dates = "Feb 2025-Apr 2026"
         , projects =
@@ -372,12 +372,12 @@ experience =
             [ { name = "XP Affiliate Platform"
               , start = 2024
               , end = 2025
-              , overview = "Led engineering on a high-performance affiliate platform. When the product stalled, ran customer discovery and proposed an AI-powered affiliate recruitment product, spun out as xpflow with me on the founding team."
+              , overview = "Led engineering on a high-performance affiliate platform. When the product stalled, ran customer discovery and proposed an AI-powered affiliate recruitment product, spun out as XP Flow with me on the founding team."
               , stack = [ "NextJS", "Postgres", "Redis" ]
               , talkingPoints =
                     [ "Led the engineering team delivering the affiliate platform on NextJS / Postgres / Redis."
                     , "Ran the customer discovery process that identified the product-market gap behind the commercial stall."
-                    , "Proposed and architected the AI-powered recruitment direction that became Alfie and spun out as xpflow."
+                    , "Proposed and architected the AI-powered recruitment direction that became Alfie and spun out as XP Flow."
                     ]
               }
             ]

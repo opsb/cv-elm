@@ -1,14 +1,15 @@
 module Cto.Data exposing (cv)
 
-{-| CTO / Engineering & Technology Executive variant. Mirrors the
-CPO variant structurally but reframes the copy for an engineering
-leadership audience: architecture, technical strategy, team building,
-and platform thinking over product discovery and commercial design.
+{-| Engineering-leaning variant of the CPO CV. Same factual role
+(CPO at XP Flow) but the copy is reframed for an engineering
+leadership audience: architecture, technical strategy, team
+building, and platform thinking over product discovery and
+commercial design.
 
-Most of the older positions (Zapnito VP Eng, Lytbulb CTO, Myschooldirect
-CTO & Co-founder, Informa Tech Lead/Architect) were already
-engineering-led so their bullets stay close to the CPO variant. The
-material differences live in:
+Most of the older positions (Zapnito VP Eng, Lytbulb CTO,
+Myschooldirect CTO & Co-founder, Informa Tech Lead/Architect) were
+already engineering-led so their bullets stay close to the CPO
+variant. The material differences live in:
 
   - tagline + side-panel framing
   - executive profile paragraphs (engineering & architecture lead)
@@ -29,7 +30,7 @@ cv : CvData
 cv =
     { pdfFileName = "Oliver-Searle-Barnes-CTO-2026.pdf"
     , name = "Oliver Searle-Barnes"
-    , tagline = "CTO, XP Flow | Engineering & Technology Executive"
+    , tagline = "Engineering & Technology Executive"
     , email = "oliver@opsb.co.uk"
     , executiveProfile = executiveProfile
     , coreCapabilities = coreCapabilities
@@ -46,7 +47,7 @@ cv =
 
 executiveProfile : List String
 executiveProfile =
-    [ "Engineering leader and technology executive with over two decades architecting and scaling software products across SaaS, fintech, e-commerce, energy, and affiliate marketing. Currently CTO of XP Flow, leading the engineering build of Alfie.io, an AI-powered affiliate platform automating partner discovery, evaluation, and outreach at scale."
+    [ "Engineering leader and technology executive with over two decades architecting and scaling software products across SaaS, fintech, e-commerce, energy, and affiliate marketing. Most recently CPO of XP Flow, where I led the engineering build of Alfie.io, an AI-powered affiliate platform automating partner discovery, evaluation, and outreach at scale."
     , "Known for pairing deep engineering expertise with clear product strategy and commercial execution. Experienced leading distributed engineering teams through early-stage discovery, product-market fit, and growth-phase scaling, including co-founding a platform acquired by Marks & Spencer, and consistently taking products from zero to production in complex, regulated, and high-scale environments."
     , "Operates at the intersection of architecture, platform, and team thinking. Comfortable owning the technical roadmap, structuring and hiring engineering teams, and partnering directly with founders and enterprise design partners to ship category-defining products."
     ]
@@ -75,14 +76,14 @@ coreCapabilities =
 
 xpflow : Position
 xpflow =
-    { title = "CTO"
+    { title = "CPO"
     , location = "Dallas / Remote"
     , company = "XP Flow (alfie.io)"
-    , dates = "Feb 2025 – Present"
+    , dates = "Feb 2025 – Apr 2026"
     , overview = Nothing
     , projects =
         [ { name = "Alfie.io"
-          , dates = "Feb 2025 – Present"
+          , dates = "Feb 2025 – Apr 2026"
           , overview = ""
           , talkingPoints =
                 [ "Architected and shipped the full Next.js / TypeScript / Postgres stack for Alfie.io, an AI-powered affiliate marketing platform, taking the product from concept to a broad base of active customers."

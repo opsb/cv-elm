@@ -23,7 +23,7 @@ cv : CvData
 cv =
     { pdfFileName = "Oliver-Searle-Barnes-CPO-2026.pdf"
     , name = "Oliver Searle-Barnes"
-    , tagline = "CPO, XP Flow | Product & Technology Executive"
+    , tagline = "Product & Technology Executive"
     , email = "oliver@opsb.co.uk"
     , executiveProfile = executiveProfile
     , coreCapabilities = coreCapabilities
@@ -40,7 +40,7 @@ cv =
 
 executiveProfile : List String
 executiveProfile =
-    [ "Technology executive and product leader with over two decades building and scaling software products across SaaS, fintech, e-commerce, energy, and affiliate marketing. Currently CPO of XP Flow, leading product development for Alfie.io, an AI-powered affiliate platform automating partner discovery, evaluation, and outreach at scale."
+    [ "Technology executive and product leader with over two decades building and scaling software products across SaaS, fintech, e-commerce, energy, and affiliate marketing. Most recently CPO of XP Flow, where I led product development for Alfie.io, an AI-powered affiliate platform automating partner discovery, evaluation, and outreach at scale."
     , "Known for bridging deep engineering expertise with clear product strategy and commercial execution. Experienced leading distributed teams through early-stage discovery, product-market fit, and growth-phase scaling, including co-founding a platform acquired by Marks & Spencer, and consistently taking products from zero to production in complex, regulated, and high-scale environments."
     , "Operates at the intersection of product, data, and platform thinking. Comfortable owning roadmaps, structuring and hiring product teams, and working directly with enterprise design partners to shape category-defining products."
     ]
@@ -72,11 +72,11 @@ xpflow =
     { title = "CPO"
     , location = "Dallas / Remote"
     , company = "XP Flow (alfie.io)"
-    , dates = "Feb 2025 – Present"
+    , dates = "Feb 2025 – Apr 2026"
     , overview = Nothing
     , projects =
         [ { name = "Alfie.io"
-          , dates = "Feb 2025 – Present"
+          , dates = "Feb 2025 – Apr 2026"
           , overview = ""
           , talkingPoints =
                 [ "Led initial product discovery and proposed Alfie.io, an AI-powered affiliate marketing platform that automates partner discovery, outreach, and management, growing the product from concept to a broad base of active customers."

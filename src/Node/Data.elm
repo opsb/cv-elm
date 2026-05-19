@@ -21,7 +21,7 @@ module Node.Data exposing
 {-| Node / Next.js Staff Engineer variant. Self-contained: own Position
 type, own copy, own ordering. Lives at /node.
 
-The aim is to lead with the most-recent JS/TS work (xpflow + Tree3, both
+The aim is to lead with the most-recent JS/TS work (XP Flow + Tree3, both
 Next.js) and reframe the older Elixir-track engagements in stack-agnostic
 platform / API / observability language so a Next.js shop reads them as
 transferable Staff-level work rather than as off-target backend specifics.
@@ -108,7 +108,7 @@ sidePanelLabels =
 introductionParagraphs : List String
 introductionParagraphs =
     [ "Building software that people actually love to use is what gets me going. With 22 years experience I've delivered successful products for the AI, Fintech, SaaS, Telecoms, Retail, Publishing, Energy, Charity, Health and Beauty, and Domestic appliance sectors."
-    , "Most recently shipping production Next.js / TypeScript: AI agents at xpflow, a high-performance affiliate platform at Tree3, React + TypeScript against the GraphQL API at Boulevard (US salon-SaaS unicorn), and a realtime SPA at Zapnito. Ex-core contributor on Orbit.js, the JS data-sync library co-authored with the JSON:API spec author."
+    , "Most recently shipped production Next.js / TypeScript: AI agents at XP Flow, a high-performance affiliate platform at Tree3, React + TypeScript against the GraphQL API at Boulevard (US salon-SaaS unicorn), and a realtime SPA at Zapnito. Ex-core contributor on Orbit.js, the JS data-sync library co-authored with the JSON:API spec author."
     , originalAgileSignoff
     ]
 
@@ -184,7 +184,7 @@ promoteNextJs group =
 ---- EXPERIENCE ----
 
 
-{-| Chronological newest-first. xpflow and Tree3 are kept as separate
+{-| Chronological newest-first. XP Flow and Tree3 are kept as separate
 entries here even though they ran back-to-back, so the Next.js story has
 two visible chapters rather than one merged block.
 -}
@@ -209,7 +209,7 @@ xpflow : Position
 xpflow =
     { title = "Founding Engineer / Tech Lead"
     , location = "Dallas / Remote"
-    , company = "xpflow"
+    , company = "XP Flow"
     , companyStack = [ "Next.js", "TypeScript", "Postgres", "AI agents" ]
     , dates = "Feb 2025-Apr 2026"
     , projects =
@@ -247,7 +247,7 @@ tree3 =
                 [ "Owned the platform architecture across click capture, attribution, and reliable postback delivery to partner endpoints."
                 , "Built dashboards on Next.js / React for both Brands and Affiliates."
                 , "Tuned Postgres + Redis for the high-volume click-stream workload."
-                , "Ran the customer-discovery sprint that surfaced the underlying gap and proposed AI-powered affiliate recruitment as the response, spun out as xpflow."
+                , "Ran the customer-discovery sprint that surfaced the underlying gap and proposed AI-powered affiliate recruitment as the response, spun out as XP Flow."
                 ]
           }
         ]

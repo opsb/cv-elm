@@ -6,7 +6,7 @@ module Node.View exposing (view)
 from `Node.Data`, which carries Node-flavoured copy and no Variant
 plumbing.
 
-xpflow and Tree3 are shown as separate position entries here, so the
+XP Flow and Tree3 are shown as separate position entries here, so the
 12-position chronology is sliced as 3 on the overview page + 3-3-3 on
 page two (the last column also carries Open Source and Education).
 
@@ -302,7 +302,7 @@ openSourceProject project =
 ---- EXPERIENCE SPLIT ----
 
 
-{-| 12 positions total. Page 1 carries the most-recent two (xpflow, Tree3);
+{-| 12 positions total. Page 1 carries the most-recent two (XP Flow, Tree3);
 page 2 carries the rest split across three columns.
 -}
 experiencePage1Block : Options -> Element msg
@@ -333,12 +333,12 @@ experiencePositions options =
     List.map (applyLeaderOverrides options) Data.experiencePositions
 
 
-{-| When `?leader=true` is set on the `/node` route, xpflow is presented
+{-| When `?leader=true` is set on the `/node` route, XP Flow is presented
 as a CPO role rather than a Founding Engineer / Tech Lead role.
 -}
 applyLeaderOverrides : Options -> Position -> Position
 applyLeaderOverrides options position =
-    if options.leader && position.company == "xpflow" then
+    if options.leader && position.company == "XP Flow" then
         { position | title = "CPO" }
 
     else
