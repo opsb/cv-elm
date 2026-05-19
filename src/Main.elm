@@ -4,6 +4,8 @@ import Browser
 import Browser.Events exposing (onResize)
 import Browser.Navigation as Nav
 import LeadershipData as Data exposing (..)
+import Cpo.View
+import Cto.View
 import Experimental.View
 import Experimental2.View
 import Experimental3.View
@@ -117,6 +119,32 @@ isNode path =
             False
 
 
+isCpo : String -> Bool
+isCpo path =
+    case String.toLower (String.trim path) of
+        "/cpo" ->
+            True
+
+        "/cpo/" ->
+            True
+
+        _ ->
+            False
+
+
+isCto : String -> Bool
+isCto path =
+    case String.toLower (String.trim path) of
+        "/cto" ->
+            True
+
+        "/cto/" ->
+            True
+
+        _ ->
+            False
+
+
 
 ---- UPDATE ----
 
@@ -179,6 +207,12 @@ view model =
 
     else if isNode model.path then
         Node.View.view { leader = nodeLeaderFlag model.query }
+
+    else if isCpo model.path then
+        Cpo.View.view
+
+    else if isCto model.path then
+        Cto.View.view
 
     else
         { title = "Oliver Searle-Barnes"

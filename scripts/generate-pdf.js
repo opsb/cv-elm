@@ -41,6 +41,8 @@ const variants = [
   { path: "/elixir-ats", file: "Oliver-Searle-Barnes-Senior-Elixir-Engineer-ATS-2026.pdf" },
   { path: "/node", file: "Oliver-Searle-Barnes-Staff-NodeJS-Engineer-2026.pdf" },
   { path: "/node?leader=true", file: "Oliver-Searle-Barnes-CPO-NodeJS-2026.pdf" },
+  { path: "/cpo", file: "Oliver-Searle-Barnes-CPO-2026.pdf" },
+  { path: "/cto", file: "Oliver-Searle-Barnes-CTO-2026.pdf" },
 ];
 
 server.on("listening", function () {
