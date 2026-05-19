@@ -79,12 +79,12 @@ xpflow =
           , dates = "Feb 2025 – Apr 2026"
           , overview = ""
           , talkingPoints =
-                [ "Led initial product discovery and proposed Alfie.io, an AI-powered affiliate marketing platform that automates partner discovery, outreach, and management, growing the product from concept to a broad base of active customers."
-                , "Defined the product vision for AI-powered affiliate scouts that autonomously discover, evaluate, and outreach to partners, fully automating workflows that agencies previously handled manually."
-                , "Shaped the end-to-end scout experience from brief configuration through to ranked partner shortlists and automated outreach, replacing multi-day manual research with a fully autonomous agent workflow."
-                , "Created the plan-based subscription model with Stripe billing and per-workspace agency structure, establishing the company's early revenue engine."
-                , "Specified LLM-driven evaluation and personalised outreach pipelines within the scout workflow, enabling the platform to analyse affiliate websites, assess brand fit, and generate tailored messages autonomously."
-                , "Drove affiliate network integrations (Everflow) and multi-campaign workflow tooling, enabling agencies to manage high-volume partner programmes from a single platform."
+                [ "Ran the initial customer-discovery sprint that surfaced the gap behind a stalled product, then proposed Alfie.io as the response, the AI-powered affiliate marketing platform the company spun out around."
+                , "Owned the product roadmap end-to-end and set quarterly OKRs across the company, aligning product, engineering, and go-to-market on the bets that unlocked each stage of growth."
+                , "Hired the product designer, establishing the design function and partnering on the end-to-end UX of the agent workflows."
+                , "Drove development of the AI affiliate assistant end-to-end, taking the autonomous scout workflow from concept to a live product that replaced multi-day agency research with fully automated partner discovery, evaluation, and outreach."
+                , "Established the product analytics stack and the experimentation discipline around it, using onboarding funnels and feature-usage data to tighten activation and prioritise the highest-leverage product investments."
+                , "Designed the commercial model, plan-based subscriptions on Stripe with per-workspace agency isolation, setting the company's early revenue engine and pricing structure."
                 ]
           }
         ]

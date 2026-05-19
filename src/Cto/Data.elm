@@ -47,8 +47,8 @@ cv =
 
 executiveProfile : List String
 executiveProfile =
-    [ "Engineering leader and technology executive with over two decades architecting and scaling software products across SaaS, fintech, e-commerce, energy, and affiliate marketing. Most recently CPO of XP Flow, where I led the engineering build of Alfie.io, an AI-powered affiliate platform automating partner discovery, evaluation, and outreach at scale."
-    , "Known for pairing deep engineering expertise with clear product strategy and commercial execution. Experienced leading distributed engineering teams through early-stage discovery, product-market fit, and growth-phase scaling, including co-founding a platform acquired by Marks & Spencer, and consistently taking products from zero to production in complex, regulated, and high-scale environments."
+    [ "Engineering leader and technology executive with over two decades architecting and scaling software products across SaaS, fintech, e-commerce, energy, and affiliate marketing. Most recently CPO and Founding Engineer at XP Flow, leading product strategy and the technical build of Alfie.io, an AI-powered affiliate platform automating partner discovery, evaluation, and outreach at scale."
+    , "Known for pairing deep engineering expertise with clear product strategy and commercial execution. Experienced leading distributed engineering teams through early-stage discovery, product-market fit, and growth-phase scaling, including co-founding a platform acquired by Marks & Spencer."
     , "Operates at the intersection of architecture, platform, and team thinking. Comfortable owning the technical roadmap, structuring and hiring engineering teams, and partnering directly with founders and enterprise design partners to ship category-defining products."
     ]
 
@@ -76,7 +76,7 @@ coreCapabilities =
 
 xpflow : Position
 xpflow =
-    { title = "CPO"
+    { title = "CPO & Founding Engineer"
     , location = "Dallas / Remote"
     , company = "XP Flow (alfie.io)"
     , dates = "Feb 2025 – Apr 2026"
@@ -86,12 +86,12 @@ xpflow =
           , dates = "Feb 2025 – Apr 2026"
           , overview = ""
           , talkingPoints =
-                [ "Architected and shipped the full Next.js / TypeScript / Postgres stack for Alfie.io, an AI-powered affiliate marketing platform, taking the product from concept to a broad base of active customers."
-                , "Designed the agentic AI architecture on LangGraph / LangChain, including a regression-test harness for prompts and an agentic learning loop that continuously improves scout behaviour."
-                , "Built the LLM-driven evaluation pipeline that scrapes affiliate websites, assesses brand fit across multiple stages, and generates personalised outreach autonomously."
-                , "Implemented the subscription billing infrastructure on Stripe with per-workspace agency isolation, establishing the company's early revenue plumbing."
-                , "Integrated the Everflow affiliate-network API and built the multi-campaign workflow tooling enabling agencies to manage high-volume partner programmes from a single platform."
-                , "Built a custom chat stack with in-chat widgets and tool-calling UI to surface agent state and decisions to operators in real time."
+                [ "Ran the customer-discovery sprint that surfaced the gap behind a stalled product, then proposed Alfie.io as the response, the AI-powered affiliate marketing platform the company spun out around."
+                , "Owned the product roadmap, set quarterly OKRs across the company, and hired the product designer to establish the design function."
+                , "Architected and shipped the full Next.js / TypeScript / Postgres stack as both product lead and primary builder, taking Alfie.io from concept to a broad base of active customers."
+                , "Drove development of the AI affiliate assistant end-to-end: agentic architecture on LangGraph / LangChain with a regression harness and a self-improving learning loop."
+                , "Built the LLM evaluation pipeline scraping affiliate sites for brand fit, plus a custom chat stack with tool-calling UI surfacing agent state in real time."
+                , "Established the product analytics and experimentation discipline behind onboarding and feature investment, and designed the Stripe-based commercial model with per-workspace agency isolation."
                 ]
           }
         ]
