@@ -141,15 +141,16 @@ positionTitle position =
 ---- SKILLS ----
 
 
-{-| Reorder the master skill list so the JS/TS surface leads. NextJS is
-bumped to the top of the Backend group; Leadership goes last because the
-target is a Staff IC role rather than a VP-Eng one.
+{-| Reorder the master skill list so the JS/TS surface leads. NextJS and
+NodeJS are bumped to the top of the Backend group (NodeJS sitting directly
+under NextJS); Leadership goes last because the target is a Staff IC role
+rather than a VP-Eng one.
 -}
 skillGroups : List SkillGroup
 skillGroups =
     let
         promoted =
-            List.map promoteNextJs Data.Skills.master
+            List.map promoteJsBackend Data.Skills.master
 
         byName target =
             promoted
@@ -167,14 +168,21 @@ skillGroups =
         |> List.filterMap byName
 
 
-promoteNextJs : SkillGroup -> SkillGroup
-promoteNextJs group =
+promoteJsBackend : SkillGroup -> SkillGroup
+promoteJsBackend group =
     if group.name == "Backend" then
         let
-            ( nextjs, rest ) =
-                List.partition (\skill -> skill.name == "NextJS") group.skills
+            isJs skill =
+                skill.name == "NextJS" || skill.name == "NodeJS"
+
+            ( js, rest ) =
+                List.partition isJs group.skills
+
+            ordered =
+                List.filter (\skill -> skill.name == "NextJS") js
+                    ++ List.filter (\skill -> skill.name == "NodeJS") js
         in
-        { group | skills = nextjs ++ rest }
+        { group | skills = ordered ++ rest }
 
     else
         group

@@ -50,7 +50,8 @@ master =
       }
     , { name = "Frontend"
       , skills =
-            [ { name = "React", years = 10 }
+            [ { name = "React", years = 5 }
+            , { name = "Ember.js", years = 6 }
             , { name = "Typescript", years = 17 }
             , { name = "Elm", years = 5 }
             , { name = "HTML / CSS / SASS", years = 22 }
@@ -68,8 +69,7 @@ master =
       , skills =
             [ { name = "OpenAI API", years = 2 }
             , { name = "AI agents", years = 2 }
-            , { name = "LangChain", years = 2 }
-            , { name = "LangSmith", years = 2 }
+            , { name = "LangChain / LangGraph", years = 2 }
             , { name = "Agentic coding", years = 2 }
             ]
       }
