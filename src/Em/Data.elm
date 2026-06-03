@@ -92,7 +92,7 @@ highlights =
     [ "Took Alfie from zero to one as CPO at XP Flow, growing the agentic AI product to 200 companies."
     , "Co-founded the school-uniform store later acquired by Marks & Spencer."
     , "Scaled the API platform of Boulevard, a health-and-beauty unicorn (authorization, HIPAA, App Store)."
-    , "Built CompareTheMarket's personal finance manager on Open Banking, integrating 12 UK high-street banks and launching to thousands of early users."
+    , "Built CompareTheMarket's personal finance manager on Open Banking, integrating 12 UK high-street banks and launching to tens of thousands of early users."
     ]
 
 
@@ -249,7 +249,7 @@ thoughtclay =
           }
         , { name = "CompareTheMarket / Bean"
           , dates = "Feb 2019 – Mar 2021"
-          , overview = "Rebuilt Bean.com as a high-performance Open Banking service for this leading UK price-comparison site, integrating 12 UK high-street banks under FCA-authorised account information and launching to thousands of early users."
+          , overview = "Rebuilt Bean.com as a high-performance Open Banking service for this leading UK price-comparison site, integrating 12 UK high-street banks under FCA-authorised account information and launching to tens of thousands of early users."
           , talkingPoints = []
           }
         ]
