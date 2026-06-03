@@ -54,3 +54,14 @@ npx elm make src/Main.elm --output=/dev/null   # fast type-check / compile
 When checking pagination of the A4 variants, each `[data-class="page"]` sheet
 is fixed-height with `overflow: hidden`; measure `scrollHeight - clientHeight`
 per page (0 = fits, >0 = clipped).
+
+## Dependencies
+
+All deps are dev/build-time only — the deployed site is a compiled Elm static
+bundle, so audit findings never reach production. Keep `npm audit` clean
+anyway. Note the `cross-spawn` override in `package.json`: `vite-plugin-elm`
+pulls `node-elm-compiler`, which still pins the vulnerable `cross-spawn@6.0.5`
+(GHSA-3xgq-45jj-v275) with no upstream fix, so we force the API-compatible
+`^7.0.6`. Don't remove the override unless `node-elm-compiler` ships a newer
+`cross-spawn`. Toolchain: Vite 8 + `vite-plugin-elm` 3 (needs Node ≥ 20.19 /
+22.12; CI runs Node 22).
