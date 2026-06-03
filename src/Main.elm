@@ -147,26 +147,26 @@ isCto path =
             False
 
 
-isEmHandsOn : String -> Bool
-isEmHandsOn path =
+isTeamLead : String -> Bool
+isTeamLead path =
     case String.toLower (String.trim path) of
-        "/em-hands-on" ->
+        "/team-lead" ->
             True
 
-        "/em-hands-on/" ->
+        "/team-lead/" ->
             True
 
         _ ->
             False
 
 
-isEmLeader : String -> Bool
-isEmLeader path =
+isEm : String -> Bool
+isEm path =
     case String.toLower (String.trim path) of
-        "/em-leader" ->
+        "/em" ->
             True
 
-        "/em-leader/" ->
+        "/em/" ->
             True
 
         _ ->
@@ -242,10 +242,10 @@ view model =
     else if isCto model.path then
         Cto.View.view
 
-    else if isEmHandsOn model.path then
+    else if isTeamLead model.path then
         Em.View.view (Em.Data.cv Em.Data.HandsOn)
 
-    else if isEmLeader model.path then
+    else if isEm model.path then
         Em.View.view (Em.Data.cv Em.Data.Leader)
 
     else

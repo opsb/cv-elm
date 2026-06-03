@@ -23,8 +23,8 @@ deploy to Pages.
 Routes are matched in `src/Main.elm` (the `is<Variant>` predicates + the
 dispatch `if/else` chain). Current EM cuts:
 
-- `/em-hands-on` → `Em.Data.HandsOn` (player-coach framing)
-- `/em-leader` → `Em.Data.Leader` (manager-first framing)
+- `/team-lead` → `Em.Data.HandsOn` (player-coach framing)
+- `/em` → `Em.Data.Leader` (manager-first framing)
 
 Each variant has a downloadable PDF, generated at build time by
 `scripts/generate-pdf.js` (Puppeteer renders each route to A4). **Every route

@@ -49,8 +49,8 @@ const variants = [
   { path: "/node?leader=true", file: "Oliver-Searle-Barnes-CPO-NodeJS-2026.pdf" },
   { path: "/cpo", file: "Oliver-Searle-Barnes-CPO-2026.pdf" },
   { path: "/cto", file: "Oliver-Searle-Barnes-CTO-2026.pdf" },
-  { path: "/em-hands-on", file: "Oliver-Searle-Barnes-Engineering-Manager.pdf" },
-  { path: "/em-leader", file: "Oliver-Searle-Barnes-Engineering-Manager-Leadership.pdf" },
+  { path: "/team-lead", file: "Oliver-Searle-Barnes-Team-Lead.pdf" },
+  { path: "/em", file: "Oliver-Searle-Barnes-Engineering-Manager.pdf" },
 ];
 
 server.on("listening", function () {

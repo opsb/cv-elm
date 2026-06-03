@@ -4,11 +4,12 @@ module Em.Data exposing (SkillGroup, Variant(..), cv, highlights, skillGroups)
 flex the single biggest axis of divergence in the EM market, the hands-on
 expectation (see the Hiring Personas doc):
 
-  - `/em-hands-on` → `HandsOn`: player-coach framing. For the ~56% of EM roles
-    that want hands-on coding and for the founder / first-EM reader.
-  - `/em-leader` → `Leader`: manager-first framing (lead through others, stay
-    technically credible without grabbing the keyboard). For the ~33% of roles
-    that explicitly don't want significant hands-on coding.
+  - `/team-lead` → `HandsOn`: player-coach framing. For the ~56% of EM /
+    tech-lead roles that want hands-on coding and for the founder / first-EM
+    reader.
+  - `/em` → `Leader`: manager-first framing (lead through others, stay
+    technically credible without grabbing the keyboard). The canonical EM cut,
+    for the ~33% of roles that don't want significant hands-on coding.
 
 Only the tagline and the profile copy flex by variant; the role history,
 capabilities, and education are shared. Each role leads with explicit `Scope:`
@@ -51,10 +52,10 @@ pdfFileName : Variant -> String
 pdfFileName variant =
     case variant of
         HandsOn ->
-            "Oliver-Searle-Barnes-Engineering-Manager.pdf"
+            "Oliver-Searle-Barnes-Team-Lead.pdf"
 
         Leader ->
-            "Oliver-Searle-Barnes-Engineering-Manager-Leadership.pdf"
+            "Oliver-Searle-Barnes-Engineering-Manager.pdf"
 
 
 tagline : Variant -> String
