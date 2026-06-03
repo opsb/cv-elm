@@ -6,10 +6,8 @@ import Browser.Navigation as Nav
 import LeadershipData as Data exposing (..)
 import Cpo.View
 import Cto.View
+import Em.Data
 import Em.View
-import EmAts.View
-import Em2.Data
-import Em2.View
 import Experimental.View
 import Experimental2.View
 import Experimental3.View
@@ -162,26 +160,26 @@ isEm path =
             False
 
 
-isEmAts : String -> Bool
-isEmAts path =
+isEmHandsOn : String -> Bool
+isEmHandsOn path =
     case String.toLower (String.trim path) of
-        "/em-ats" ->
+        "/em-hands-on" ->
             True
 
-        "/em-ats/" ->
+        "/em-hands-on/" ->
             True
 
         _ ->
             False
 
 
-isEm2 : String -> Bool
-isEm2 path =
+isEmLeader : String -> Bool
+isEmLeader path =
     case String.toLower (String.trim path) of
-        "/em2" ->
+        "/em-leader" ->
             True
 
-        "/em2/" ->
+        "/em-leader/" ->
             True
 
         _ ->
@@ -257,14 +255,14 @@ view model =
     else if isCto model.path then
         Cto.View.view
 
-    else if isEmAts model.path then
-        EmAts.View.view
+    else if isEmHandsOn model.path then
+        Em.View.view (Em.Data.cv Em.Data.HandsOn)
 
-    else if isEm2 model.path then
-        Em2.View.view Em2.Data.cv
+    else if isEmLeader model.path then
+        Em.View.view (Em.Data.cv Em.Data.Leader)
 
     else if isEm model.path then
-        Em.View.view
+        Em.View.view (Em.Data.cv Em.Data.HandsOn)
 
     else
         { title = "Oliver Searle-Barnes"
