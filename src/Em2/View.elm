@@ -1,4 +1,4 @@
-module Cv.View exposing (view)
+module Em2.View exposing (view)
 
 {-| Two-page executive-CV layout shared by the /cpo and /cto
 variants (and any future sibling). The visual design matches the
@@ -29,6 +29,7 @@ portrait dimensions override the global landscape rule in
 
 import Browser
 import Cv.Types exposing (CvData, Institution, Position, Project)
+import Em2.Data
 import Element exposing (..)
 import Element.Background as Background
 import Element.Border as Border
@@ -100,6 +101,11 @@ bodyColor =
     rgb255 32 32 36
 
 
+mutedColor : Color
+mutedColor =
+    rgb255 110 110 116
+
+
 accentBlue : Color
 accentBlue =
     rgb255 47 84 150
@@ -161,13 +167,13 @@ a4Portrait body =
     column
         [ htmlAttribute (Html.Attributes.style "width" "210mm")
         , htmlAttribute (Html.Attributes.style "height" "297mm")
-        , htmlAttribute (Html.Attributes.style "padding" "18mm 18mm 16mm 18mm")
+        , htmlAttribute (Html.Attributes.style "padding" "16mm 18mm 14mm 18mm")
         , htmlAttribute (Html.Attributes.style "box-sizing" "border-box")
         , htmlAttribute (Html.Attributes.attribute "data-class" "page")
         , htmlAttribute (Html.Attributes.style "page-break-after" "always")
         , htmlAttribute (Html.Attributes.style "overflow" "hidden")
         , Background.color pageBg
-        , spacing 14
+        , spacing 11
         ]
         body
 
@@ -211,7 +217,7 @@ page1 cv thoughtclayHead =
         , section cv.profileTitle (executiveProfileBlock cv)
         , section "Core Capabilities" (coreCapabilitiesBlock cv)
         , section "Professional Experience"
-            (column [ spacing 8, width fill ]
+            (column [ spacing 13, width fill ]
                 ([ positionView cv.leadingPosition ]
                     ++ (case cv.secondPosition of
                             Just p ->
@@ -229,7 +235,7 @@ page1 cv thoughtclayHead =
 page2 : CvData -> List Project -> Element msg
 page2 cv thoughtclayTail =
     a4Portrait
-        [ column [ spacing 8, width fill ]
+        [ column [ spacing 16, width fill ]
             (nestedProjectsBlock thoughtclayTail
                 :: List.map positionView cv.otherPositions
             )
@@ -272,7 +278,7 @@ header cv =
 
 section : String -> Element msg -> Element msg
 section title body =
-    column [ spacing 8, width fill ]
+    column [ spacing 6, width fill ]
         [ sectionHeader title
         , body
         ]
@@ -288,7 +294,7 @@ sectionHeader title =
             ]
             none
         , el
-            [ Font.size 14
+            [ Font.size 15
             , Font.bold
             , Font.color accentBlue
             , letterSpacing 0.5
@@ -310,7 +316,7 @@ sectionHeader title =
 
 executiveProfileBlock : CvData -> Element msg
 executiveProfileBlock cv =
-    column [ spacing 6, width fill ]
+    column [ spacing 4, width fill ]
         (cv.executiveProfile
             |> List.map
                 (\p ->
@@ -328,66 +334,25 @@ executiveProfileBlock cv =
 ---- CORE CAPABILITIES ----
 
 
+{-| Grouped Core Capabilities lifted from the ATS cut: one labelled,
+comma-separated line per group (Leadership, Product & Discovery,
+Engineering Leadership, AI, Languages & Platform). The final group
+carries the technical stack, so there is no separate Technical Skills
+line on this variant.
+-}
 coreCapabilitiesBlock : CvData -> Element msg
-coreCapabilitiesBlock cv =
-    let
-        ( leftItems, rightItems ) =
-            splitInTwo cv.coreCapabilities
-    in
-    column [ width fill, spacing 10 ]
-        [ row [ width fill, spacing 30, alignTop ]
-            [ capabilityColumn leftItems
-            , capabilityColumn rightItems
-            ]
-        , technicalSkillsLine cv.technicalSkills
+coreCapabilitiesBlock _ =
+    column [ width fill, spacing 3 ]
+        (List.map skillGroupLine Em2.Data.skillGroups)
+
+
+skillGroupLine : Em2.Data.SkillGroup -> Element msg
+skillGroupLine group =
+    Element.paragraph
+        [ Font.size 13, lineHeight 1.28, Font.color bodyColor ]
+        [ el [ Font.bold ] (text (group.name ++ ": "))
+        , text (String.join ", " group.skills)
         ]
-
-
-technicalSkillsLine : String -> Element msg
-technicalSkillsLine skills =
-    if skills == "" then
-        none
-
-    else
-        Element.paragraph
-            [ Font.size 12
-            , lineHeight 1.3
-            , Font.color bodyColor
-            ]
-            [ el [ Font.bold ] (text "Technical Skills: ")
-            , text skills
-            ]
-
-
-capabilityColumn : List String -> Element msg
-capabilityColumn items =
-    column [ width (fillPortion 1), spacing 3, alignTop ]
-        (List.map capabilityRow items)
-
-
-capabilityRow : String -> Element msg
-capabilityRow item =
-    row [ spacing 7, alignTop, width fill ]
-        [ el [ Font.size 13, alignTop, Font.color bodyColor ] (text "▪")
-        , Element.paragraph
-            [ Font.size 13
-            , lineHeight 1.35
-            , Font.color bodyColor
-            ]
-            [ text item ]
-        ]
-
-
-splitInTwo : List a -> ( List a, List a )
-splitInTwo xs =
-    let
-        n =
-            List.length xs
-
-        mid =
-            (n + 1) // 2
-    in
-    ( List.take mid xs, List.drop mid xs )
 
 
 
@@ -396,7 +361,7 @@ splitInTwo xs =
 
 positionView : Position -> Element msg
 positionView position =
-    column [ spacing 3, width fill ]
+    column [ spacing 5, width fill ]
         [ companyLine position
         , scopeLine position.scope
         , stackLine position.stack
@@ -411,7 +376,7 @@ scopeLine scope =
 
     else
         Element.paragraph
-            [ Font.size 13, lineHeight 1.3, Font.color bodyColor ]
+            [ Font.size 13, lineHeight 1.3, Font.color bodyColor, paddingEach { top = 0, right = 0, bottom = 0, left = 18 } ]
             [ el [ Font.bold ] (text "Scope: "), text scope ]
 
 
@@ -423,7 +388,7 @@ stackLine stack =
 
         _ ->
             Element.paragraph
-                [ Font.size 11, lineHeight 1.3, Font.color bodyColor ]
+                [ Font.size 13, lineHeight 1.3, Font.color bodyColor, paddingEach { top = 0, right = 0, bottom = 0, left = 18 } ]
                 [ el [ Font.bold ] (text "Stack: "), text (String.join ", " stack) ]
 
 
@@ -444,22 +409,17 @@ projectsBlock projects =
 
 companyLine : Position -> Element msg
 companyLine position =
-    row
-        [ width fill, spacing 12 ]
-        [ Element.paragraph
-            [ width fill, Font.color bodyColor ]
-            [ el [ Font.size 16, Font.bold ] (text (String.replace "\n" "" position.company))
-            , el [ Font.size 14 ] (text ("  —  " ++ position.title))
-            ]
-        , el
-            [ Font.size 13, Font.color bodyColor, alignRight, alignTop ]
-            (text position.dates)
+    Element.paragraph
+        [ width fill ]
+        [ el [ Font.size 16, Font.bold, Font.color bodyColor ] (text (String.replace "\n" "" position.company))
+        , el [ Font.size 13, Font.color mutedColor ] (text ("  ·  " ++ position.title ++ "  ·  " ++ position.dates))
         ]
 
 
 nestedProjectsBlock : List Project -> Element msg
 nestedProjectsBlock projects =
-    column [ spacing 8, width fill, paddingEach { top = 4, right = 0, bottom = 0, left = 0 } ]
+    column
+        [ spacing 14, width fill, paddingEach { top = 4, right = 0, bottom = 0, left = 18 } ]
         (List.map nestedProjectView projects)
 
 
@@ -467,11 +427,9 @@ nestedProjectView : Project -> Element msg
 nestedProjectView project =
     column [ spacing 3, width fill ]
         [ Element.paragraph
-            [ Font.size 14
-            , Font.color bodyColor
-            ]
-            [ el [ Font.bold ] (text project.name)
-            , text ("  |  " ++ project.dates)
+            [ width fill ]
+            [ el [ Font.size 14, Font.bold, Font.color bodyColor ] (text project.name)
+            , el [ Font.size 13, Font.color mutedColor ] (text ("  ·  " ++ project.dates))
             ]
         , if project.overview == "" then
             none
@@ -496,7 +454,7 @@ bulletList points =
         _ ->
             column
                 [ spacing 3
-                , paddingEach { top = 3, right = 0, bottom = 0, left = 10 }
+                , paddingEach { top = 3, right = 0, bottom = 0, left = 18 }
                 , width fill
                 ]
                 (List.map bulletItem points)

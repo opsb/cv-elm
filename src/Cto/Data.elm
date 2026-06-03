@@ -32,9 +32,12 @@ cv =
     , name = "Oliver Searle-Barnes"
     , tagline = "Engineering & Technology Executive"
     , email = "oliver@opsb.co.uk"
+    , profileTitle = "Executive Profile"
     , executiveProfile = executiveProfile
     , coreCapabilities = coreCapabilities
+    , technicalSkills = ""
     , leadingPosition = xpflow
+    , secondPosition = Nothing
     , thoughtclay = thoughtclay
     , otherPositions = [ zapnito, lytbulb, myschooldirect, informa, nutshell ]
     , education = education
@@ -49,7 +52,7 @@ executiveProfile : List String
 executiveProfile =
     [ "Engineering leader and technology executive with over two decades architecting and scaling software products across SaaS, fintech, e-commerce, energy, and affiliate marketing. Most recently CPO and Founding Engineer at XP Flow, leading product strategy and the technical build of Alfie.io, an AI-powered affiliate platform automating partner discovery, evaluation, and outreach at scale."
     , "Known for pairing deep engineering expertise with clear product strategy and commercial execution. Experienced leading distributed engineering teams through early-stage discovery, product-market fit, and growth-phase scaling, including co-founding a platform acquired by Marks & Spencer."
-    , "Operates at the intersection of architecture, platform, and team thinking. Comfortable owning the technical roadmap, structuring and hiring engineering teams, and partnering directly with founders and enterprise design partners to ship category-defining products."
+    , "Operates at the intersection of architecture, platform, and team thinking. Owns the technical roadmap, builds and mentors engineering teams from the first hire upward, and partners directly with founders and enterprise design partners to ship category-defining products."
     ]
 
 
@@ -63,7 +66,7 @@ coreCapabilities =
     , "Platform & Data Architecture"
     , "Distributed Systems & API Design"
     , "AI Agent & LLM Pipeline Engineering"
-    , "Engineering Team Leadership & Hiring"
+    , "Team Leadership, Hiring & Mentoring"
     , "DevOps, Observability & Reliability"
     , "Zero-to-One Delivery in Regulated Domains"
     , "Early-Stage & Growth-Stage Ventures"
@@ -81,14 +84,16 @@ xpflow =
     , company = "XP Flow (alfie.io)"
     , dates = "Feb 2025 – Apr 2026"
     , overview = Nothing
+    , scope = ""
+    , stack = []
     , projects =
         [ { name = "Alfie.io"
           , dates = "Feb 2025 – Apr 2026"
           , overview = ""
           , talkingPoints =
                 [ "Ran the customer-discovery sprint that surfaced the gap behind a stalled product, then proposed Alfie.io as the response, the AI-powered affiliate marketing platform the company spun out around."
-                , "Owned the product roadmap, set quarterly OKRs across the company, and hired the product designer to establish the design function."
-                , "Architected and shipped the full Next.js / TypeScript / Postgres stack as both product lead and primary builder, taking Alfie.io from concept to a broad base of active customers."
+                , "Owned the product roadmap and set quarterly OKRs across the company, and led the team day-to-day: managing the product designer and automation specialist through regular 1:1s, directing the CTO, and interviewing and partnering on engineering hires."
+                , "Set the architecture and led the build of the Next.js / TypeScript / Postgres stack, hands-on as founding engineer while directing the wider team, taking Alfie.io from concept to a broad base of active customers."
                 , "Drove development of the AI affiliate assistant end-to-end: agentic architecture on LangGraph / LangChain with a regression harness and a self-improving learning loop."
                 , "Built the LLM evaluation pipeline scraping affiliate sites for brand fit, plus a custom chat stack with tool-calling UI surfacing agent state in real time."
                 , "Established the product analytics and experimentation discipline behind onboarding and feature investment, and designed the Stripe-based commercial model with per-workspace agency isolation."
@@ -105,6 +110,8 @@ thoughtclay =
     , company = "Thoughtclay"
     , dates = "2018 – Present"
     , overview = Nothing
+    , scope = ""
+    , stack = []
     , projects =
         [ { name = "Tree3"
           , dates = "Dec 2024 – Present"
@@ -142,12 +149,14 @@ zapnito =
     , company = "Zapnito"
     , dates = "2014 – 2017"
     , overview = Nothing
+    , scope = ""
+    , stack = []
     , projects =
         [ { name = "Feeds"
           , dates = "2014 – 2017"
           , overview = ""
           , talkingPoints =
-                [ "Led the engineering team building a white-labelled real-time community platform for B2B publishers, owning technical strategy and delivery end-to-end."
+                [ "As VP Engineering, built and led the team behind a white-labelled real-time community platform for B2B publishers, owning hiring, mentoring, and technical strategy end-to-end."
                 , "Delivered a Phoenix / Elixir platform with real-time collaboration over WebSockets, taking it from early-stage prototype to a stable multi-tenant SaaS serving multiple enterprise publishers."
                 , "Introduced an event-driven architecture and embedding API with SSO across third-party host platforms, enabling the realtime features that became a key product differentiator."
                 ]
@@ -163,13 +172,15 @@ lytbulb =
     , company = "Lytbulb"
     , dates = "2014 – 2015"
     , overview = Nothing
+    , scope = ""
+    , stack = []
     , projects =
         [ { name = "lytbulb.com"
           , dates = "2014 – 2015"
           , overview = ""
           , talkingPoints =
                 [ "Led the technical build of a Trello-style project management product aimed at the energy sector, with a focus on oil and gas operations."
-                , "Defined the architecture, hired engineers, and took the product from concept to live deployment in a lean startup environment."
+                , "Defined the architecture, hired and mentored the founding engineers, and took the product from concept to live deployment in a lean startup environment."
                 , "Built a real-time Kanban-style workflow engine on an Ember.js front-end with Firebase backend, enabling field teams to coordinate complex operational projects."
                 ]
           }
@@ -184,12 +195,14 @@ myschooldirect =
     , company = "Myschooldirect"
     , dates = "2010 – 2014"
     , overview = Nothing
+    , scope = ""
+    , stack = []
     , projects =
         [ { name = "Myschooldirect & Give4Sure"
           , dates = "2010 – 2014"
           , overview = ""
           , talkingPoints =
-                [ "Co-founded and led technology at Myschooldirect, a school-shopping affiliate platform serving UK schools."
+                [ "Co-founded and led technology at Myschooldirect, hiring and leading the engineering team behind a school-shopping affiliate platform serving UK schools."
                 , "Architected and delivered three products: a school fundraising platform, the Give4Sure charitable browser extension, and the M&S school uniform store, the last subsequently sold to Marks & Spencer and brought in-house."
                 , "Designed a compression-based algorithm for detecting broken or incorrect affiliate links across third-party networks, plus the browser extensions that handled high traffic at low infrastructure cost."
                 ]
@@ -205,6 +218,8 @@ nutshell =
     , company = "Nutshell Development"
     , dates = "Oct 2004 – Jun 2005"
     , overview = Nothing
+    , scope = ""
+    , stack = []
     , projects =
         [ { name = "Nutshell Development"
           , dates = "Oct 2004 – Jun 2005"
@@ -225,6 +240,8 @@ informa =
     , company = "Informa Telecoms & Media"
     , dates = "2005 – 2010"
     , overview = Nothing
+    , scope = ""
+    , stack = []
     , projects =
         [ { name = "World Cellular Information Service"
           , dates = "2005 – 2010"

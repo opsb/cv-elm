@@ -6,6 +6,10 @@ import Browser.Navigation as Nav
 import LeadershipData as Data exposing (..)
 import Cpo.View
 import Cto.View
+import Em.View
+import EmAts.View
+import Em2.Data
+import Em2.View
 import Experimental.View
 import Experimental2.View
 import Experimental3.View
@@ -145,6 +149,45 @@ isCto path =
             False
 
 
+isEm : String -> Bool
+isEm path =
+    case String.toLower (String.trim path) of
+        "/em" ->
+            True
+
+        "/em/" ->
+            True
+
+        _ ->
+            False
+
+
+isEmAts : String -> Bool
+isEmAts path =
+    case String.toLower (String.trim path) of
+        "/em-ats" ->
+            True
+
+        "/em-ats/" ->
+            True
+
+        _ ->
+            False
+
+
+isEm2 : String -> Bool
+isEm2 path =
+    case String.toLower (String.trim path) of
+        "/em2" ->
+            True
+
+        "/em2/" ->
+            True
+
+        _ ->
+            False
+
+
 
 ---- UPDATE ----
 
@@ -213,6 +256,15 @@ view model =
 
     else if isCto model.path then
         Cto.View.view
+
+    else if isEmAts model.path then
+        EmAts.View.view
+
+    else if isEm2 model.path then
+        Em2.View.view Em2.Data.cv
+
+    else if isEm model.path then
+        Em.View.view
 
     else
         { title = "Oliver Searle-Barnes"
@@ -402,10 +454,10 @@ experiencePage variant =
                     Data.experienceColumnsFor variant
               in
               row [ width fill, height fill ]
-                [ Atom.pageColumn []
+                [ Atom.pageColumn [ spacing 20 ]
                     (List.map (positionView variant) columns.left)
                 , Atom.verticalDivider
-                , Atom.pageColumn []
+                , Atom.pageColumn [ spacing 20 ]
                     (List.map (positionView variant) columns.right)
                 ]
             ]

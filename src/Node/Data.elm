@@ -16,6 +16,7 @@ module Node.Data exposing
     , positionTitle
     , sidePanelLabels
     , skillGroups
+    , leaderSkillGroups
     , tagline
     )
 
@@ -152,11 +153,40 @@ positionTitle position =
 
 {-| Reorder the master skill list so the JS/TS surface leads. NextJS and
 NodeJS are bumped to the top of the Backend group (NodeJS sitting directly
-under NextJS); Leadership goes last because the target is a Staff IC role
-rather than a VP-Eng one.
+under NextJS); Leadership goes last because the default target is a Staff
+IC role rather than a VP-Eng one.
 -}
 skillGroups : List SkillGroup
 skillGroups =
+    skillGroupsInOrder
+        [ "Frontend"
+        , "Backend"
+        , "AI"
+        , "Datastores"
+        , "Infrastructure"
+        , "Methodology"
+        , "Leadership"
+        ]
+
+
+{-| Leader framing (`/node?leader=true`): the target is a hands-on CTO
+role, so Leadership leads the skills grid rather than trailing it.
+-}
+leaderSkillGroups : List SkillGroup
+leaderSkillGroups =
+    skillGroupsInOrder
+        [ "Leadership"
+        , "Frontend"
+        , "Backend"
+        , "AI"
+        , "Datastores"
+        , "Infrastructure"
+        , "Methodology"
+        ]
+
+
+skillGroupsInOrder : List String -> List SkillGroup
+skillGroupsInOrder order =
     let
         promoted =
             List.map promoteJsBackend Data.Skills.master
@@ -166,15 +196,7 @@ skillGroups =
                 |> List.filter (\group -> group.name == target)
                 |> List.head
     in
-    [ "Frontend"
-    , "Backend"
-    , "AI"
-    , "Datastores"
-    , "Infrastructure"
-    , "Methodology"
-    , "Leadership"
-    ]
-        |> List.filterMap byName
+    List.filterMap byName order
 
 
 promoteJsBackend : SkillGroup -> SkillGroup

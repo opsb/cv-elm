@@ -44,7 +44,6 @@ master =
             , { name = "Ruby on Rails", years = 8 }
             , { name = "NextJS", years = 3 }
             , { name = "NodeJS", years = 5 }
-            , { name = "SQL", years = 22 }
             , { name = "Java", years = 8 }
             ]
       }
@@ -59,7 +58,8 @@ master =
       }
     , { name = "Datastores"
       , skills =
-            [ { name = "Postgres", years = 20 }
+            [ { name = "SQL", years = 22 }
+            , { name = "Postgres", years = 20 }
             , { name = "Redis", years = 15 }
             , { name = "Snowflake", years = 2 }
             , { name = "Firebase", years = 4 }

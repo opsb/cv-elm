@@ -403,7 +403,7 @@ experience =
             [ { name = "MoneyHub"
               , start = 2019
               , end = 2021
-              , overview = "Rebuilt Bean.com as a high-performance Elixir service for this leading UK price-comparison site, integrating the majority of high street banks via Open Banking."
+              , overview = "Rebuilt Bean.com as a high-performance Elixir service for this leading UK price-comparison site, integrating most high street banks via Open Banking."
               , stack = [ "Elixir", "GraphQL", "Elm", "Javascript", "Ruby", "Postgres", "AWS" ]
               , talkingPoints = []
               }

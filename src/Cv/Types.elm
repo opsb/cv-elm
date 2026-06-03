@@ -18,6 +18,8 @@ type alias Position =
     , location : String
     , company : String
     , dates : String
+    , scope : String
+    , stack : List String
     , overview : Maybe String
     , projects : List Project
     }
@@ -50,9 +52,12 @@ type alias CvData =
     , name : String
     , tagline : String
     , email : String
+    , profileTitle : String
     , executiveProfile : List String
     , coreCapabilities : List String
+    , technicalSkills : String
     , leadingPosition : Position
+    , secondPosition : Maybe Position
     , thoughtclay : Position
     , otherPositions : List Position
     , education : List Institution

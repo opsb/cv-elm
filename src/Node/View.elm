@@ -104,7 +104,7 @@ overviewPage options =
             , Atom.verticalDivider
             , Atom.pageColumn [ spacing 20 ]
                 [ pageSection "Introduction" introductionSection
-                , pageSection "Skills" skillsSection
+                , pageSection "Skills" (skillsSection options)
                 ]
             , Atom.verticalDivider
             , Atom.pageColumn [ spacing 26 ]
@@ -190,11 +190,11 @@ introductionSection =
         )
 
 
-skillsSection : Element msg
-skillsSection =
+skillsSection : Options -> Element msg
+skillsSection options =
     let
         ( leftGroups, rightGroups ) =
-            splitInTwo Data.skillGroups
+            splitInTwo (skillGroupsFor options)
     in
     row [ spacing 30, width fill ]
         [ skillGroupsColumn leftGroups
@@ -340,6 +340,15 @@ sidePanelLabelsFor options =
 
     else
         Data.sidePanelLabels
+
+
+skillGroupsFor : Options -> List Data.SkillGroup
+skillGroupsFor options =
+    if options.leader then
+        Data.leaderSkillGroups
+
+    else
+        Data.skillGroups
 
 
 {-| When `?leader=true` is set on the `/node` route, the CV is reframed
