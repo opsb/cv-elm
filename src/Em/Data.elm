@@ -1,11 +1,11 @@
 module Em.Data exposing (SkillGroup, Variant(..), cv, highlights, skillGroups)
 
-{-| Engineering Manager CV content, served at `/em` (the canonical cut) and at
-two re-weighted variations that flex the single biggest axis of divergence in
-the EM market, the hands-on expectation (see the Hiring Personas doc):
+{-| Engineering Manager CV content, served as two re-weighted variations that
+flex the single biggest axis of divergence in the EM market, the hands-on
+expectation (see the Hiring Personas doc):
 
-  - `/em` and `/em-hands-on` → `HandsOn`: player-coach framing. For the ~56% of
-    EM roles that want hands-on coding and for the founder / first-EM reader.
+  - `/em-hands-on` → `HandsOn`: player-coach framing. For the ~56% of EM roles
+    that want hands-on coding and for the founder / first-EM reader.
   - `/em-leader` → `Leader`: manager-first framing (lead through others, stay
     technically credible without grabbing the keyboard). For the ~33% of roles
     that explicitly don't want significant hands-on coding.

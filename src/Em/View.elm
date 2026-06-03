@@ -1,7 +1,7 @@
 module Em.View exposing (view)
 
-{-| Two-page Engineering Manager CV layout, served at `/em`, `/em-hands-on`,
-and `/em-leader`. The variant only changes the copy in `Em.Data` (tagline +
+{-| Two-page Engineering Manager CV layout, served at `/em-hands-on` and
+`/em-leader`. The variant only changes the copy in `Em.Data` (tagline +
 profile); this view renders whichever `CvData` it is handed.
 
   - portrait A4 pages paginated to two sheets

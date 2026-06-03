@@ -147,19 +147,6 @@ isCto path =
             False
 
 
-isEm : String -> Bool
-isEm path =
-    case String.toLower (String.trim path) of
-        "/em" ->
-            True
-
-        "/em/" ->
-            True
-
-        _ ->
-            False
-
-
 isEmHandsOn : String -> Bool
 isEmHandsOn path =
     case String.toLower (String.trim path) of
@@ -260,9 +247,6 @@ view model =
 
     else if isEmLeader model.path then
         Em.View.view (Em.Data.cv Em.Data.Leader)
-
-    else if isEm model.path then
-        Em.View.view (Em.Data.cv Em.Data.HandsOn)
 
     else
         { title = "Oliver Searle-Barnes"

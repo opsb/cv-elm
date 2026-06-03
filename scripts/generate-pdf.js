@@ -1,15 +1,21 @@
 // Generates one PDF per variant by serving the built `dist/` directory and
 // driving headless Chromium via Puppeteer over each route. Each PDF is written
-// back into `dist/` so it ships with the deployment artifact (GitHub Pages /
-// Netlify) and the in-page "Download PDF" links resolve at the root path.
+// back into `dist/` so it ships with the GitHub Pages deployment artifact and
+// the in-page "Download PDF" links resolve at the root path.
+//
+// This runs in CI as a build step (see .github/workflows/deploy.yml). A new
+// route therefore needs an entry in the `variants` array below for its PDF to
+// exist on the deployed site, and the `file` must match that variant's
+// `pdfFileName` in its Data module.
 //
 // `preferCSSPageSize: true` makes Puppeteer respect each variant's own
 // `@page { size: A4 ... }` rule. The original landscape variants declare it in
-// `main.css`; `/elixir-ats` declares portrait via an inline <style>.
+// `main.css`; `/elixir-ats` and the EM variants declare portrait via inline
+// <style>.
 //
 // SPA fallback: the static server below mirrors what GitHub Pages does via
-// `404.html` and what Netlify does via the redirects rule: any unknown path
-// returns `index.html` so the Elm router can pick the variant up.
+// `404.html`: any unknown path returns `index.html` so the Elm router can pick
+// the variant up.
 
 const puppeteer = require("puppeteer");
 const finalhandler = require("finalhandler");
@@ -43,6 +49,8 @@ const variants = [
   { path: "/node?leader=true", file: "Oliver-Searle-Barnes-CPO-NodeJS-2026.pdf" },
   { path: "/cpo", file: "Oliver-Searle-Barnes-CPO-2026.pdf" },
   { path: "/cto", file: "Oliver-Searle-Barnes-CTO-2026.pdf" },
+  { path: "/em-hands-on", file: "Oliver-Searle-Barnes-Engineering-Manager.pdf" },
+  { path: "/em-leader", file: "Oliver-Searle-Barnes-Engineering-Manager-Leadership.pdf" },
 ];
 
 server.on("listening", function () {
