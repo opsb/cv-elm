@@ -104,6 +104,36 @@ function saveChats(state) {
   }
 }
 
+// A pasted job description, fetched server-side once and remembered GLOBALLY so
+// it stays in context for every chat and thread until the visitor clears it.
+const JOB_KEY = "cv-agent-active-job:v1";
+const jobListeners = new Set();
+function loadActiveJob() {
+  try {
+    return JSON.parse(localStorage.getItem(JOB_KEY) || "null");
+  } catch {
+    return null;
+  }
+}
+function setActiveJob(job) {
+  try {
+    job ? localStorage.setItem(JOB_KEY, JSON.stringify(job)) : localStorage.removeItem(JOB_KEY);
+  } catch {
+    /* ignore */
+  }
+  jobListeners.forEach((fn) => fn(job));
+}
+function onActiveJobChange(fn) {
+  jobListeners.add(fn);
+  return () => jobListeners.delete(fn);
+}
+/** A short label for the job pill, from the JD's first line (often the title). */
+function jobLabel(job) {
+  const first = (job?.text || "").split("\n").find((l) => l.trim());
+  const t = (first || "Active job").replace(/\s+/g, " ").trim();
+  return t.length > 34 ? t.slice(0, 34) + "…" : t;
+}
+
 // --- light, minimal palette ---
 const STYLES = `
   :host { all: initial; }
@@ -223,6 +253,11 @@ const STYLES = `
   .sidebar-new { margin: 12px; padding: 9px 12px; border: 1px solid var(--border); border-radius: 10px; background: #fff; color: var(--text); cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 8px; }
   .sidebar-new:hover { border-color: #c7c7cc; }
   .sidebar-new span { font-size: 16px; line-height: 1; }
+  .job-pill { display: flex; align-items: center; gap: 6px; margin: 0 12px 8px; padding: 7px 9px; background: #eef1fb; border: 1px solid #d6dcf5; border-radius: 9px; font-size: 12.5px; }
+  .job-pill-tag { flex: none; font-size: 9px; font-weight: 700; letter-spacing: .08em; color: #fff; background: #6b78d6; border-radius: 4px; padding: 2px 5px; }
+  .job-pill-label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #2b3380; }
+  .job-pill-clear { flex: none; border: none; background: none; color: #6b78d6; cursor: pointer; font-size: 16px; line-height: 1; padding: 0 2px; }
+  .job-pill-clear:hover { color: #b42318; }
   .sidebar-list { flex: 1; overflow-y: auto; padding: 2px 8px 14px; display: flex; flex-direction: column; gap: 2px; }
   .sidebar-item { display: flex; align-items: center; gap: 6px; padding: 8px 10px; border-radius: 8px; cursor: pointer; font-size: 13.5px; color: var(--text); }
   .sidebar-item:hover { background: #ececee; }
@@ -245,7 +280,7 @@ const STYLES = `
   .fs-scroll { flex: 1; overflow-y: auto; }
   .fs-col { max-width: 768px; margin: 0 auto; padding: 0 20px; }
   .fs-intro { padding: 52px 0 24px; text-align: left; }
-  .fs-intro h1 { font-family: "Playfair Display", Georgia, serif; font-weight: 600; font-size: clamp(28px, 4.4vw, 38px); margin: 0; }
+  .fs-intro h1 { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-weight: 650; font-size: clamp(28px, 4.4vw, 38px); margin: 0; }
   .fs-intro .tagline { margin: 12px 0 0; max-width: 620px; color: var(--muted); font-size: 16px; line-height: 1.5; }
   .fs-scroll .messages { padding-bottom: 28px; }
   .fs-composer { background: var(--bg); border-top: 1px solid var(--border); }
@@ -291,7 +326,7 @@ const STYLES = `
 `;
 
 /** Parse an Anthropic SSE stream, invoking onText for each text delta. */
-async function streamReply(messages, onText) {
+async function streamReply(messages, onText, onJd) {
   const res = await fetch(AGENT_URL, {
     method: "POST",
     headers: { "content-type": "application/json" },
@@ -316,12 +351,17 @@ async function streamReply(messages, onText) {
     buffer = events.pop() ?? "";
 
     for (const event of events) {
+      const evType = event.split("\n").find((l) => l.startsWith("event:"))?.slice(6).trim();
       const dataLine = event.split("\n").find((l) => l.startsWith("data:"));
       if (!dataLine) continue;
       const data = dataLine.slice(5).trim();
       if (!data || data === "[DONE]") continue;
       try {
         const json = JSON.parse(data);
+        if (evType === "cv_jd") {
+          onJd?.(json); // the server fetched a job description; remember it globally
+          continue;
+        }
         if (json.type === "content_block_delta" && json.delta?.type === "text_delta") {
           onText(json.delta.text);
         }
@@ -682,15 +722,40 @@ function createConversation({ scrollEl, messagesEl, input, form, sendBtn, starte
     let outgoing = [...contextMessages, ...messages].slice(-20);
     while (outgoing.length && outgoing[0].role !== "user") outgoing.shift();
 
+    // Inject the globally-active job description so EVERY chat and thread sees it,
+    // unless this conversation already carries the job link (the server fetches
+    // that one itself) or the JD is already in the messages.
+    const job = loadActiveJob();
+    if (job && job.text) {
+      const ui = outgoing.findIndex((m) => m.role === "user");
+      const hasLink = job.url && outgoing.some((m) => m.content.includes(job.url));
+      const alreadyInjected = outgoing.some((m) => m.content.includes("[Active job description"));
+      if (ui >= 0 && !hasLink && !alreadyInjected) {
+        outgoing = outgoing.slice();
+        outgoing[ui] = {
+          ...outgoing[ui],
+          content:
+            "[Active job description the visitor is evaluating Oliver against — keep it in mind for this whole conversation:]\n" +
+            job.text +
+            "\n\n---\n\n" +
+            outgoing[ui].content,
+        };
+      }
+    }
+
     let answer = "";
     try {
-      await streamReply(outgoing, (delta) => {
-        const stick = atBottom();
-        answer += delta;
-        bubble.innerHTML = renderMarkdown(stripTokens(answer));
-        bubble.appendChild(caret);
-        if (stick) toBottom();
-      });
+      await streamReply(
+        outgoing,
+        (delta) => {
+          const stick = atBottom();
+          answer += delta;
+          bubble.innerHTML = renderMarkdown(stripTokens(answer));
+          bubble.appendChild(caret);
+          if (stick) toBottom();
+        },
+        (jd) => setActiveJob({ url: jd.url, text: jd.text, at: Date.now() }),
+      );
       caret.remove();
       const clean = stripTokens(answer);
       if (clean.trim()) {
@@ -743,11 +808,34 @@ function createConversation({ scrollEl, messagesEl, input, form, sendBtn, starte
     document.addEventListener("keydown", (e) => {
       if (inputFocused || e.metaKey || e.ctrlKey || e.altKey) return;
       if (input.getClientRects().length === 0) return; // input not visible (panel closed)
+      // A field inside the widget's shadow root is focused (e.g. a thread's reply
+      // box) — document.activeElement only sees the host, so check the shadow too.
+      const inner = input.getRootNode().activeElement;
+      if (inner && (inner.tagName === "INPUT" || inner.tagName === "TEXTAREA" || inner.isContentEditable)) return;
       const a = document.activeElement;
       if (a && a !== document.body && a !== host &&
           (a.tagName === "INPUT" || a.tagName === "TEXTAREA" || a.isContentEditable)) return;
       if (e.key === "/") { e.preventDefault(); input.focus(); slash?.open(); }
       else if (e.key.length === 1) { input.focus(); }
+    });
+
+    // Paste anywhere (when no field is focused) routes the text into the input,
+    // so pasting a job-description URL always lands in the chat box.
+    document.addEventListener("paste", (e) => {
+      if (input.getClientRects().length === 0) return; // input not visible
+      const inner = input.getRootNode().activeElement; // focused element inside the widget's shadow root
+      if (inner && (inner.tagName === "INPUT" || inner.tagName === "TEXTAREA" || inner.isContentEditable)) return; // a field (this input or a thread's) is focused: let the default paste happen
+      const a = document.activeElement;
+      if (a && a !== document.body && a !== host &&
+          (a.tagName === "INPUT" || a.tagName === "TEXTAREA" || a.isContentEditable)) return; // a light-DOM field is focused
+      const text = e.clipboardData && e.clipboardData.getData("text");
+      if (!text) return;
+      e.preventDefault();
+      input.focus();
+      if (input.value && !/\s$/.test(input.value)) input.value += " ";
+      input.value += text;
+      const pos = input.value.length;
+      input.setSelectionRange(pos, pos);
     });
   }
 
@@ -770,6 +858,8 @@ function createConversation({ scrollEl, messagesEl, input, form, sendBtn, starte
       greet();
       if (startersEl) buildStarters(startersEl, PERSONAS, (q) => send(q));
     }
+    // Focus the composer on every load (switching chats / new chat) when visible.
+    if (input.getClientRects().length) input.focus();
   }
 
   return { send, load };
@@ -1004,6 +1094,7 @@ function mountFullscreen(root) {
     <div class="fs">
       <aside class="sidebar">
         <button class="sidebar-new" type="button"><span>+</span> New chat</button>
+        <div class="job-pill" hidden></div>
         <div class="sidebar-list"></div>
       </aside>
       <div class="fs-main">
@@ -1077,6 +1168,32 @@ function mountFullscreen(root) {
   });
   session = createSession(convo, root.querySelector(".sidebar-list"), closeThread);
   root.querySelector(".sidebar-new").addEventListener("click", () => session.newChat());
+
+  // The active-job pill: shows the remembered JD (injected into every chat /
+  // thread) with a clear button.
+  const jobPill = root.querySelector(".job-pill");
+  function renderJobPill(job) {
+    jobPill.replaceChildren();
+    if (!job || !job.text) { jobPill.hidden = true; return; }
+    jobPill.hidden = false;
+    const tag = document.createElement("span");
+    tag.className = "job-pill-tag";
+    tag.textContent = "JOB";
+    const label = document.createElement("span");
+    label.className = "job-pill-label";
+    label.textContent = jobLabel(job);
+    label.title = "Active job description — included as context in every chat and thread";
+    const clear = document.createElement("button");
+    clear.className = "job-pill-clear";
+    clear.type = "button";
+    clear.setAttribute("aria-label", "Clear active job");
+    clear.textContent = "×";
+    clear.addEventListener("click", () => setActiveJob(null));
+    jobPill.append(tag, label, clear);
+  }
+  renderJobPill(loadActiveJob());
+  onActiveJobChange(renderJobPill);
+
   input.focus();
 }
 

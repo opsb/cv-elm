@@ -114,7 +114,7 @@ html, body { background-color: #f4f4f4 !important; margin: 0; padding: 0; }
 
 bodyColor : Color
 bodyColor =
-    rgb255 32 32 36
+    rgb255 51 51 57
 
 
 mutedColor : Color
@@ -290,8 +290,8 @@ header : CvData -> Element msg
 header cv =
     column [ spacing 2, width fill, paddingEach { top = 0, right = 0, bottom = 6, left = 0 } ]
         [ el
-            [ Font.size 34
-            , Font.bold
+            [ Font.size 38
+            , Font.semiBold
             , Font.color bodyColor
             ]
             (text cv.name)
@@ -333,8 +333,8 @@ sectionHeader title =
             ]
             none
         , el
-            [ Font.size 15
-            , Font.bold
+            [ Font.size 16
+            , Font.semiBold
             , Font.color accentBlue
             , letterSpacing 0.5
             , paddingEach { top = 3, right = 0, bottom = 3, left = 0 }
