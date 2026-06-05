@@ -120,7 +120,7 @@ thoughtclay =
           }
         , { name = "Tastermonial · Interim CTO"
           , dates = "Jun – Dec 2023"
-          , overview = "Engaged as Interim CTO to rebuild a failing iOS MVP into a production-grade Flutter app on iOS and Android. Established AWS infrastructure and CI/CD via Terraform, materially improving reliability and leaving the engineering function stable and scalable."
+          , overview = "Engaged as Interim CTO to rebuild a failing iOS MVP into a production-grade Flutter app on iOS and Android. Established the engineering foundations and developer tooling from scratch, materially improving reliability and leaving the engineering function stable and scalable."
           , talkingPoints = []
           }
         , { name = "Boulevard (LA) · Unicorn"
@@ -130,7 +130,7 @@ thoughtclay =
           }
         , { name = "Vorwerk"
           , dates = "Apr – Sep 2021"
-          , overview = "Tech Lead bootstrapping a backend team at this German consumer-appliance giant, delivering Elixir / Python cloud services on AWS that power IoT connectivity for a new commercial robot vacuum line. Shipped on schedule for commercial launch."
+          , overview = "Tech lead on a 6-engineer team, bootstrapping the backend at this German consumer-appliance giant, delivering Elixir / Python cloud services on AWS that power IoT connectivity for a new commercial robot vacuum line. Shipped on schedule for commercial launch."
           , talkingPoints = []
           }
         , { name = "CompareTheMarket / Bean"

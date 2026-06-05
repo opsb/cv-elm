@@ -1,18 +1,19 @@
-module Em.View exposing (view)
+module Cv.PortraitView exposing (PortraitCv, SkillGroup, view)
 
-{-| Two-page Engineering Manager CV layout, served at `/team-lead` (hands-on
-player-coach) and `/em` (manager-first). The variant only changes the copy in
-`Em.Data` (tagline + profile); this view renders whichever `CvData` it is
-handed.
+{-| Two-page portrait CV layout shared by the Engineering Manager cuts
+(`/em`, `/team-lead`) and the Node / Next.js cuts (`/node-staff`,
+`/node-lead`). Each variant's `Data` module assembles a `PortraitCv`; this
+view renders whichever one it is handed and never names variant-specific copy.
 
   - portrait A4 pages paginated to two sheets
-  - page 1: header → Profile → Core Capabilities → Professional Experience
-    header → leading position → second position → Thoughtclay (first engagement)
+  - page 1: header → Profile → Selected Highlights → Core Capabilities →
+    Professional Experience header → leading position → second position →
+    Thoughtclay (first engagement)
   - page 2: rest of Thoughtclay → other positions → Education
   - each role: a one-line company | title | dates header, then indented
     `Scope:` / `Stack:` lines and bullets
   - grouped Core Capabilities (labelled comma-separated lines) from
-    `Em.Data.skillGroups`
+    `portrait.skillGroups`
   - blue uppercase section headings with hairline rules
   - weight hierarchy: section headings bold blue; role / capability labels
     medium; body and bullets regular (dark); supporting Scope/Stack/overview
@@ -27,7 +28,6 @@ override the global landscape rule in `main.css`.
 
 import Browser
 import Cv.Types exposing (CvData, Institution, Position, Project)
-import Em.Data
 import Element exposing (..)
 import Element.Background as Background
 import Element.Font as Font
@@ -35,13 +35,32 @@ import Html exposing (Html)
 import Html.Attributes
 
 
-view : CvData -> Browser.Document msg
-view cv =
+{-| Grouped Core Capabilities rendered as labelled, comma-separated lines. The
+final group conventionally carries the technical stack, so there is no
+standalone Technical Skills line on this layout.
+-}
+type alias SkillGroup =
+    { name : String, skills : List String }
+
+
+{-| Everything the portrait layout needs: the shared `CvData` record plus the
+two blocks this layout adds over the executive `Cv.View` (the Selected
+Highlights strip and the grouped Core Capabilities).
+-}
+type alias PortraitCv =
+    { cv : CvData
+    , highlights : List String
+    , skillGroups : List SkillGroup
+    }
+
+
+view : PortraitCv -> Browser.Document msg
+view portrait =
     { title = "Oliver Searle-Barnes CV"
     , body =
         [ Html.node "style" [] [ Html.text printStyles ]
-        , downloadLinkHtml cv
-        , Element.layout pageAttrs (pages cv)
+        , downloadLinkHtml portrait.cv
+        , Element.layout pageAttrs (pages portrait)
         ]
     }
 
@@ -169,7 +188,7 @@ a4Portrait body =
     column
         [ htmlAttribute (Html.Attributes.style "width" "210mm")
         , htmlAttribute (Html.Attributes.style "height" "297mm")
-        , htmlAttribute (Html.Attributes.style "padding" "16mm 18mm 13mm 18mm")
+        , htmlAttribute (Html.Attributes.style "padding" "9mm 11mm 7mm 11mm")
         , htmlAttribute (Html.Attributes.style "box-sizing" "border-box")
         , htmlAttribute (Html.Attributes.attribute "data-class" "page")
         , htmlAttribute (Html.Attributes.style "page-break-after" "always")
@@ -184,9 +203,12 @@ a4Portrait body =
 ---- PAGES ----
 
 
-pages : CvData -> Element msg
-pages cv =
+pages : PortraitCv -> Element msg
+pages portrait =
     let
+        cv =
+            portrait.cv
+
         thoughtclay =
             cv.thoughtclay
 
@@ -207,18 +229,22 @@ pages cv =
             List.drop page1Count thoughtclay.projects
     in
     column [ width fill, spacing 0 ]
-        [ page1 cv thoughtclayPage1
+        [ page1 portrait thoughtclayPage1
         , page2 cv thoughtclayPage2Projects
         ]
 
 
-page1 : CvData -> Position -> Element msg
-page1 cv thoughtclayHead =
+page1 : PortraitCv -> Position -> Element msg
+page1 portrait thoughtclayHead =
+    let
+        cv =
+            portrait.cv
+    in
     a4Portrait
         [ header cv
         , section cv.profileTitle (executiveProfileBlock cv)
-        , section "Selected Highlights" highlightsBlock
-        , section "Core Capabilities" coreCapabilitiesBlock
+        , section "Selected Highlights" (highlightsBlock portrait.highlights)
+        , section "Core Capabilities" (coreCapabilitiesBlock portrait.skillGroups)
         , section "Professional Experience"
             (column [ spacing 13, width fill, paddingEach { top = 4, right = 0, bottom = 0, left = 0 } ]
                 ([ positionView cv.leadingPosition ]
@@ -237,11 +263,21 @@ page1 cv thoughtclayHead =
 
 page2 : CvData -> List Project -> Element msg
 page2 cv thoughtclayTail =
+    let
+        -- Cuts that split their consulting engagements into standalone
+        -- positions (e.g. Elixir) leave no Thoughtclay tail; omit the block
+        -- entirely so it adds no leading gap on page 2.
+        thoughtclayTailBlock =
+            case thoughtclayTail of
+                [] ->
+                    []
+
+                _ ->
+                    [ nestedProjectsBlock thoughtclayTail ]
+    in
     a4Portrait
-        [ column [ spacing 16, width fill ]
-            (nestedProjectsBlock thoughtclayTail
-                :: List.map positionView cv.otherPositions
-            )
+        [ column [ spacing 12, width fill ]
+            (thoughtclayTailBlock ++ List.map positionView cv.otherPositions)
         , section "Education" (educationBlock cv)
         ]
 
@@ -337,35 +373,34 @@ executiveProfileBlock cv =
 ---- SELECTED HIGHLIGHTS ----
 
 
-highlightsBlock : Element msg
-highlightsBlock =
+highlightsBlock : List String -> Element msg
+highlightsBlock highlights =
     column [ width fill, spacing 4 ]
-        (List.map bulletItem Em.Data.highlights)
+        (List.map bulletItem highlights)
 
 
 
 ---- CORE CAPABILITIES ----
 
 
-{-| Grouped Core Capabilities: one labelled, comma-separated line per group
-(Leadership, Engineering Leadership, Product & Discovery, AI, Languages &
-Platform). The final group carries the technical stack, so there is no
+{-| Grouped Core Capabilities: one labelled, comma-separated line per group.
+The final group conventionally carries the technical stack, so there is no
 separate Technical Skills line on this layout.
 -}
-coreCapabilitiesBlock : Element msg
-coreCapabilitiesBlock =
+coreCapabilitiesBlock : List SkillGroup -> Element msg
+coreCapabilitiesBlock skillGroups =
     let
         lastIndex =
-            List.length Em.Data.skillGroups - 1
+            List.length skillGroups - 1
     in
     column [ width fill, spacing 5 ]
         (List.indexedMap
             (\i group -> skillGroupLine (i == lastIndex) group)
-            Em.Data.skillGroups
+            skillGroups
         )
 
 
-skillGroupLine : Bool -> Em.Data.SkillGroup -> Element msg
+skillGroupLine : Bool -> SkillGroup -> Element msg
 skillGroupLine isLast group =
     Element.paragraph
         [ Font.size 13, lineHeight 1.22, Font.color textColor ]
@@ -388,7 +423,7 @@ skillGroupLine isLast group =
 
 positionView : Position -> Element msg
 positionView position =
-    column [ spacing 5, width fill ]
+    column [ spacing 4, width fill ]
         [ companyLine position
         , scopeLine position.scope
         , stackLine position.stack

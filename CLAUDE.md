@@ -21,10 +21,30 @@ deploy to Pages.
 ## Variants and their PDFs
 
 Routes are matched in `src/Main.elm` (the `is<Variant>` predicates + the
-dispatch `if/else` chain). Current EM cuts:
+dispatch `if/else` chain).
 
-- `/team-lead` → `Em.Data.HandsOn` (player-coach framing)
-- `/em` → `Em.Data.Leader` (manager-first framing)
+The two-page **portrait** layout lives in `src/Cv/PortraitView.elm` and renders
+a `PortraitCv` (the shared `Cv.Types.CvData` plus a Selected Highlights strip
+and grouped Core Capabilities). It is shared by the EM, Node, and Elixir cuts;
+each variant's `Data` module only assembles copy. Current cuts:
+
+- `/team-lead` → `Em.Data.HandsOn` (player-coach EM framing)
+- `/em` → `Em.Data.Leader` (manager-first EM framing)
+- `/node-staff` → `NodePortrait.Data.Staff` (Staff Next.js / TypeScript / Node IC)
+- `/node-lead` → `NodePortrait.Data.Leader` (hands-on CTO · Staff engineer)
+- `/elixir-staff` → `ElixirPortrait.Data.Staff` (Staff Elixir / Phoenix / OTP IC)
+- `/elixir-lead` → `ElixirPortrait.Data.Leader` (hands-on Elixir lead · Staff engineer)
+
+For the Node and Elixir cuts, tagline + profile flex by variant and the
+skill-group ordering flexes (Staff leads with the technical groups, Leader
+leads with Leadership). The older landscape `/node` (`src/Node/`, with its
+`?leader=true` flag) and the older landscape `/elixir` (`src/Experimental2/`)
+are separate, untouched layouts.
+
+When editing portrait-cut copy, re-check page-1 pagination: each
+`[data-class="page"]` sheet is fixed-height with `overflow: hidden`, so adding
+a wrapped line can clip page 1. Measure `scrollHeight - clientHeight` per page
+(0 = fits).
 
 Each variant has a downloadable PDF, generated at build time by
 `scripts/generate-pdf.js` (Puppeteer renders each route to A4). **Every route
@@ -32,13 +52,23 @@ must have an entry in that script's `variants` array, or its in-page "Download
 PDF" link 404s on the deployed site.** The entry's `file` must exactly match
 that variant's `pdfFileName` field in its `Data` module.
 
+### Directory index — `/directory`
+
+`/directory` (`src/Directory/`) is the in-app index of every variant and when
+to use it, mirroring the vault's decision guide
+(`01 Projects/Next opportunity/CV/Home.md`). It reads the hand-maintained
+registry in `src/Directory/Data.elm`. It is a screen page, not a CV, so it has
+**no** `generate-pdf` entry.
+
 ### Adding or changing a route
 
 1. Add/keep the route in `src/Main.elm` (predicate + dispatch branch).
 2. Set `pdfFileName` in the variant's `Data` module.
 3. Add `{ path: "/your-route", file: "<same pdfFileName>" }` to the `variants`
    array in `scripts/generate-pdf.js`.
-4. Build and verify (below), then push to `main`.
+4. **Add the variant to `src/Directory/Data.elm`** (route, title, tagline,
+   when-to-use, pdf) so `/directory` stays complete.
+5. Build and verify (below), then push to `main`.
 
 ## Local commands
 

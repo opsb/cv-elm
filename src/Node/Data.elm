@@ -283,9 +283,8 @@ tree3 =
           , overview = "Led engineering on a high-performance affiliate platform built on Next.js, Postgres and Redis."
           , stack = [ "Next.js", "TypeScript", "Postgres", "Redis" ]
           , talkingPoints =
-                [ "Owned the platform architecture across click capture, attribution, and reliable postback delivery to partner endpoints."
+                [ "Built the affiliate platform on top of TUNE's white-label tracking — the dashboards, auth, and the TUNE / Twilio / Tipalti integrations — plus a multi-tenant layer over TUNE's single-advertiser model."
                 , "Built dashboards on Next.js / React for both Brands and Affiliates."
-                , "Tuned Postgres + Redis for the high-volume click-stream workload."
                 , "Ran the customer-discovery sprint that surfaced the underlying gap and proposed AI-powered affiliate recruitment as the response, spun out as XP Flow."
                 ]
           }
@@ -298,18 +297,18 @@ tastermonial =
     { title = "Interim CTO"
     , location = "Cupertino / Remote"
     , company = "Tastermonial"
-    , companyStack = [ "Flutter", "Phoenix", "AWS" ]
+    , companyStack = [ "Flutter", "Phoenix" ]
     , dates = "Jul 2023-Dec 2023"
     , projects =
         [ { name = "Tastermonial App"
           , start = 2023
           , end = 2023
           , overview = "Rebuilt an unstable iOS MVP into a production-grade mobile app on iOS + Android."
-          , stack = [ "Flutter", "Phoenix", "Postgres", "AWS/Terraform" ]
+          , stack = [ "Flutter", "Phoenix", "Postgres" ]
           , talkingPoints =
                 [ "Inherited customers with active reliability complaints and left the engineering function stable and scalable."
                 , "Rebuilt the mobile app on Flutter for iOS + Android."
-                , "Established CI/CD on AWS, managed via Terraform; introduced Kanban + BDD."
+                , "Established the engineering foundations and developer tooling from scratch; introduced Kanban + BDD."
                 ]
           }
         ]
@@ -353,7 +352,7 @@ vorwerk =
         [ { name = "Kobold"
           , start = 2021
           , end = 2021
-          , overview = "Bootstrapped a backend team at this consumer-appliance giant, building IoT cloud services for a new line of commercial robot vacuum cleaners."
+          , overview = "Tech lead on a 6-engineer team, bootstrapping the backend at this consumer-appliance giant, building IoT cloud services for a new line of commercial robot vacuum cleaners."
           , stack = [ "Elixir", "Python", "Postgres", "AWS/Terraform" ]
           , talkingPoints =
                 [ "Established the backend service and the Python client library on the device side."
@@ -443,7 +442,7 @@ zapnito =
           , start = 2016
           , end = 2017
           , overview = "Hands-on VP Engineering, leading delivery of Feeds, a white-labelled realtime community platform serving multiple B2B publishers."
-          , stack = [ "WebSockets", "Elm", "JavaScript", "JWT", "Auth0", "Postgres", "Phoenix Channels" ]
+          , stack = [ "WebSockets", "Elm", "JavaScript", "JWT", "Postgres", "Phoenix Channels" ]
           , talkingPoints =
                 [ "Built a single-page realtime web app with a Slack-like UX over WebSockets."
                 , "Designed an embedding API with a multi-widget kit and seamless SSO for 3rd-party host platforms."
@@ -511,7 +510,7 @@ informa =
           , start = 2007
           , end = 2008
           , stack = [ "Java", "Spring", "MS Analytics services", "Oracle DB", "Scrum", "TDD" ]
-          , overview = "Led the team replacing Informa Telecom's flagship product (WCIS), a mobile-markets intelligence platform covering 226 countries."
+          , overview = "Architected the replacement for Informa Telecom's flagship product (WCIS), a mobile-markets intelligence platform covering 226 countries."
           , talkingPoints =
                 [ "Used incremental releases to migrate the live service to a new architecture without disrupting customers or requiring parallel development."
                 ]

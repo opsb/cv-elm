@@ -10,8 +10,8 @@
 //
 // `preferCSSPageSize: true` makes Puppeteer respect each variant's own
 // `@page { size: A4 ... }` rule. The original landscape variants declare it in
-// `main.css`; `/elixir-ats` and the EM variants declare portrait via inline
-// <style>.
+// `main.css`; the portrait cuts (EM / Node / Elixir) declare portrait via
+// inline <style>.
 //
 // SPA fallback: the static server below mirrors what GitHub Pages does via
 // `404.html`: any unknown path returns `index.html` so the Elm router can pick
@@ -39,19 +39,38 @@ const server = http.createServer((req, res) => {
   });
 });
 
-const variants = [
+const allVariants = [
   { path: "/", file: "Oliver-Searle-Barnes-CTO-2026.pdf" },
-  { path: "/engineer", file: "Oliver-Searle-Barnes-Engineer-2026.pdf" },
   { path: "/elixir", file: "Oliver-Searle-Barnes-Staff-Elixir-Engineer-2026.pdf" },
   { path: "/experimental", file: "Oliver-Searle-Barnes-Elixir-Editorial-2026.pdf" },
-  { path: "/elixir-ats", file: "Oliver-Searle-Barnes-Senior-Elixir-Engineer-ATS-2026.pdf" },
   { path: "/node", file: "Oliver-Searle-Barnes-Staff-NodeJS-Engineer-2026.pdf" },
   { path: "/node?leader=true", file: "Oliver-Searle-Barnes-CPO-NodeJS-2026.pdf" },
-  { path: "/cpo", file: "Oliver-Searle-Barnes-CPO-2026.pdf" },
   { path: "/cto", file: "Oliver-Searle-Barnes-CTO-2026.pdf" },
   { path: "/team-lead", file: "Oliver-Searle-Barnes-Team-Lead.pdf" },
   { path: "/em", file: "Oliver-Searle-Barnes-Engineering-Manager.pdf" },
+  { path: "/node-staff", file: "Oliver-Searle-Barnes-Staff-Engineer.pdf" },
+  { path: "/node-lead", file: "Oliver-Searle-Barnes-Hands-On-CTO.pdf" },
+  { path: "/elixir-staff", file: "Oliver-Searle-Barnes-Staff-Elixir-Engineer.pdf" },
+  { path: "/elixir-lead", file: "Oliver-Searle-Barnes-Elixir-Lead.pdf" },
 ];
+
+// Optional CLI filter: `node scripts/generate-pdf.js /em /team-lead` renders
+// only those routes (used by the watch-pdf daemon for affected-only regen).
+// No args renders everything, so CI and `just gen-pdf` are unchanged.
+const requestedPaths = process.argv.slice(2);
+const variants =
+  requestedPaths.length === 0
+    ? allVariants
+    : allVariants.filter((v) => requestedPaths.includes(v.path));
+
+requestedPaths
+  .filter((p) => !allVariants.some((v) => v.path === p))
+  .forEach((p) => console.warn("Unknown route, skipping: " + p));
+
+if (variants.length === 0) {
+  console.warn("No matching routes to render.");
+  process.exit(0);
+}
 
 server.on("listening", function () {
   (async () => {

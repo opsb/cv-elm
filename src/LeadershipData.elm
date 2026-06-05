@@ -27,9 +27,9 @@ module LeadershipData exposing
     , variantPath
     )
 
-{-| Per-variant content module isolated to `/` and `/engineer`. Edits here
-do not affect `/elixir`, `/elixir-ats`, or `/experimental`, which carry
-their own content. Content originates from the pre-/elixir-customisation
+{-| Content module for the landscape full CV at `/`. Edits here do not affect
+`/elixir` or `/experimental`, which carry their own content. Content
+originates from the pre-/elixir-customisation
 state of `Data.elm` (commit 319030a^) plus the modern `companyStack` and
 `introductionParagraphsFor` additions needed by the shared view code.
 
@@ -42,20 +42,11 @@ import Data.Skills
 
 type Variant
     = Leadership
-    | Engineer
 
 
 variantFromPath : String -> Variant
-variantFromPath path =
-    case String.toLower (String.trim path) of
-        "/engineer" ->
-            Engineer
-
-        "/engineer/" ->
-            Engineer
-
-        _ ->
-            Leadership
+variantFromPath _ =
+    Leadership
 
 
 variantPath : Variant -> String
@@ -64,18 +55,12 @@ variantPath variant =
         Leadership ->
             "/"
 
-        Engineer ->
-            "/engineer"
-
 
 pdfFileFor : Variant -> String
 pdfFileFor variant =
     case variant of
         Leadership ->
             "Oliver-Searle-Barnes-CTO-2026.pdf"
-
-        Engineer ->
-            "Oliver-Searle-Barnes-Engineer-2026.pdf"
 
 
 type alias Data =
@@ -112,18 +97,12 @@ positionTitle variant position =
         Leadership ->
             position.title
 
-        Engineer ->
-            position.engineerTitle
-
 
 taglineFor : Variant -> String
 taglineFor variant =
     case variant of
         Leadership ->
             "Passionate full-stack tech leader"
-
-        Engineer ->
-            "Hands-on full-stack engineer"
 
 
 sidePanelLabels : Variant -> List String
@@ -135,12 +114,6 @@ sidePanelLabels variant =
             , "22 Years experience"
             ]
 
-        Engineer ->
-            [ "Hands-on full-stack engineer"
-            , "Staff Engineer, Tech Lead, Architect"
-            , "22 years experience"
-            ]
-
 
 introductionParagraphsFor : Variant -> List String
 introductionParagraphsFor _ =
@@ -150,7 +123,7 @@ introductionParagraphsFor _ =
 sharedIntroductionParagraphs : List String
 sharedIntroductionParagraphs =
     [ "Building software that people actually love to use is what gets me going. With 22 years experience I've delivered successful products for the AI, Fintech, SaaS, Telecoms, Retail, Publishing, Energy, Charity, Health and Beauty, and Domestic appliance sectors."
-    , "I've led teams building computer vision training pipelines at TwentyBN, Open Banking integration across UK high street banks at CompareTheMarket, IoT cloud services for commercial robot vacuums at Vorwerk, an event-sourced real-time community platform at Zapnito, and a WebDAV-based CMS that let Informa's journalists edit articles directly in Microsoft Word."
+    , "I've led teams building computer vision training pipelines at TwentyBN, Open Banking integration across UK high street banks at CompareTheMarket, IoT cloud services for commercial robot vacuums at Vorwerk, a real-time community platform at Zapnito, and a WebDAV-based CMS that let Informa's journalists edit articles directly in Microsoft Word."
     , "Agile from day one; comfortable owning the engineering function or contributing within an established team."
     ]
 
@@ -160,9 +133,6 @@ skillGroupsFor variant =
     case variant of
         Leadership ->
             Data.Skills.leadershipFirst
-
-        Engineer ->
-            Data.Skills.leadershipLast
 
 
 type alias ExperienceColumns =
@@ -193,24 +163,6 @@ experienceColumnsFor variant =
                 ]
             }
 
-        Engineer ->
-            { left =
-                [ engineerXpflow
-                , experience.tastermonial
-                , experience.boulevard
-                , experience.vorwerk
-                , experience.ctm
-                , experience.twentyBn
-                ]
-            , right =
-                [ experience.liqid
-                , experience.zapnito
-                , experience.lytbulb
-                , experience.myschooldirect
-                , experience.informa
-                ]
-            }
-
 
 experiencePositionsFor : Variant -> List Position
 experiencePositionsFor variant =
@@ -219,18 +171,6 @@ experiencePositionsFor variant =
             experienceColumnsFor variant
     in
     columns.left ++ columns.right
-
-
-engineerXpflow : Position
-engineerXpflow =
-    { title = "Tech Lead"
-    , engineerTitle = "Tech Lead"
-    , location = "Dallas / Remote"
-    , company = "Tree3 / XP Flow"
-    , companyStack = []
-    , dates = "Jan 2024-Apr 2026"
-    , projects = experience.xpflow.projects ++ experience.tree3.projects
-    }
 
 
 type alias Project =
@@ -352,8 +292,8 @@ experience =
             [ { name = "Tastermonial App"
               , start = 2023
               , end = 2023
-              , overview = "Replaced MVP with a high-performance Flutter/Phoenix mobile app, running on AWS with supporting build pipelines."
-              , stack = [ "Elixir", "Flutter", "Sqlite", "Postgres", "AWS/Terraform" ]
+              , overview = "Replaced MVP with a high-performance Flutter/Phoenix mobile app, with the engineering foundations and developer tooling established from scratch."
+              , stack = [ "Elixir", "Flutter", "Sqlite", "Postgres" ]
               , talkingPoints = []
               }
             ]
@@ -386,7 +326,7 @@ experience =
             [ { name = "Kobold"
               , start = 2021
               , end = 2021
-              , overview = "Bootstrapped an Elixir/Phoenix team at this global consumer appliance giant to provide cloud services and a Python client for a new line of commercial robot vacuum cleaners."
+              , overview = "Tech lead on a 6-engineer team, bootstrapping the Elixir/Phoenix backend at this global consumer appliance giant to provide cloud services and a Python client for a new line of commercial robot vacuum cleaners."
               , stack = [ "Elixir", "Python", "Postgres", "AWS/Terraform" ]
               , talkingPoints = []
               }
@@ -455,9 +395,9 @@ experience =
               , start = 2016
               , end = 2017
               , overview = "Led the development of a white-labelled realtime community platform."
-              , stack = [ "Phoenix", "Phoenix-Channels", "Elixir", "Elm", "Javascript", "JWT", "Auth0", "Postgres", "Kanban", "BDD" ]
+              , stack = [ "Phoenix", "Phoenix-Channels", "Elixir", "Elm", "Javascript", "JWT", "Postgres", "Kanban", "BDD" ]
               , talkingPoints =
-                    [ "Implemented an Event Sourcing architecture to power the realtime front end built on top of Phoenix's websocket based channels."
+                    [ "Built a realtime pub-sub architecture to power the front end on top of Phoenix's websocket-based channels."
                     , "Designed API for embedding product within 3rd party platforms including a variety of widgets and seamless integration with Single Sign On."
                     , "Built testing infrastructure that allowed full stack testing in multiple concurrent browser instances."
                     ]
@@ -524,7 +464,7 @@ experience =
               , start = 2007
               , end = 2006
               , stack = [ "Java", "Spring", "MS Analytics services", "Oracle DB", "Scrum", "TDD" ]
-              , overview = "Led team to replace Informa Telecom's flagship product (WCIS), a mobile markets intelligence platform covering 226 countries."
+              , overview = "Architected the replacement for Informa Telecom's flagship product (WCIS), a mobile markets intelligence platform covering 226 countries."
               , talkingPoints = []
               }
             , { name = "World Broadband Information Service"

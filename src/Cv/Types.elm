@@ -6,7 +6,7 @@ module Cv.Types exposing
     )
 
 {-| Shared type definitions for the two-page executive-CV variants
-that render via `Cv.View` (Cpo, Cto, and any future siblings). Each
+that render via `Cv.View` (Cto, and any future siblings). Each
 variant's `Data` module assembles a `CvData` record from these
 building blocks; the View module never names variant-specific copy.
 

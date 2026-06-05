@@ -173,7 +173,7 @@ introductionParagraphsFor variant =
 elixirIntroductionParagraphs : List String
 elixirIntroductionParagraphs =
     [ "Building software that people actually love to use is what gets me going. With 22 years experience I've delivered successful products for the AI, Fintech, SaaS, Telecoms, Retail, Publishing, Energy, Charity, Health and Beauty, and Domestic appliance sectors."
-    , "10+ years shipping production Elixir / Phoenix at scale: API authorization and rate-limiting at Boulevard, IoT cloud services on Phoenix at Vorwerk, an event-sourced real-time community platform at Zapnito, and Open Banking integration across UK high street banks at CompareTheMarket."
+    , "10+ years shipping production Elixir / Phoenix at scale: API authorization and rate-limiting at Boulevard, IoT cloud services on Phoenix at Vorwerk, a real-time community platform at Zapnito, and Open Banking integration across UK high street banks at CompareTheMarket."
     , originalAgileSignoff
     ]
 
@@ -190,7 +190,7 @@ originalAgileSignoff =
 sharedIntroductionParagraphs : List String
 sharedIntroductionParagraphs =
     [ "Building software that people actually love to use is what gets me going. With 22 years experience I've delivered successful products for the AI, Fintech, SaaS, Telecoms, Retail, Publishing, Energy, Charity, Health and Beauty, and Domestic appliance sectors."
-    , "I've led teams building computer vision training pipelines at TwentyBN, Open Banking integration across UK high street banks at CompareTheMarket, IoT cloud services for commercial robot vacuums at Vorwerk, an event-sourced real-time community platform at Zapnito, and a WebDAV-based CMS that let Informa's journalists edit articles directly in Microsoft Word."
+    , "I've led teams building computer vision training pipelines at TwentyBN, Open Banking integration across UK high street banks at CompareTheMarket, IoT cloud services for commercial robot vacuums at Vorwerk, a real-time community platform at Zapnito, and a WebDAV-based CMS that let Informa's journalists edit articles directly in Microsoft Word."
     , "Agile from day one; comfortable owning the engineering function or contributing within an established team."
     ]
 
@@ -388,7 +388,7 @@ experience =
               , overview = "Led engineering on a high-performance affiliate platform."
               , stack = [ "NextJS", "Postgres", "Redis" ]
               , talkingPoints =
-                    [ "Owned the platform architecture across click capture, attribution, and reliable postback delivery to partner endpoints."
+                    [ "Built the affiliate platform on top of TUNE's white-label tracking — the dashboards, auth, and the TUNE / Twilio / Tipalti integrations — plus a multi-tenant layer over TUNE's single-advertiser model."
                     , "Built dashboards for both Brands and Affiliates."
                     , "Ran the customer-discovery sprint that surfaced the underlying gap and proposed AI-powered affiliate recruitment as the response."
                     ]
@@ -408,12 +408,12 @@ experience =
               , start = 2023
               , end = 2023
               , overview = "Rebuilt the platform end-to-end: an unstable iOS MVP became a production-grade Phoenix/Flutter app on iOS + Android."
-              , stack = [ "Elixir", "Flutter", "Sqlite", "Postgres", "AWS/Terraform" ]
+              , stack = [ "Elixir", "Flutter", "Sqlite", "Postgres" ]
               , talkingPoints =
                     [ "Inherited customers with active reliability complaints."
                     , "Rebuilt the backend on Phoenix/Elixir for production-grade reliability."
                     , "Rebuilt the mobile app on Flutter, iOS + Android."
-                    , "Established development practices Kanban, BDD, CI, Terraform infra, etc."
+                    , "Established development practices Kanban, BDD, and developer tooling from scratch."
                     ]
               }
             ]
@@ -453,7 +453,7 @@ experience =
             [ { name = "Kobold"
               , start = 2021
               , end = 2021
-              , overview = "Bootstrapped an Elixir team at this consumer appliance giant, building cloud services for a new line of commercial robot vacuum cleaners."
+              , overview = "Tech lead on a 6-engineer team, bootstrapping the Elixir backend at this consumer appliance giant, building cloud services for a new line of commercial robot vacuum cleaners."
               , stack = [ "Elixir", "Python", "Postgres", "AWS/Terraform" ]
               , talkingPoints =
                     [ "Established the Elixir backend and Python client library."
@@ -539,7 +539,7 @@ experience =
               , start = 2016
               , end = 2017
               , overview = "Hands-on VP Engineering at Zapnito, leading delivery of Feeds, a white-labelled realtime community platform serving multiple B2B publishers."
-              , stack = [ "Phoenix", "Phoenix-Channels", "Elixir", "Elm", "Javascript", "JWT", "Auth0", "Postgres", "Kanban", "BDD" ]
+              , stack = [ "Phoenix", "Phoenix-Channels", "Elixir", "Elm", "Javascript", "JWT", "Postgres", "Kanban", "BDD" ]
               , talkingPoints =
                     [ "Built slack like experience built on Phoenix Channels."
                     , "Created multi widget kit for embedding within client apps."
@@ -619,7 +619,7 @@ experience =
               , start = 2007
               , end = 2008
               , stack = [ "Java", "Spring", "MS Analytics services", "Oracle DB", "Scrum", "TDD" ]
-              , overview = "Led the team replacing Informa Telecom's flagship product (WCIS), a mobile markets intelligence platform covering 226 countries."
+              , overview = "Architected the replacement for Informa Telecom's flagship product (WCIS), a mobile markets intelligence platform covering 226 countries."
               , talkingPoints =
                     [ "Used incremental releases to migrate the live service to a new architecture without disrupting customers or requiring parallel development."
                     , "Introduced Clover for test coverage and drove the adoption of TDD across the team."

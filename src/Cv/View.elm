@@ -1,7 +1,7 @@
 module Cv.View exposing (view)
 
-{-| Two-page executive-CV layout shared by the /cpo and /cto
-variants (and any future sibling). The visual design matches the
+{-| Two-page executive-CV layout used by the /cto variant
+(and any future sibling). The visual design matches the
 2026-04-06 source PDF:
 
   - portrait A4 pages paginated to two sheets

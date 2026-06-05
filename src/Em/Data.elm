@@ -1,4 +1,4 @@
-module Em.Data exposing (SkillGroup, Variant(..), cv, highlights, skillGroups)
+module Em.Data exposing (Variant(..), portrait)
 
 {-| Engineering Manager CV content, served as two re-weighted variations that
 flex the single biggest axis of divergence in the EM market, the hands-on
@@ -22,12 +22,26 @@ DD/handover; the Boulevard authz / App Store / scaling claims are claimable.
 
 -}
 
+import Cv.PortraitView exposing (PortraitCv, SkillGroup)
 import Cv.Types exposing (CvData, Institution, Position, Project)
 
 
 type Variant
     = HandsOn
     | Leader
+
+
+{-| Assemble the `PortraitCv` the shared `Cv.PortraitView` renders: the
+shared `CvData` plus the highlights strip and grouped capabilities that
+layout adds. Only `cv` flexes by variant; highlights and capabilities are
+shared across both EM cuts.
+-}
+portrait : Variant -> PortraitCv
+portrait variant =
+    { cv = cv variant
+    , highlights = highlights
+    , skillGroups = skillGroups
+    }
 
 
 cv : Variant -> CvData
@@ -62,7 +76,7 @@ tagline : Variant -> String
 tagline variant =
     case variant of
         HandsOn ->
-            "Engineering Manager · Player-Coach"
+            "Team Lead · Player-Coach"
 
         Leader ->
             "Engineering Manager"
@@ -93,7 +107,7 @@ highlights =
     [ "Took Alfie from zero to one as CPO at XP Flow, growing the agentic AI product to 200 companies."
     , "Co-founded the school-uniform store later acquired by Marks & Spencer."
     , "Scaled the API platform of Boulevard, a health-and-beauty unicorn (authorization, HIPAA, App Store)."
-    , "Built CompareTheMarket's personal finance manager on Open Banking, integrating 12 UK high-street banks and launching to tens of thousands of early users."
+    , "Built CompareTheMarket's personal finance manager on Open Banking, integrating 15 UK high-street banks and launching to tens of thousands of early users."
     ]
 
 
@@ -114,10 +128,6 @@ coreCapabilities =
 "Languages & Platform" carries the technical stack, so there is no standalone
 Technical Skills line on this layout.
 -}
-type alias SkillGroup =
-    { name : String, skills : List String }
-
-
 skillGroups : List SkillGroup
 skillGroups =
     [ { name = "Leadership"
@@ -221,9 +231,9 @@ tastermonial =
         , company = "Tastermonial"
         , dates = "Jun 2023 – Dec 2023"
         , scope = "Interim CTO; owned the engineering function for a consumer-health startup."
-        , stack = [ "Elixir", "Phoenix", "Flutter", "Postgres", "AWS / Terraform" ]
+        , stack = [ "Elixir", "Phoenix", "Flutter", "Postgres" ]
         , bullets =
-            [ "Rebuilt a failing iOS MVP into a production Flutter app (iOS and Android); set technical strategy with the founder, scoped work and wrote tickets, and established the cloud infrastructure and CI/CD."
+            [ "Rebuilt a failing iOS MVP into a production Flutter app (iOS and Android); set technical strategy with the founder, scoped work and wrote tickets, and established the engineering foundations and developer tooling from scratch."
             ]
         }
 
@@ -245,12 +255,12 @@ thoughtclay =
           }
         , { name = "Vorwerk"
           , dates = "Apr – Sep 2021"
-          , overview = "Tech Lead bootstrapping a backend team at this German consumer-appliance giant, mentoring engineers onto Elixir while delivering the IoT cloud services for a new commercial robot-vacuum line. Shipped on schedule for commercial launch."
+          , overview = "Tech lead on a 6-engineer team, bootstrapping the backend and mentoring engineers onto Elixir while delivering the IoT cloud services for a new commercial robot-vacuum line. Shipped on schedule for commercial launch."
           , talkingPoints = []
           }
         , { name = "CompareTheMarket / Bean"
           , dates = "Feb 2019 – Mar 2021"
-          , overview = "Rebuilt Bean.com as a high-performance Open Banking service for this leading UK price-comparison site, integrating 12 UK high-street banks under FCA-authorised account information and launching to tens of thousands of early users."
+          , overview = "Rebuilt Bean.com as a high-performance Open Banking service for this leading UK price-comparison site, integrating 15 UK high-street banks under FCA-authorised account information and launching to tens of thousands of early users."
           , talkingPoints = []
           }
         ]
@@ -267,7 +277,7 @@ zapnito =
         , stack = [ "Elixir", "Phoenix", "Phoenix Channels", "Elm", "Postgres" ]
         , bullets =
             [ "Delivered a white-labelled real-time community platform for B2B publishers, from early prototype to a stable multi-tenant SaaS serving multiple enterprise publishers."
-            , "Introduced an event-sourcing architecture over WebSockets and an embedding API with SSO across third-party host platforms, the realtime features the product was sold on."
+            , "Introduced a realtime pub-sub architecture over WebSockets and an embedding API with SSO across third-party host platforms, the realtime features the product was sold on."
             ]
         }
 
@@ -312,7 +322,7 @@ informa =
         , scope = "Led the engineering team across multiple flagship products."
         , stack = [ "Java", "Spring", "Oracle DB", "Scrum", "BDD" ]
         , bullets =
-            [ "Led the team that architected the replacement for the flagship World Cellular Information Service (WCIS), an intelligence platform covering mobile markets across 226 countries."
+            [ "Architected the replacement for the flagship World Cellular Information Service (WCIS), an intelligence platform covering mobile markets across 226 countries."
             , "Delivered a Business Intelligence portal on the Mondrian OLAP engine and a WebDAV-based CMS, letting analysts and journalists author reports directly in Microsoft Word."
             , "Led a multi-year platform migration off the legacy systems, coordinating across editorial, product, and infrastructure teams to deliver without disrupting paying subscribers."
             ]

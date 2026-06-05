@@ -4,14 +4,15 @@ import Browser
 import Browser.Events exposing (onResize)
 import Browser.Navigation as Nav
 import LeadershipData as Data exposing (..)
-import Cpo.View
 import Cto.View
+import Cv.PortraitView
+import Directory.View
+import ElixirPortrait.Data
 import Em.Data
-import Em.View
 import Experimental.View
 import Experimental2.View
-import Experimental3.View
 import Node.View
+import NodePortrait.Data
 import Element exposing (..)
 import Element.Background as Background
 import Element.Border as Border
@@ -95,13 +96,26 @@ isExperimental2 path =
             False
 
 
-isElixirAts : String -> Bool
-isElixirAts path =
+isElixirStaff : String -> Bool
+isElixirStaff path =
     case String.toLower (String.trim path) of
-        "/elixir-ats" ->
+        "/elixir-staff" ->
             True
 
-        "/elixir-ats/" ->
+        "/elixir-staff/" ->
+            True
+
+        _ ->
+            False
+
+
+isElixirLead : String -> Bool
+isElixirLead path =
+    case String.toLower (String.trim path) of
+        "/elixir-lead" ->
+            True
+
+        "/elixir-lead/" ->
             True
 
         _ ->
@@ -121,13 +135,26 @@ isNode path =
             False
 
 
-isCpo : String -> Bool
-isCpo path =
+isNodeStaff : String -> Bool
+isNodeStaff path =
     case String.toLower (String.trim path) of
-        "/cpo" ->
+        "/node-staff" ->
             True
 
-        "/cpo/" ->
+        "/node-staff/" ->
+            True
+
+        _ ->
+            False
+
+
+isNodeLead : String -> Bool
+isNodeLead path =
+    case String.toLower (String.trim path) of
+        "/node-lead" ->
+            True
+
+        "/node-lead/" ->
             True
 
         _ ->
@@ -167,6 +194,19 @@ isEm path =
             True
 
         "/em/" ->
+            True
+
+        _ ->
+            False
+
+
+isDirectory : String -> Bool
+isDirectory path =
+    case String.toLower (String.trim path) of
+        "/directory" ->
+            True
+
+        "/directory/" ->
             True
 
         _ ->
@@ -230,23 +270,32 @@ view model =
     else if isExperimental2 model.path then
         Experimental2.View.view
 
-    else if isElixirAts model.path then
-        Experimental3.View.view
+    else if isElixirStaff model.path then
+        Cv.PortraitView.view (ElixirPortrait.Data.portrait ElixirPortrait.Data.Staff)
+
+    else if isElixirLead model.path then
+        Cv.PortraitView.view (ElixirPortrait.Data.portrait ElixirPortrait.Data.Leader)
+
+    else if isNodeStaff model.path then
+        Cv.PortraitView.view (NodePortrait.Data.portrait NodePortrait.Data.Staff)
+
+    else if isNodeLead model.path then
+        Cv.PortraitView.view (NodePortrait.Data.portrait NodePortrait.Data.Leader)
 
     else if isNode model.path then
         Node.View.view { leader = nodeLeaderFlag model.query }
-
-    else if isCpo model.path then
-        Cpo.View.view
 
     else if isCto model.path then
         Cto.View.view
 
     else if isTeamLead model.path then
-        Em.View.view (Em.Data.cv Em.Data.HandsOn)
+        Cv.PortraitView.view (Em.Data.portrait Em.Data.HandsOn)
 
     else if isEm model.path then
-        Em.View.view (Em.Data.cv Em.Data.Leader)
+        Cv.PortraitView.view (Em.Data.portrait Em.Data.Leader)
+
+    else if isDirectory model.path then
+        Directory.View.view
 
     else
         { title = "Oliver Searle-Barnes"

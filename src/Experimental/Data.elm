@@ -169,7 +169,7 @@ introductionParagraphsFor variant =
 
         Elixir ->
             [ "Barcelona-based · UK citizen, full UK RTW · operating via Thoughtclay Ltd (UK) · EU-TZ, London-hours overlap."
-            , "Senior Elixir / Phoenix engineer with 10+ years shipping production OTP at scale. Built Open Banking integration across UK high street banks at CompareTheMarket (Bean), API authorization and rate-limiting at Boulevard (US salon-SaaS unicorn), IoT cloud services on Phoenix at Vorwerk, and an event-sourced real-time community platform at Zapnito."
+            , "Senior Elixir / Phoenix engineer with 10+ years shipping production OTP at scale. Built Open Banking integration across UK high street banks at CompareTheMarket (Bean), API authorization and rate-limiting at Boulevard (US salon-SaaS unicorn), IoT cloud services on Phoenix at Vorwerk, and a real-time community platform at Zapnito."
             , "Comfortable owning supervision-tree design, telemetry / observability, and Ecto-heavy data layers. Most recently co-founder and tech lead at XP Flow, building production AI agents on Next.js."
             , "All client engagements delivered through Thoughtclay Ltd, my UK Ltd Co. Available for senior Elixir IC, tech-lead, or fractional CTO engagements."
             ]
@@ -178,7 +178,7 @@ introductionParagraphsFor variant =
 sharedIntroductionParagraphs : List String
 sharedIntroductionParagraphs =
     [ "Building software that people actually love to use is what gets me going. With 22 years experience I've delivered successful products for the AI, Fintech, SaaS, Telecoms, Retail, Publishing, Energy, Charity, Health and Beauty, and Domestic appliance sectors."
-    , "I've led teams building computer vision training pipelines at TwentyBN, Open Banking integration across UK high street banks at CompareTheMarket, IoT cloud services for commercial robot vacuums at Vorwerk, an event-sourced real-time community platform at Zapnito, and a WebDAV-based CMS that let Informa's journalists edit articles directly in Microsoft Word."
+    , "I've led teams building computer vision training pipelines at TwentyBN, Open Banking integration across UK high street banks at CompareTheMarket, IoT cloud services for commercial robot vacuums at Vorwerk, a real-time community platform at Zapnito, and a WebDAV-based CMS that let Informa's journalists edit articles directly in Microsoft Word."
     , "Most recently founding engineer at XP Flow; previously co-founded a school e-commerce business later taken in-house by Marks & Spencer."
     , "Agile from day one; comfortable owning the engineering function or contributing within an established team."
     ]
@@ -394,11 +394,11 @@ experience =
             [ { name = "Tastermonial App"
               , start = 2023
               , end = 2023
-              , overview = "Replaced the previous MVP with a high-performance Flutter/Phoenix mobile app on AWS. Inherited unstable code, slow performance, and no deployment infrastructure; rebuilt the engineering function with CI/CD pipelines from scratch and left the team set up to continue independently."
-              , stack = [ "Elixir", "Flutter", "Sqlite", "Postgres", "AWS/Terraform" ]
+              , overview = "Replaced the previous MVP with a high-performance Flutter/Phoenix mobile app. Inherited unstable code and slow performance; rebuilt the engineering function with the engineering foundations and developer tooling from scratch and left the team set up to continue independently."
+              , stack = [ "Elixir", "Flutter", "Sqlite", "Postgres" ]
               , talkingPoints =
-                    [ "Inherited unstable code, slow performance and no deployment infrastructure; left the engineering function stable and scalable."
-                    , "Established CI/CD pipelines from scratch on AWS, managed via Terraform."
+                    [ "Inherited unstable code and slow performance; left the engineering function stable and scalable."
+                    , "Established the engineering foundations and developer tooling from scratch."
                     , "Closed the engagement cleanly with the team set up to continue independently."
                     ]
               }
@@ -448,7 +448,7 @@ experience =
             [ { name = "Kobold"
               , start = 2021
               , end = 2021
-              , overview = "Bootstrapped an Elixir team at this global consumer appliance giant to provide cloud services and a Python client library for a new line of commercial robot vacuum cleaners."
+              , overview = "Tech lead on a 6-engineer team, bootstrapping the Elixir backend at this global consumer appliance giant to provide cloud services and a Python client library for a new line of commercial robot vacuum cleaners."
               , stack = [ "Elixir", "Python", "Postgres", "AWS/Terraform" ]
               , talkingPoints =
                     [ "Established the Elixir/Phoenix backend from scratch and built the Python client library for the device-side integration."
@@ -534,10 +534,10 @@ experience =
             [ { name = "Feeds"
               , start = 2016
               , end = 2017
-              , overview = "Led the development of a white-labelled realtime community platform. Implemented an event-sourcing architecture on top of Phoenix Channels for the realtime front end, designed an embedding API with widgets and SSO integration for 3rd-party platforms, and built full-stack testing infrastructure running multiple concurrent browser instances."
-              , stack = [ "Phoenix", "Phoenix-Channels", "Elixir", "Elm", "Javascript", "JWT", "Auth0", "Postgres", "Kanban", "BDD" ]
+              , overview = "Led the development of a white-labelled realtime community platform. Implemented a realtime pub-sub architecture on top of Phoenix Channels for the realtime front end, designed an embedding API with widgets and SSO integration for 3rd-party platforms, and built full-stack testing infrastructure running multiple concurrent browser instances."
+              , stack = [ "Phoenix", "Phoenix-Channels", "Elixir", "Elm", "Javascript", "JWT", "Postgres", "Kanban", "BDD" ]
               , talkingPoints =
-                    [ "Implemented an Event Sourcing architecture to power the realtime front end built on top of Phoenix's websocket based channels."
+                    [ "Built a realtime pub-sub architecture to power the front end on top of Phoenix's websocket-based channels."
                     , "Designed API for embedding product within 3rd party platforms including a variety of widgets and seamless integration with Single Sign On."
                     , "Built testing infrastructure that allowed full stack testing in multiple concurrent browser instances."
                     ]
@@ -610,7 +610,7 @@ experience =
               , start = 2007
               , end = 2008
               , stack = [ "Java", "Spring", "MS Analytics services", "Oracle DB", "Scrum", "TDD" ]
-              , overview = "Led team to replace Informa Telecom's flagship product (WCIS), a mobile markets intelligence platform covering 226 countries."
+              , overview = "Architected the replacement for Informa Telecom's flagship product (WCIS), a mobile markets intelligence platform covering 226 countries."
               , talkingPoints =
                     [ "Used incremental approach with frequent releases to gradually shift product over to new architecture without disrupting the live service or requiring parallel development."
                     , "Introduced clover to track test coverage and promote a TDD approach"
