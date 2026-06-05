@@ -31,9 +31,9 @@ const COMPANIES = [
 
 // Stack, grouped into the popover's tech sections.
 const FRONTEND = ["TypeScript", "React", "Next.js", "Elm"];
-const BACKEND = ["Elixir", "Phoenix", "OTP", "Node.js", "NestJS", "Python", "Ruby on Rails", "GraphQL"];
+const BACKEND = ["Elixir", "Phoenix", "OTP", "Node.js", "NestJS", "Python", "Ruby on Rails", "Java", "GraphQL"];
 const DATA = ["PostgreSQL", "Redis", "Ecto", "Drizzle"];
-const PLATFORM = ["AWS", "Terraform", "Vercel", "SQS / Broadway", "RabbitMQ", "Inngest"];
+const PLATFORM = ["AWS", "Heroku", "Terraform", "Vercel", "SQS / Broadway", "RabbitMQ", "Inngest"];
 
 const techItems = (arr) => arr.map((t) => ({ label: t, query: `What is Oliver's experience with ${t}?` }));
 
@@ -68,9 +68,22 @@ const AI = [
 ];
 
 // The "/" command menu, grouped.
+const LEADERSHIP = [
+  { label: "Engineering management", query: "Tell me about Oliver's engineering management experience." },
+  { label: "Team leadership", query: "Tell me about Oliver's team leadership across his career." },
+  { label: "Coaching & 1:1s", query: "How does Oliver coach and develop the engineers he manages?" },
+  { label: "Performance management", query: "How has Oliver handled performance management and hard people decisions?" },
+  { label: "Hiring & building teams", query: "Tell me about Oliver's experience hiring and building engineering teams." },
+  { label: "Agile & process", query: "Tell me about Oliver's approach to agile and engineering process." },
+  { label: "Feedback loops", query: "Tell me about Oliver's philosophy on shortening feedback loops." },
+  { label: "Operating cadence (OKRs / Shape Up)", query: "Tell me about the operating cadence Oliver designed at Alfie." },
+  { label: "Fractional / interim CTO", query: "Is Oliver a fit for a fractional or interim CTO role?" },
+];
+
 const TOPIC_GROUPS = [
   { group: "Ask about", items: PERSONAS.map((p) => ({ label: p, query: p })) },
   { group: "Projects", items: PROJECTS },
+  { group: "Leadership", items: LEADERSHIP },
   { group: "AI", items: AI },
   { group: "Frontend", items: techItems(FRONTEND) },
   { group: "Backend", items: techItems(BACKEND) },
@@ -134,6 +147,72 @@ function jobLabel(job) {
   return t.length > 34 ? t.slice(0, 34) + "…" : t;
 }
 
+// Hidden reset: clear all chats, threads and the active job. Trigger with
+// cv.dev/#reset (cleared on load) or window.cvAgentReset() from the console.
+function clearAllAgentState() {
+  try {
+    localStorage.removeItem(STORE_KEY);
+    localStorage.removeItem(JOB_KEY);
+  } catch {
+    /* ignore */
+  }
+}
+if (typeof window !== "undefined") {
+  window.cvAgentReset = () => {
+    clearAllAgentState();
+    location.hash = "";
+    location.reload();
+  };
+  if (location.hash === "#reset") {
+    clearAllAgentState();
+    // Drop the #reset fragment so a refresh doesn't keep clearing and the URL stays clean.
+    history.replaceState(null, "", location.pathname + location.search);
+  }
+}
+
+// A stable per-visitor id + a fire-and-forget logging beacon, so conversations
+// can be reviewed server-side (the Worker writes them to D1). Never blocks chat.
+const VISITOR_KEY = "cv-agent-visitor:v1";
+const LOG_URL = AGENT_URL.replace(/\/chat$/, "/log");
+function visitorId() {
+  let v = null;
+  try {
+    v = localStorage.getItem(VISITOR_KEY);
+  } catch {
+    /* ignore */
+  }
+  if (!v) {
+    v = Date.now().toString(36) + Math.random().toString(36).slice(2, 9);
+    try {
+      localStorage.setItem(VISITOR_KEY, v);
+    } catch {
+      /* ignore */
+    }
+  }
+  return v;
+}
+function logConversation(chat, title) {
+  if (!chat || !chat.messages || !chat.messages.length) return;
+  const job = loadActiveJob();
+  try {
+    fetch(LOG_URL, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      keepalive: true,
+      body: JSON.stringify({
+        visitorId: visitorId(),
+        chatId: chat.id,
+        title: title || "",
+        jobTitle: job ? jobLabel(job) : null,
+        jobUrl: job && job.url ? job.url : null,
+        messages: chat.messages,
+      }),
+    }).catch(() => {});
+  } catch {
+    /* ignore */
+  }
+}
+
 // --- light, minimal palette ---
 const STYLES = `
   :host { all: initial; }
@@ -175,6 +254,9 @@ const STYLES = `
   .msg .md-h.entity { display: inline-flex; align-items: center; gap: 7px; cursor: pointer; border-bottom: none; border-radius: 7px; padding: 2px 7px; margin-left: -7px; }
   .msg .md-h.entity:hover { background: #eef1ff; color: #2b3380; }
   .msg .md-h.entity .logo { width: 20px; height: 20px; margin-right: 0; border-radius: 4px; }
+  .avatar { display: inline-flex; align-items: center; justify-content: center; flex: none; color: #fff; font-weight: 700; line-height: 1; }
+  .avatar::before { content: attr(data-initials); }
+  .msg .md-h.entity .avatar { width: 20px; height: 20px; border-radius: 4px; font-size: 9px; }
   .msg ul, .msg ol { margin: 6px 0 10px; padding-left: 22px; }
   .msg li { margin: 3px 0; }
   .msg strong { font-weight: 600; }
@@ -182,9 +264,10 @@ const STYLES = `
   .msg .entity:hover { background: #eef1ff; border-bottom-color: #6b78d6; color: #2b3380; }
   .msg .entity:focus-visible { outline: 2px solid #6b78d6; outline-offset: 1px; }
   .msg .entity .logo { width: 15px; height: 15px; margin-right: 5px; border-radius: 3px; object-fit: contain; vertical-align: -2px; background: #fff; }
+  .msg .entity .avatar { width: 15px; height: 15px; margin-right: 5px; border-radius: 3px; font-size: 7.5px; vertical-align: -2px; }
   .more-btn { display: inline-grid; place-items: center; vertical-align: -3px; width: 18px; height: 18px; margin-left: 1px; padding: 0; border: none; border-radius: 50%; background: none; color: var(--muted); cursor: pointer; transition: color .12s ease, background .12s ease; }
   .more-btn:hover { color: #fff; background: var(--accent); }
-  .section-more { display: inline-block; margin-top: 2px; border: none; background: none; padding: 0; font: inherit; font-size: 13px; color: #6b78d6; cursor: pointer; }
+  .section-more { display: block; width: fit-content; margin: 6px 0 0; border: none; background: none; padding: 0; font: inherit; font-size: 13px; color: #6b78d6; cursor: pointer; }
   .section-more:hover { color: #2b3380; text-decoration: underline; }
   .msg code { font-family: ui-monospace, Menlo, monospace; font-size: .9em; background: #f4f4f5; padding: 1px 5px; border-radius: 5px; }
   .msg.user code { background: rgba(0,0,0,.06); }
@@ -198,11 +281,12 @@ const STYLES = `
     padding: 6px 6px 6px 18px; box-shadow: 0 1px 2px rgba(0,0,0,.04);
   }
   .form:focus-within { border-color: #c7c7cc; }
-  .form input {
-    flex: 1; border: none; outline: none; background: transparent;
-    font-size: 15.5px; color: var(--text); padding: 9px 0;
+  .form textarea {
+    flex: 1; border: none; outline: none; background: transparent; resize: none;
+    font-family: inherit; font-size: 15.5px; line-height: 1.4; color: var(--text);
+    padding: 9px 0; max-height: 150px; overflow-y: auto;
   }
-  .form input::placeholder { color: var(--muted); }
+  .form textarea::placeholder { color: var(--muted); }
   .send {
     flex: none; width: 36px; height: 36px; border: none; border-radius: 50%;
     background: var(--accent); color: #fff; cursor: pointer; font-size: 18px;
@@ -241,6 +325,11 @@ const STYLES = `
 
   /* ---------- starter chips (initial visible openers) ---------- */
   .starters { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+  .hiring-cta { flex-basis: 100%; padding: 14px 16px; border: 1px solid #d6dcf5; border-radius: 12px; background: #f3f5ff; cursor: text; }
+  .hiring-cta:hover { border-color: #b9c2ee; }
+  .hiring-cta-title { font-weight: 650; font-size: 15px; margin-bottom: 3px; color: var(--text); }
+  .hiring-cta-sub { color: var(--muted); font-size: 13.5px; line-height: 1.45; }
+  .starters-or { flex-basis: 100%; margin: 4px 0 -2px; font-size: 12.5px; color: var(--muted); }
   .chip {
     padding: 8px 14px; border: 1px solid var(--border); border-radius: 999px;
     background: #fff; color: var(--text); font-size: 13.5px; cursor: pointer;
@@ -458,6 +547,29 @@ function companyLogo(text) {
   const key = COMPANY_LOGO_KEYS[t] || COMPANY_LOGO_KEYS[companyHead(t)];
   return key ? `/logos/${key}.png` : null;
 }
+/** First two initials of a company name, for the avatar fallback. */
+function companyInitials(text) {
+  const name = text.split(/[/(]/)[0].trim();
+  const words = name.split(/\s+/).filter(Boolean);
+  const raw = words.length >= 2 ? words[0][0] + words[1][0] : name.slice(0, 2);
+  return raw.toUpperCase();
+}
+/** Deterministic background colour from the name (stable per company). */
+function avatarColor(text) {
+  const s = text.toLowerCase();
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+  return `hsl(${h % 360}, 50%, 42%)`;
+}
+/** A rounded-square initials avatar, used when a company has no logo (or it fails to load). */
+function makeAvatar(name) {
+  const span = document.createElement("span");
+  span.className = "avatar";
+  span.setAttribute("aria-hidden", "true");
+  span.dataset.initials = companyInitials(name);
+  span.style.background = avatarColor(name);
+  return span;
+}
 
 /**
  * Make company names interactive: section-headings that name a company become
@@ -476,14 +588,20 @@ function decorateEntities(bubble) {
   // image is inserted only once it has loaded, so a missing logo leaves no gap.
   bubble.querySelectorAll(".entity").forEach((el) => {
     if (el.dataset.logo) return;
-    const src = companyLogo(el.textContent.trim());
-    if (!src) return;
+    const name = el.textContent.trim();
+    if (!isCompany(name)) return; // logos / avatars are for companies only
     el.dataset.logo = "1";
-    const img = new Image();
-    img.className = "logo";
-    img.alt = "";
-    img.onload = () => el.prepend(img);
-    img.src = src;
+    const src = companyLogo(name);
+    if (src) {
+      const img = new Image();
+      img.className = "logo";
+      img.alt = "";
+      img.onload = () => el.prepend(img);
+      img.onerror = () => el.prepend(makeAvatar(name)); // logo no longer available
+      img.src = src;
+    } else {
+      el.prepend(makeAvatar(name)); // company with no logo: initials avatar
+    }
   });
 }
 
@@ -709,6 +827,7 @@ function createConversation({ scrollEl, messagesEl, input, form, sendBtn, starte
     saveState();
 
     input.value = "";
+    input.style.height = ""; // collapse the auto-grown textarea back to one line
     input.disabled = true;
     sendBtn.disabled = true;
 
@@ -791,6 +910,22 @@ function createConversation({ scrollEl, messagesEl, input, form, sendBtn, starte
     if (text && !text.startsWith("/")) send(text);
   });
 
+  // Textarea composer: Enter submits, Shift+Enter inserts a newline. When the
+  // slash menu is open it owns Enter (item selection), so bail then.
+  input.addEventListener("keydown", (e) => {
+    if (e.key !== "Enter" || e.shiftKey || e.isComposing) return;
+    const slashEl = form.parentElement?.querySelector(".slash");
+    if (slashEl && !slashEl.hidden) return;
+    e.preventDefault();
+    if (form.requestSubmit) form.requestSubmit();
+    else form.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
+  });
+  // Auto-grow the textarea up to its max-height.
+  input.addEventListener("input", () => {
+    input.style.height = "auto";
+    input.style.height = Math.min(input.scrollHeight, 150) + "px";
+  });
+
   // The slash menu, mic, and type-to-focus are for the main composers only, not
   // lightweight thread instances.
   if (!lite) {
@@ -856,7 +991,21 @@ function createConversation({ scrollEl, messagesEl, input, form, sendBtn, starte
       toBottom();
     } else {
       greet();
-      if (startersEl) buildStarters(startersEl, PERSONAS, (q) => send(q));
+      if (startersEl) {
+        // Lead with the highest-value action: paste a JD.
+        const cta = document.createElement("div");
+        cta.className = "hiring-cta";
+        cta.innerHTML =
+          '<div class="hiring-cta-title">Hiring for a position?</div>' +
+          "<div class=\"hiring-cta-sub\">Paste the job description or a link, and I'll show you exactly how Oliver maps to it.</div>";
+        cta.addEventListener("click", () => input.focus());
+        startersEl.appendChild(cta);
+        const orLabel = document.createElement("div");
+        orLabel.className = "starters-or";
+        orLabel.textContent = "Or ask about Oliver:";
+        startersEl.appendChild(orLabel);
+        buildStarters(startersEl, PERSONAS, (q) => send(q));
+      }
     }
     // Focus the composer on every load (switching chats / new chat) when visible.
     if (input.getClientRects().length) input.focus();
@@ -962,7 +1111,7 @@ function composerHTML(placeholder) {
     <div class="composer">
       <div class="slash" hidden></div>
       <form class="form">
-        <input type="text" placeholder="${placeholder}" autocomplete="off" />
+        <textarea class="ta" rows="1" placeholder="${placeholder}" autocomplete="off"></textarea>
         <button class="mic" type="button" aria-label="Voice input" hidden>
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="11" rx="3"/><path d="M5 10v1a7 7 0 0 0 14 0v-1"/><line x1="12" y1="18" x2="12" y2="22"/></svg>
         </button>
@@ -978,7 +1127,7 @@ function threadComposerHTML() {
   return `
     <div class="composer">
       <form class="form">
-        <input type="text" placeholder="Reply in this thread..." autocomplete="off" />
+        <textarea class="ta" rows="1" placeholder="Reply in this thread..." autocomplete="off"></textarea>
         <button class="send" type="submit" aria-label="Send">&uarr;</button>
       </form>
     </div>
@@ -1034,6 +1183,7 @@ function createSession(convo, listEl, onChange) {
     state.currentId = current.id;
     saveChats(state);
     renderList();
+    logConversation(current, titleOf(current)); // beacon for server-side review
   }
 
   function switchTo(chat) {
@@ -1122,7 +1272,7 @@ function mountFullscreen(root) {
   const scrollEl = fsMain.querySelector(".fs-scroll");
   const messagesEl = fsMain.querySelector(".messages");
   const form = fsMain.querySelector(".form");
-  const input = form.querySelector("input");
+  const input = form.querySelector("textarea");
   const sendBtn = form.querySelector(".send");
   const startersEl = fsMain.querySelector(".starters");
 
@@ -1140,7 +1290,7 @@ function mountFullscreen(root) {
     fs.classList.add("thread-open");
     threadEl.querySelector(".thread-close").addEventListener("click", closeThread);
     const tForm = threadEl.querySelector(".form");
-    const tInput = tForm.querySelector("input");
+    const tInput = tForm.querySelector("textarea");
     const tConvo = createConversation({
       scrollEl: threadEl.querySelector(".thread-scroll"),
       messagesEl: threadEl.querySelector(".messages"),
@@ -1221,7 +1371,7 @@ function mountFloating(root) {
   const scrollEl = root.querySelector(".p-scroll");
   const messagesEl = root.querySelector(".messages");
   const form = root.querySelector(".form");
-  const input = form.querySelector("input");
+  const input = form.querySelector("textarea");
   const sendBtn = form.querySelector(".send");
   const startersEl = root.querySelector(".starters");
 
