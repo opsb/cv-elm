@@ -1,5 +1,6 @@
 import "./main.css";
 import { Elm } from "./Main.elm";
+import "./chat-widget.js";
 
 Elm.Main.init({
   flags: {

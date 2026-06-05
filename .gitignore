@@ -16,3 +16,15 @@ dist
 
 # Local Netlify folder
 .netlify
+
+# watch-pdf daemon runtime files
+.watch-pdf.log
+.watch-pdf.pid
+
+# Personal, non-git working files (logs, daemon plist source, scratch)
+private-notes
+
+# Career-agent Worker. Deploys separately (Cloudflare / wrangler) and holds
+# private career data, the agent system prompt, and candid honesty guardrails.
+# This is a PUBLIC repo, so keep the worker out of it (it has its own home).
+worker/

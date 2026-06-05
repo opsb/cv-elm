@@ -64,7 +64,7 @@ cv variant =
     , leadingPosition = xpflow
     , secondPosition = Just tastermonial
     , thoughtclay = boulevard
-    , otherPositions = [ vorwerk, ctm, twentyBn, liqid, zapnito, lytbulb, myschooldirect, informa ]
+    , otherPositions = [ vorwerk, ctm, twentyBn, liqid, zapnito, lytbulb, myschooldirect, informa, nutshell ]
     , education = education
     }
 
@@ -318,7 +318,7 @@ ctm =
         , scope = "Senior Elixir / Phoenix engineer rebuilding Bean.com as a high-performance Open Banking service for this leading UK price-comparison site."
         , stack = [ "Elixir", "Phoenix", "Absinthe (GraphQL)", "Elm", "Ruby", "Postgres", "AWS" ]
         , bullets =
-            [ "Integrated 15 UK high-street banks under the Open Banking specification, navigating the regulatory complexity of FCA-authorised account information services."
+            [ "Integrated 15 UK high-street banks under Open Banking and the regulatory complexity of FCA-authorised account information services."
             , "Delivered the headroom to support the CompareTheMarket.com customer base at scale, launching to tens of thousands of early users."
             ]
         }
@@ -334,7 +334,7 @@ zapnito =
         , stack = [ "Elixir", "Phoenix", "Phoenix Channels", "Elm", "Postgres" ]
         , bullets =
             [ "Led delivery of Feeds, a white-labelled real-time community platform for B2B publishers, from early prototype to a stable multi-tenant SaaS serving multiple enterprise publishers."
-            , "Built a Slack-like realtime experience on Phoenix Channels with a realtime pub-sub architecture, a multi-widget embedding kit with SSO, and end-to-end test infrastructure running multiple app instances in parallel in a single BEAM VM."
+            , "Built a Slack-like realtime experience on Phoenix Channels with a realtime pub-sub architecture and a multi-widget embedding kit with SSO."
             ]
         }
 
@@ -348,7 +348,7 @@ twentyBn =
         , scope = "Senior frontend engineer building functional-frontend tooling for this computer-vision AI company."
         , stack = [ "Elm", "JavaScript" ]
         , bullets =
-            [ "Designed and built two Elm apps to collect video-gesture training data from Mechanical Turk workers, feeding directly into TwentyBN's model-training pipelines."
+            [ "Built two Elm apps collecting video-gesture training data from Mechanical Turk workers for TwentyBN's models."
             ]
         }
 
@@ -362,7 +362,7 @@ liqid =
         , scope = "Senior backend engineer integrating a wealth-management fintech's Rails platform with Salesforce."
         , stack = [ "Elixir", "RabbitMQ", "Ruby / Rails", "Salesforce", "Docker", "GraphQL" ]
         , bullets =
-            [ "Designed and shipped an Elixir microservice supporting CRM and operational workflows, using RabbitMQ for asynchronous, reliable message delivery across the integration boundary."
+            [ "Shipped an Elixir / RabbitMQ microservice for CRM and operational workflows across the integration boundary."
             ]
         }
 
@@ -406,8 +406,22 @@ informa =
         , scope = "Led the engineering team across multiple flagship products."
         , stack = [ "Java", "Spring", "Oracle DB", "Scrum", "BDD" ]
         , bullets =
-            [ "Architected the replacement for the flagship World Cellular Information Service (WCIS), an intelligence platform covering mobile markets across 226 countries, migrating the live service via incremental releases without disrupting paying subscribers."
+            [ "Architected the replacement for the flagship World Cellular Information Service (WCIS), an intelligence platform covering mobile markets across 226 countries, migrated live without disrupting paying subscribers."
             , "Delivered a Business Intelligence portal on the Mondrian OLAP engine and a WebDAV-based CMS, letting analysts and journalists author reports directly in Microsoft Word."
+            ]
+        }
+
+
+nutshell : Position
+nutshell =
+    role
+        { title = "Technical Co-founder"
+        , company = "Nutshell Development"
+        , dates = "Oct 2004 – Jun 2005"
+        , scope = ""
+        , stack = []
+        , bullets =
+            [ "Co-founded a Brighton web agency straight out of a Sussex BSc in Artificial Intelligence, delivering booking systems, content management systems, and bespoke websites for small-business and retail clients."
             ]
         }
 

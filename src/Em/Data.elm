@@ -263,6 +263,16 @@ thoughtclay =
           , overview = "Rebuilt Bean.com as a high-performance Open Banking service for this leading UK price-comparison site, integrating 15 UK high-street banks under FCA-authorised account information and launching to tens of thousands of early users."
           , talkingPoints = []
           }
+        , { name = "TwentyBN"
+          , dates = "Aug – Dec 2018"
+          , overview = "Senior frontend engineer at this computer-vision AI company, building two Elm apps to collect video-gesture training data from Mechanical Turk workers, feeding directly into the model-training pipelines."
+          , talkingPoints = []
+          }
+        , { name = "Liqid"
+          , dates = "Jan – Aug 2018"
+          , overview = "Senior backend engineer at this wealth-management fintech, shipping a microservice over RabbitMQ for CRM and operational workflows and integrating the platform with Salesforce."
+          , talkingPoints = []
+          }
         ]
     }
 
