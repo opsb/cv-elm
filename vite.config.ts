@@ -3,6 +3,8 @@ import elmPlugin from "vite-plugin-elm";
 
 export default defineConfig({
   plugins: [elmPlugin()],
+  // Preact JSX for the chat widget (automatic runtime -> preact/jsx-runtime).
+  esbuild: { jsx: "automatic", jsxImportSource: "preact" },
   base: "/",
   server: {
     host: true,
