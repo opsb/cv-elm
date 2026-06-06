@@ -157,9 +157,9 @@ const JOBS_KEY = "cv-agent-jobs:v1";
 const JOBS_URL = AGENT_URL.replace(/\/chat$/, "/jobs");
 const LOG_URL = AGENT_URL.replace(/\/chat$/, "/log");
 const STATE_URL = AGENT_URL.replace(/\/chat$/, "/state");
-const THREAD_URL = AGENT_URL.replace(/\/chat$/, "/thread");
-// Stable id for a durable thread generation: a hash of the exact request
-// (context + seed + injected JD), so re-opening the same drill-in reconnects.
+// Stable id for a durable thread generation (the per-thread Durable Object name):
+// a hash of the exact request (context + seed + injected JD), so re-opening the
+// same drill-in re-attaches to the same live stream.
 function threadStreamId(outgoing) {
   const s = JSON.stringify(outgoing);
   let h = 0;
@@ -886,8 +886,7 @@ function setupSlashMenu(input, slashEl, onPick) {
  */
 function createConversation({ scrollEl, messagesEl, input, form, sendBtn, startersEl, onUpdate, onMore, contextMessages = [], lite = false, durable = false, opener = false, onLayout }) {
   const messages = [];
-  let abortController = null; // aborts the in-flight SSE reply (main chat)
-  let stopPoll = null; // stops polling a durable thread (the server keeps generating)
+  let abortController = null; // aborts the in-flight SSE reply (main chat or thread)
   let followupsEl = null; // the suggested-follow-up chip row after the last reply
   const NEAR_BOTTOM = 90;
   const atBottom = () =>
@@ -1088,18 +1087,17 @@ function createConversation({ scrollEl, messagesEl, input, form, sendBtn, starte
       return "";
     } finally {
       abortController = null;
-      stopPoll = null;
       input.disabled = false;
       sendBtn.disabled = false;
       input.focus();
     }
   }
 
-  // A durable thread turn. The generation is server-owned (keyed by a stable id):
-  //  - new          -> STREAM it live (SSE) while the server captures to D1;
-  //  - generating   -> reconnect by POLLING content-so-far (we missed the live stream);
-  //  - done         -> render the stored result.
-  // Closing the column aborts the stream / stops the poll; the server keeps generating.
+  // A durable thread turn. The generation is owned by a per-thread Durable Object
+  // (keyed by a stable id), which streams live and lets us re-attach: opening, an
+  // already-running thread, or a finished one all look the same here — we just
+  // stream. The DO sends the content-so-far up front, then live deltas. Closing the
+  // column aborts our SSE; the DO keeps generating and we re-attach on return.
   async function durableTurn(outgoing, bubble, caret) {
     const id = threadStreamId(outgoing);
     const renderPartial = (txt) => {
@@ -1108,55 +1106,6 @@ function createConversation({ scrollEl, messagesEl, input, form, sendBtn, starte
       bubble.appendChild(caret);
       if (stick) toBottom();
     };
-    const finalize = (answer, ok) => {
-      caret.remove();
-      const clean = stripTokens(answer);
-      if (ok && clean.trim()) {
-        bubble.innerHTML = renderMarkdown(clean);
-        decorateEntities(bubble);
-        applyMore(bubble, extractMore(answer) || "Tell me more about that.");
-        messages.push({ role: "assistant", content: clean });
-        renderFollowups(extractSuggestions(answer));
-        saveState();
-        return clean;
-      }
-      bubble.remove();
-      showError();
-      return "";
-    };
-    // Poll D1 to follow an in-progress generation (reconnect / stream-fallback).
-    const pollToEnd = async (answer) => {
-      let alive = true;
-      stopPoll = () => {
-        alive = false;
-      };
-      if (answer) renderPartial(answer);
-      for (;;) {
-        await new Promise((r) => setTimeout(r, 450));
-        if (!alive) return null; // column closed; generation continues server-side
-        let s;
-        try {
-          s = await fetch(`${THREAD_URL}?id=${encodeURIComponent(id)}`).then((r) => r.json());
-        } catch {
-          return finalize(answer, !!answer.trim());
-        }
-        answer = s.content || answer;
-        renderPartial(answer);
-        if (s.status !== "generating") return finalize(answer, s.status !== "error");
-      }
-    };
-
-    // What's the generation's current state?
-    let state = { status: "none", content: "" };
-    try {
-      state = await fetch(`${THREAD_URL}?id=${encodeURIComponent(id)}`).then((r) => r.json());
-    } catch {
-      /* treat as none */
-    }
-    if (state.status === "done") return finalize(state.content, true);
-    if (state.status === "generating") return await pollToEnd(state.content || "");
-
-    // New: stream it live (SSE). The server captures to D1 so a returning visitor can poll.
     let answer = "";
     abortController = new AbortController();
     try {
@@ -1170,11 +1119,23 @@ function createConversation({ scrollEl, messagesEl, input, form, sendBtn, starte
         abortController.signal,
         id,
       );
-      return finalize(answer, true);
     } catch (err) {
-      if (err && err.name === "AbortError") return ""; // column closed; server keeps generating
-      return (await pollToEnd(answer)) ?? ""; // stream dropped — follow the server-side capture
+      if (err && err.name === "AbortError") return ""; // column closed; the DO keeps generating
     }
+    caret.remove();
+    const clean = stripTokens(answer);
+    if (clean.trim()) {
+      bubble.innerHTML = renderMarkdown(clean);
+      decorateEntities(bubble);
+      applyMore(bubble, extractMore(answer) || "Tell me more about that.");
+      messages.push({ role: "assistant", content: clean });
+      renderFollowups(extractSuggestions(answer));
+      saveState();
+      return clean;
+    }
+    bubble.remove();
+    showError();
+    return "";
   }
 
   // Generic error bubble with an inline Retry that re-runs the last turn.
@@ -1308,11 +1269,10 @@ function createConversation({ scrollEl, messagesEl, input, form, sendBtn, starte
 
   const abort = () => {
     try {
-      abortController?.abort();
+      abortController?.abort(); // detach our SSE; a thread's DO keeps generating
     } catch {
       /* ignore */
     }
-    stopPoll?.(); // durable threads: stop polling (generation continues server-side)
   };
   return { send, load, abort };
 }
