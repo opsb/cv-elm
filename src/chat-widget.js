@@ -157,6 +157,15 @@ const JOBS_KEY = "cv-agent-jobs:v1";
 const JOBS_URL = AGENT_URL.replace(/\/chat$/, "/jobs");
 const LOG_URL = AGENT_URL.replace(/\/chat$/, "/log");
 const STATE_URL = AGENT_URL.replace(/\/chat$/, "/state");
+const THREAD_URL = AGENT_URL.replace(/\/chat$/, "/thread");
+// Stable id for a durable thread generation: a hash of the exact request
+// (context + seed + injected JD), so re-opening the same drill-in reconnects.
+function threadStreamId(outgoing) {
+  const s = JSON.stringify(outgoing);
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (Math.imul(h, 31) + s.charCodeAt(i)) | 0;
+  return "ts" + (h >>> 0).toString(36) + s.length.toString(36);
+}
 const jobListeners = new Set();
 
 function loadJobsState() {
@@ -468,6 +477,8 @@ const STYLES = `
   .admin-gate-input { border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; font: inherit; }
   .admin-gate-btn { border: none; background: var(--accent); color: #fff; border-radius: 8px; padding: 10px; font: inherit; cursor: pointer; }
   .admin-gate-err { color: #b42318; font-size: 13px; text-align: center; }
+  .replay-visited { background: #fdf3d0; box-shadow: 0 0 0 2px #fdf3d0; border-radius: 4px; }
+  .replay-more { cursor: default; }
   .sidebar-list { flex: 1; overflow-y: auto; padding: 2px 8px 14px; display: flex; flex-direction: column; gap: 2px; }
   .sidebar-item { display: flex; align-items: center; gap: 6px; padding: 8px 10px; border-radius: 8px; cursor: pointer; font-size: 13.5px; color: var(--text); }
   .sidebar-item:hover { background: #ececee; }
@@ -477,7 +488,7 @@ const STYLES = `
   .sidebar-item:hover .sidebar-del { opacity: 1; }
   .sidebar-del:hover { color: #b42318; }
   /* Hierarchical columns: main chat + thread columns; ~2 visible, scroll for more. */
-  .columns { flex: 1; min-width: 0; display: flex; overflow-x: auto; overflow-y: hidden; }
+  .columns { flex: 1; min-width: 0; min-height: 0; display: flex; overflow-x: auto; overflow-y: hidden; scroll-behavior: smooth; }
   .column { flex: 0 0 50%; min-width: 0; display: flex; flex-direction: column; border-left: 1px solid var(--border); background: var(--bg); }
   .column:first-child { border-left: none; }
   .columns:not(.multi) .column { flex: 1 1 100%; }
@@ -492,15 +503,31 @@ const STYLES = `
   .thread-col-close:hover { color: var(--text); }
   .col-scroll { flex: 1; overflow-y: auto; }
   .col-scroll .messages { padding-bottom: 28px; }
+  .col-scroll .fs-col { padding-top: 28px; }
   .thread-col .col-scroll .fs-col { padding-top: 18px; }
   .fs-col { max-width: 768px; margin: 0 auto; padding: 0 20px; }
-  .fs-intro { padding: 52px 0 24px; text-align: left; }
-  .fs-intro h1 { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-weight: 650; font-size: clamp(28px, 4.4vw, 38px); margin: 0; }
-  .fs-intro .tagline { margin: 12px 0 0; max-width: 620px; color: var(--muted); font-size: 16px; line-height: 1.5; }
+  /* Fixed header above the chat area (sidebar stays full-height to its left), so
+     the name + what-he-does are always in view. */
+  .main-area { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .page-header { flex: none; padding: 13px 24px; border-bottom: 1px solid var(--border); background: var(--bg); }
+  .page-header h1 { margin: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-weight: 650; font-size: 20px; }
+  .page-header .tagline { margin: 3px 0 0; color: var(--muted); font-size: 13.5px; line-height: 1.45; }
   .col-composer { background: var(--bg); border-top: 1px solid var(--border); }
   .col-composer .fs-col { padding-top: 14px; padding-bottom: 18px; }
   /* widen the "/" menu beyond the message column */
   .col-composer .slash { left: 50%; right: auto; transform: translateX(-50%); width: min(1000px, 90vw); }
+  /* Centered ChatGPT-style opener for an empty chat (composer in the middle). */
+  .column.empty { justify-content: center; }
+  .column.empty .col-scroll { flex: 0 0 auto; overflow: visible; }
+  .column.empty .col-composer { border-top: none; }
+  .opener-head { text-align: center; padding: 0 0 18px; }
+  .opener-title { margin: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-weight: 600; font-size: 26px; }
+  .opener-sub { margin: 10px auto 0; max-width: 520px; color: var(--muted); font-size: 14.5px; line-height: 1.5; }
+  .column:not(.empty) .opener-head { display: none; }
+  .starters-zone { flex: none; }
+  .column:not(.empty) .starters-zone { display: none; }
+  .starters-zone .fs-col { padding-top: 14px; }
+  .starters-zone .starters { justify-content: center; }
 
   /* ---------- floating ---------- */
   .launcher {
@@ -540,11 +567,12 @@ const STYLES = `
 `;
 
 /** Parse an Anthropic SSE stream, invoking onText for each text delta. */
-async function streamReply(messages, onText, onJd) {
+async function streamReply(messages, onText, onJd, signal, threadId) {
   const res = await fetch(AGENT_URL, {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ messages }),
+    body: JSON.stringify(threadId ? { messages, threadId } : { messages }),
+    signal,
   });
 
   if (!res.ok || !res.body) {
@@ -856,8 +884,10 @@ function setupSlashMenu(input, slashEl, onPick) {
  * is where bubbles append. Auto-scroll sticks to the bottom only when already
  * near it. Wires the "/" menu if a `.slash` element is present in the composer.
  */
-function createConversation({ scrollEl, messagesEl, input, form, sendBtn, startersEl, onUpdate, onMore, contextMessages = [], lite = false }) {
+function createConversation({ scrollEl, messagesEl, input, form, sendBtn, startersEl, onUpdate, onMore, contextMessages = [], lite = false, durable = false, opener = false, onLayout }) {
   const messages = [];
+  let abortController = null; // aborts the in-flight SSE reply (main chat)
+  let stopPoll = null; // stops polling a durable thread (the server keeps generating)
   let followupsEl = null; // the suggested-follow-up chip row after the last reply
   const NEAR_BOTTOM = 90;
   const atBottom = () =>
@@ -905,7 +935,7 @@ function createConversation({ scrollEl, messagesEl, input, form, sendBtn, starte
     btn.title = "More on this";
     btn.setAttribute("aria-label", "More on this");
     btn.innerHTML = ICON.circleArrowRight;
-    btn.addEventListener("click", () => drill(query, "More", null, () => btn.classList.add("loaded")));
+    btn.addEventListener("click", () => { btn.classList.add("loaded"); drill(query, "More"); });
     const host = bubble.querySelector("p:last-of-type, li:last-of-type") || bubble;
     host.append(" ", btn);
   }
@@ -926,13 +956,12 @@ function createConversation({ scrollEl, messagesEl, input, form, sendBtn, starte
       link.className = "section-more";
       link.type = "button";
       link.innerHTML = "More " + ICON.circleArrowRight;
-      // Mark loaded only once the thread's reply actually arrives (the onLoaded
-      // callback), so an interrupted thread doesn't leave a filled circle behind.
-      link.addEventListener("click", () =>
-        drill(`Tell me more about ${topic} (in the context of Oliver's career).`, topic, sectionText, () =>
-          link.classList.add("loaded"),
-        ),
-      );
+      // Mark loaded immediately on click: the reply is captured server-side
+      // (waitUntil) so it is never lost, and instant feedback reads better.
+      link.addEventListener("click", () => {
+        link.classList.add("loaded");
+        drill(`Tell me more about ${topic} (in the context of Oliver's career).`, topic, sectionText);
+      });
       last.after(link);
     });
   }
@@ -969,6 +998,7 @@ function createConversation({ scrollEl, messagesEl, input, form, sendBtn, starte
 
   async function send(text, hidden = false) {
     if (startersEl) startersEl.replaceChildren(); // hide the opener chips, keep the slot
+    onLayout?.(false); // chat has started: drop the centered opener, composer to the bottom
     renderFollowups([]);
     messages.push({ role: "user", content: text, ...(hidden ? { hidden: true } : {}) });
     // A hidden seed (a thread's opening "More" click) goes to the model but isn't
@@ -1020,6 +1050,10 @@ function createConversation({ scrollEl, messagesEl, input, form, sendBtn, starte
 
     let answer = "";
     try {
+      // Threads use the durable server-side generation (continues in the
+      // background, polled to follow along); the main chat streams live.
+      if (durable) return await durableTurn(outgoing, bubble, caret);
+      abortController = new AbortController();
       await streamReply(
         outgoing,
         (delta) => {
@@ -1030,6 +1064,7 @@ function createConversation({ scrollEl, messagesEl, input, form, sendBtn, starte
           if (stick) toBottom();
         },
         (jd) => setActiveJob({ url: jd.url, text: jd.text, at: Date.now() }),
+        abortController.signal,
       );
       caret.remove();
       const clean = stripTokens(answer);
@@ -1046,14 +1081,99 @@ function createConversation({ scrollEl, messagesEl, input, form, sendBtn, starte
         showError();
         return "";
       }
-    } catch {
+    } catch (err) {
       bubble.remove();
-      showError();
+      // An abort is intentional (the thread was closed/replaced) — not an error.
+      if (!(err && err.name === "AbortError")) showError();
       return "";
     } finally {
+      abortController = null;
+      stopPoll = null;
       input.disabled = false;
       sendBtn.disabled = false;
       input.focus();
+    }
+  }
+
+  // A durable thread turn. The generation is server-owned (keyed by a stable id):
+  //  - new          -> STREAM it live (SSE) while the server captures to D1;
+  //  - generating   -> reconnect by POLLING content-so-far (we missed the live stream);
+  //  - done         -> render the stored result.
+  // Closing the column aborts the stream / stops the poll; the server keeps generating.
+  async function durableTurn(outgoing, bubble, caret) {
+    const id = threadStreamId(outgoing);
+    const renderPartial = (txt) => {
+      const stick = atBottom();
+      bubble.innerHTML = renderMarkdown(stripTokens(txt));
+      bubble.appendChild(caret);
+      if (stick) toBottom();
+    };
+    const finalize = (answer, ok) => {
+      caret.remove();
+      const clean = stripTokens(answer);
+      if (ok && clean.trim()) {
+        bubble.innerHTML = renderMarkdown(clean);
+        decorateEntities(bubble);
+        applyMore(bubble, extractMore(answer) || "Tell me more about that.");
+        messages.push({ role: "assistant", content: clean });
+        renderFollowups(extractSuggestions(answer));
+        saveState();
+        return clean;
+      }
+      bubble.remove();
+      showError();
+      return "";
+    };
+    // Poll D1 to follow an in-progress generation (reconnect / stream-fallback).
+    const pollToEnd = async (answer) => {
+      let alive = true;
+      stopPoll = () => {
+        alive = false;
+      };
+      if (answer) renderPartial(answer);
+      for (;;) {
+        await new Promise((r) => setTimeout(r, 450));
+        if (!alive) return null; // column closed; generation continues server-side
+        let s;
+        try {
+          s = await fetch(`${THREAD_URL}?id=${encodeURIComponent(id)}`).then((r) => r.json());
+        } catch {
+          return finalize(answer, !!answer.trim());
+        }
+        answer = s.content || answer;
+        renderPartial(answer);
+        if (s.status !== "generating") return finalize(answer, s.status !== "error");
+      }
+    };
+
+    // What's the generation's current state?
+    let state = { status: "none", content: "" };
+    try {
+      state = await fetch(`${THREAD_URL}?id=${encodeURIComponent(id)}`).then((r) => r.json());
+    } catch {
+      /* treat as none */
+    }
+    if (state.status === "done") return finalize(state.content, true);
+    if (state.status === "generating") return await pollToEnd(state.content || "");
+
+    // New: stream it live (SSE). The server captures to D1 so a returning visitor can poll.
+    let answer = "";
+    abortController = new AbortController();
+    try {
+      await streamReply(
+        outgoing,
+        (delta) => {
+          answer += delta;
+          renderPartial(answer);
+        },
+        (jd) => setActiveJob({ url: jd.url, text: jd.text }),
+        abortController.signal,
+        id,
+      );
+      return finalize(answer, true);
+    } catch (err) {
+      if (err && err.name === "AbortError") return ""; // column closed; server keeps generating
+      return (await pollToEnd(answer)) ?? ""; // stream dropped — follow the server-side capture
     }
   }
 
@@ -1158,10 +1278,15 @@ function createConversation({ scrollEl, messagesEl, input, form, sendBtn, starte
       }
       renderFollowups(chat.suggestions || []);
       toBottom();
+      onLayout?.(false);
+    } else if (opener) {
+      // Centered opener: the heading + sub live in the column DOM; here we just
+      // lay out the suggestion chips beneath the composer.
+      if (startersEl) buildStarters(startersEl, PERSONAS, (q) => send(q));
+      onLayout?.(true);
     } else {
       greet();
       if (startersEl) {
-        // Lead with the highest-value action: paste a JD.
         const cta = document.createElement("div");
         cta.className = "hiring-cta";
         cta.innerHTML =
@@ -1175,12 +1300,21 @@ function createConversation({ scrollEl, messagesEl, input, form, sendBtn, starte
         startersEl.appendChild(orLabel);
         buildStarters(startersEl, PERSONAS, (q) => send(q));
       }
+      onLayout?.(true);
     }
     // Focus the composer on every load (switching chats / new chat) when visible.
     if (input.getClientRects().length) input.focus();
   }
 
-  return { send, load };
+  const abort = () => {
+    try {
+      abortController?.abort();
+    } catch {
+      /* ignore */
+    }
+    stopPoll?.(); // durable threads: stop polling (generation continues server-side)
+  };
+  return { send, load, abort };
 }
 
 // Speech recognisers mis-hear tech terms ("next jazz" -> "Next.js"). Browsers
@@ -1416,7 +1550,13 @@ function mountFullscreen(root) {
         <div class="roles" hidden></div>
         <div class="sidebar-list"></div>
       </aside>
-      <div class="columns"></div>
+      <div class="main-area">
+        <header class="page-header">
+          <h1>Oliver Searle-Barnes</h1>
+          <p class="tagline">Hands-on CTO and Staff Engineer. Two decades shipping production software, most recently agentic AI.</p>
+        </header>
+        <div class="columns"></div>
+      </div>
     </div>
   `;
 
@@ -1494,14 +1634,17 @@ function mountFullscreen(root) {
   function makeColumn(node, { main = false, ctx = [] } = {}) {
     const el = document.createElement("div");
     if (main) {
-      el.className = "column";
+      el.className = "column empty";
       el.innerHTML = `
         <div class="col-scroll"><div class="fs-col">
-          <div class="fs-intro"><h1>Oliver Searle-Barnes</h1>
-            <p class="tagline">Hands-on CTO and Staff Engineer. A decade of Elixir at scale, most recently building agentic AI.</p></div>
-          <div class="messages"></div><div class="starters"></div>
+          <div class="opener-head">
+            <h2 class="opener-title">Hiring for a position?</h2>
+            <p class="opener-sub">Paste the job description or a link, and I'll show you exactly how Oliver maps to it.</p>
+          </div>
+          <div class="messages"></div>
         </div></div>
-        <div class="col-composer"><div class="fs-col">${composerHTML("Ask anything about Oliver...")}</div></div>`;
+        <div class="col-composer"><div class="fs-col">${composerHTML("Ask anything about Oliver...")}</div></div>
+        <div class="starters-zone"><div class="fs-col"><div class="starters"></div></div></div>`;
     } else {
       el.className = "column thread-col";
       el.innerHTML = `
@@ -1524,6 +1667,9 @@ function mountFullscreen(root) {
       sendBtn: form.querySelector(".send"),
       startersEl: main ? el.querySelector(".starters") : null,
       lite: !main,
+      durable: !main, // threads use the durable server-side generation
+      opener: main, // main column gets the centered opener when empty
+      onLayout: main ? (empty) => el.classList.toggle("empty", empty) : undefined,
       contextMessages: ctx,
       onUpdate: (m, s) => {
         node.messages = m;
@@ -1546,7 +1692,10 @@ function mountFullscreen(root) {
   function spawnFrom(parentCol, question, ctx, title, sectionText, onLoaded) {
     const idx = columns.indexOf(parentCol);
     if (idx < 0) return;
-    columns.splice(idx + 1).forEach((c) => c.el.remove());
+    columns.splice(idx + 1).forEach((c) => {
+      c.convo.abort();
+      c.el.remove();
+    });
     const seed = sectionText
       ? `Go deeper, expanding specifically on this part of your previous answer (in the context of Oliver's career): "${sectionText}"`
       : question;
@@ -1572,6 +1721,7 @@ function mountFullscreen(root) {
     const i = columns.indexOf(colObj);
     if (i < 1) return; // never close the main column
     const removed = columns.splice(i);
+    removed.forEach((c) => c.convo.abort()); // stop in-flight replies (server still caches via waitUntil)
     syncMulti();
     if (animate) {
       removed.forEach((c) => c.el.classList.add("leaving"));
@@ -1587,6 +1737,7 @@ function mountFullscreen(root) {
   // Render a chat by rebuilding its column chain from the stored nodes.
   function openChat(chat) {
     current = chat;
+    columns.forEach((c) => c.convo?.abort());
     columns.length = 0;
     columnsEl.replaceChildren();
     const nodes = chat.nodes && chat.nodes.length ? chat.nodes : [{ id: chat.id, parentId: null, position: 0, title: "", seed: "", sectionText: "", messages: [], suggestions: [] }];
@@ -1641,6 +1792,19 @@ function mountFullscreen(root) {
     if (e.key !== "Escape") return;
     if (root.querySelector(".slash:not([hidden])")) return;
     if (columns.length > 1) { e.preventDefault(); closeRightmost(); }
+  });
+
+  // Left/Right arrows scroll between panes when threads are open. We only defer to
+  // the cursor when the composer actually has text to move through; an empty
+  // composer (the usual browsing state) lets the arrows page across panes.
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+    const ae = root.getRootNode().activeElement;
+    const typing = ae && (ae.tagName === "TEXTAREA" || ae.tagName === "INPUT") && ae.value.trim() !== "";
+    if (typing || columns.length < 2) return;
+    e.preventDefault();
+    const pane = columnsEl.clientWidth / 2;
+    columnsEl.scrollBy({ left: e.key === "ArrowLeft" ? -pane : pane }); // CSS scroll-behavior animates it
   });
 
   // ---- initial paint (localStorage) then reconcile with D1 (source of truth) ----
@@ -1823,6 +1987,28 @@ function mountAdmin(root) {
       b.textContent = m.content || "";
     }
     return b;
+  }
+
+  // Highlight the drill-ins the visitor actually opened (read-only only). A child
+  // thread's title matches the heading/entity it was opened from; sectionText
+  // present means a section "More", absent means a bolded-term drill.
+  function markReplayVisited(b, children) {
+    if (!children || !children.length) return;
+    const sectionTitles = new Set(children.filter((c) => c.sectionText).map((c) => (c.title || "").trim()).filter(Boolean));
+    const entityTitles = new Set(children.filter((c) => !c.sectionText).map((c) => (c.title || "").trim()).filter(Boolean));
+    b.querySelectorAll(".md-h").forEach((h) => {
+      if (!sectionTitles.has(h.textContent.trim())) return;
+      h.classList.add("replay-visited");
+      let last = h;
+      for (let n = h.nextElementSibling; n && !n.classList.contains("md-h"); n = n.nextElementSibling) last = n;
+      const mk = document.createElement("div");
+      mk.className = "section-more loaded replay-more";
+      mk.innerHTML = "Opened " + ICON.circleArrowRight;
+      last.after(mk);
+    });
+    b.querySelectorAll(".entity").forEach((e) => {
+      if (entityTitles.has(e.textContent.trim())) e.classList.add("replay-visited");
+    });
   }
 
   const section = (title) => {
@@ -2058,7 +2244,12 @@ function mountAdmin(root) {
       fscol.className = "fs-col";
       const msgs = document.createElement("div");
       msgs.className = "messages";
-      (node.messages || []).filter((m) => !m.hidden).forEach((m) => msgs.appendChild(bubble(m)));
+      const children = nodes.filter((n) => n.parentId === node.id);
+      (node.messages || []).filter((m) => !m.hidden).forEach((m) => {
+        const b = bubble(m);
+        if (m.role === "assistant") markReplayVisited(b, children);
+        msgs.appendChild(b);
+      });
       fscol.appendChild(msgs);
       sc.appendChild(fscol);
       col.appendChild(sc);
