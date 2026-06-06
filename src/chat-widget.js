@@ -67,6 +67,19 @@ const AI = [
   { label: "Cursor", query: "How does Oliver use Cursor?" },
 ];
 
+// Icons (Lucide, MIT). Inline SVG keeps them crisp and shadow-DOM-friendly, no
+// web-font loading. `.ico` applies the shared Lucide stroke style.
+const ICON = {
+  circleArrowRight:
+    '<svg class="ico circle-arrow" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="m12 16 4-4-4-4"/></svg>',
+  arrowLeft:
+    '<svg class="ico" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>',
+  x:
+    '<svg class="ico" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>',
+  arrowUp:
+    '<svg class="ico" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg>',
+};
+
 // The "/" command menu, grouped.
 const LEADERSHIP = [
   { label: "Engineering management", query: "Tell me about Oliver's engineering management experience." },
@@ -117,63 +130,8 @@ function saveChats(state) {
   }
 }
 
-// A pasted job description, fetched server-side once and remembered GLOBALLY so
-// it stays in context for every chat and thread until the visitor clears it.
-const JOB_KEY = "cv-agent-active-job:v1";
-const jobListeners = new Set();
-function loadActiveJob() {
-  try {
-    return JSON.parse(localStorage.getItem(JOB_KEY) || "null");
-  } catch {
-    return null;
-  }
-}
-function setActiveJob(job) {
-  try {
-    job ? localStorage.setItem(JOB_KEY, JSON.stringify(job)) : localStorage.removeItem(JOB_KEY);
-  } catch {
-    /* ignore */
-  }
-  jobListeners.forEach((fn) => fn(job));
-}
-function onActiveJobChange(fn) {
-  jobListeners.add(fn);
-  return () => jobListeners.delete(fn);
-}
-/** A short label for the job pill, from the JD's first line (often the title). */
-function jobLabel(job) {
-  const first = (job?.text || "").split("\n").find((l) => l.trim());
-  const t = (first || "Active job").replace(/\s+/g, " ").trim();
-  return t.length > 34 ? t.slice(0, 34) + "…" : t;
-}
-
-// Hidden reset: clear all chats, threads and the active job. Trigger with
-// cv.dev/#reset (cleared on load) or window.cvAgentReset() from the console.
-function clearAllAgentState() {
-  try {
-    localStorage.removeItem(STORE_KEY);
-    localStorage.removeItem(JOB_KEY);
-  } catch {
-    /* ignore */
-  }
-}
-if (typeof window !== "undefined") {
-  window.cvAgentReset = () => {
-    clearAllAgentState();
-    location.hash = "";
-    location.reload();
-  };
-  if (location.hash === "#reset") {
-    clearAllAgentState();
-    // Drop the #reset fragment so a refresh doesn't keep clearing and the URL stays clean.
-    history.replaceState(null, "", location.pathname + location.search);
-  }
-}
-
-// A stable per-visitor id + a fire-and-forget logging beacon, so conversations
-// can be reviewed server-side (the Worker writes them to D1). Never blocks chat.
+// A stable per-visitor id.
 const VISITOR_KEY = "cv-agent-visitor:v1";
-const LOG_URL = AGENT_URL.replace(/\/chat$/, "/log");
 function visitorId() {
   let v = null;
   try {
@@ -191,22 +149,132 @@ function visitorId() {
   }
   return v;
 }
+
+// Multi-JD state: a visitor holds a list of roles ("job descriptions"); ONE is
+// FOCUSED and injected as context into every chat/thread. D1 is the source of
+// truth (synced via the /jobs beacon); localStorage is a fast cache.
+const JOBS_KEY = "cv-agent-jobs:v1";
+const JOBS_URL = AGENT_URL.replace(/\/chat$/, "/jobs");
+const LOG_URL = AGENT_URL.replace(/\/chat$/, "/log");
+const STATE_URL = AGENT_URL.replace(/\/chat$/, "/state");
+const jobListeners = new Set();
+
+function loadJobsState() {
+  try {
+    return JSON.parse(localStorage.getItem(JOBS_KEY)) || { jobs: [], focusedId: null };
+  } catch {
+    return { jobs: [], focusedId: null };
+  }
+}
+function persistJobs(state, { sync = true } = {}) {
+  try {
+    localStorage.setItem(JOBS_KEY, JSON.stringify(state));
+  } catch {
+    /* ignore */
+  }
+  if (sync) {
+    try {
+      fetch(JOBS_URL, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        keepalive: true,
+        body: JSON.stringify({ visitorId: visitorId(), focusedJobId: state.focusedId, jobs: state.jobs }),
+      }).catch(() => {});
+    } catch {
+      /* ignore */
+    }
+  }
+  jobListeners.forEach((fn) => fn(state));
+}
+function onJobsChange(fn) {
+  jobListeners.add(fn);
+  return () => jobListeners.delete(fn);
+}
+function jobIdFor(url, text) {
+  const s = (url || "") + "\n" + (text || "");
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (Math.imul(h, 31) + s.charCodeAt(i)) | 0;
+  return "j" + (h >>> 0).toString(36) + s.length.toString(36);
+}
+/** A short label for a JD pill, from its title or first line. */
+function jobLabel(job) {
+  const explicit = (job?.title || "").trim();
+  const first = explicit || (job?.text || "").split("\n").find((l) => l.trim()) || "Role";
+  const t = first.replace(/\s+/g, " ").trim();
+  return t.length > 30 ? t.slice(0, 30) + "…" : t;
+}
+function addJob({ url, text, title }) {
+  if (!text && !url) return null;
+  const state = loadJobsState();
+  const id = jobIdFor(url, text);
+  if (!state.jobs.some((j) => j.id === id))
+    state.jobs.push({ id, url: url || null, text: text || "", title: title || jobLabel({ text }) });
+  state.focusedId = id; // adding a role focuses it
+  persistJobs(state);
+  return id;
+}
+function removeJob(id) {
+  const state = loadJobsState();
+  state.jobs = state.jobs.filter((j) => j.id !== id);
+  if (state.focusedId === id) state.focusedId = state.jobs.length ? state.jobs[state.jobs.length - 1].id : null;
+  persistJobs(state);
+}
+function focusJob(id) {
+  const state = loadJobsState();
+  state.focusedId = state.jobs.some((j) => j.id === id) ? id : state.focusedId;
+  persistJobs(state);
+}
+// The focused JD is the "active job" injected into chats (back-compat name).
+function loadActiveJob() {
+  const state = loadJobsState();
+  return state.jobs.find((j) => j.id === state.focusedId) || null;
+}
+// The server's cv_jd event (a URL it fetched) adds + focuses that JD.
+function setActiveJob(job) {
+  if (job && job.text) addJob({ url: job.url, text: job.text, title: job.title });
+}
+
+// Hidden reset: clear all chats, threads and roles, AND rotate the visitor id so
+// the D1 reconcile starts from a clean slate. cv.dev/#reset or cvAgentReset().
+function clearAllAgentState() {
+  try {
+    localStorage.removeItem(STORE_KEY);
+    localStorage.removeItem(JOBS_KEY);
+    localStorage.removeItem(VISITOR_KEY);
+  } catch {
+    /* ignore */
+  }
+}
+if (typeof window !== "undefined") {
+  window.cvAgentReset = () => {
+    clearAllAgentState();
+    location.hash = "";
+    location.reload();
+  };
+  if (location.hash === "#reset") {
+    clearAllAgentState();
+    history.replaceState(null, "", location.pathname + location.search);
+  }
+}
+
+// Fire-and-forget beacon of a chat's FULL tree (main column + threads) to D1.
+// `chat.nodes` is the serialised column tree; falls back to the main messages
+// as a single root node.
 function logConversation(chat, title) {
-  if (!chat || !chat.messages || !chat.messages.length) return;
-  const job = loadActiveJob();
+  if (!chat) return;
+  const nodes =
+    Array.isArray(chat.nodes) && chat.nodes.length
+      ? chat.nodes
+      : chat.messages && chat.messages.length
+        ? [{ id: chat.id, parentId: null, position: 0, title: "", seed: "", sectionText: "", messages: chat.messages }]
+        : [];
+  if (!nodes.some((n) => n.messages && n.messages.length)) return;
   try {
     fetch(LOG_URL, {
       method: "POST",
       headers: { "content-type": "application/json" },
       keepalive: true,
-      body: JSON.stringify({
-        visitorId: visitorId(),
-        chatId: chat.id,
-        title: title || "",
-        jobTitle: job ? jobLabel(job) : null,
-        jobUrl: job && job.url ? job.url : null,
-        messages: chat.messages,
-      }),
+      body: JSON.stringify({ visitorId: visitorId(), chatId: chat.id, title: title || "", focusedJobId: loadJobsState().focusedId, nodes }),
     }).catch(() => {});
   } catch {
     /* ignore */
@@ -240,6 +308,11 @@ const STYLES = `
     align-self: center; color: #b42318; background: #fef3f2;
     border: 1px solid #fecdca; padding: 8px 12px; border-radius: 10px; font-size: 13.5px;
   }
+  .retry-link {
+    border: none; background: none; padding: 0; font: inherit; color: #b42318;
+    font-weight: 600; text-decoration: underline; cursor: pointer;
+  }
+  .retry-link:hover { color: #7a1b12; }
   .caret {
     display: inline-block; width: 7px; height: 1em; margin-left: 2px;
     background: var(--text); opacity: .5; vertical-align: text-bottom;
@@ -249,7 +322,7 @@ const STYLES = `
 
   .msg p { margin: 0 0 10px; }
   .msg p:last-child { margin-bottom: 0; }
-  .msg .md-h { font-size: 17.5px; font-weight: 700; line-height: 1.3; margin: 22px 0 8px; color: var(--text); }
+  .msg .md-h { font-size: 20.5px; font-weight: 500; line-height: 1.3; margin: 22px 0 8px; color: var(--text); }
   .msg .md-h:first-child { margin-top: 0; }
   .msg .md-h.entity { display: inline-flex; align-items: center; gap: 7px; cursor: pointer; border-bottom: none; border-radius: 7px; padding: 2px 7px; margin-left: -7px; }
   .msg .md-h.entity:hover { background: #eef1ff; color: #2b3380; }
@@ -265,10 +338,15 @@ const STYLES = `
   .msg .entity:focus-visible { outline: 2px solid #6b78d6; outline-offset: 1px; }
   .msg .entity .logo { width: 15px; height: 15px; margin-right: 5px; border-radius: 3px; object-fit: contain; vertical-align: -2px; background: #fff; }
   .msg .entity .avatar { width: 15px; height: 15px; margin-right: 5px; border-radius: 3px; font-size: 7.5px; vertical-align: -2px; }
-  .more-btn { display: inline-grid; place-items: center; vertical-align: -3px; width: 18px; height: 18px; margin-left: 1px; padding: 0; border: none; border-radius: 50%; background: none; color: var(--muted); cursor: pointer; transition: color .12s ease, background .12s ease; }
-  .more-btn:hover { color: #fff; background: var(--accent); }
-  .section-more { display: block; width: fit-content; margin: 6px 0 0; border: none; background: none; padding: 0; font: inherit; font-size: 13px; color: #6b78d6; cursor: pointer; }
-  .section-more:hover { color: #2b3380; text-decoration: underline; }
+  .ico { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .more-btn { display: inline-grid; place-items: center; vertical-align: -4px; width: 20px; height: 20px; margin-left: 2px; padding: 0; border: none; background: none; color: var(--muted); cursor: pointer; transition: color .12s ease; }
+  .more-btn:hover { color: var(--accent); }
+  .more-btn.loaded .circle-arrow circle { fill: currentColor; }
+  .more-btn.loaded .circle-arrow path { stroke: #fff; }
+  .section-more { display: flex; align-items: center; gap: 5px; width: fit-content; margin: 6px 0 0; border: none; background: none; padding: 0; font: inherit; font-size: 13px; color: #6b78d6; cursor: pointer; }
+  .section-more:hover { color: #2b3380; }
+  .section-more.loaded .circle-arrow circle { fill: currentColor; } /* opened */
+  .section-more.loaded .circle-arrow path { stroke: #fff; }
   .msg code { font-family: ui-monospace, Menlo, monospace; font-size: .9em; background: #f4f4f5; padding: 1px 5px; border-radius: 5px; }
   .msg.user code { background: rgba(0,0,0,.06); }
   .msg a { color: #2563eb; text-decoration: underline; }
@@ -342,11 +420,54 @@ const STYLES = `
   .sidebar-new { margin: 12px; padding: 9px 12px; border: 1px solid var(--border); border-radius: 10px; background: #fff; color: var(--text); cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 8px; }
   .sidebar-new:hover { border-color: #c7c7cc; }
   .sidebar-new span { font-size: 16px; line-height: 1; }
-  .job-pill { display: flex; align-items: center; gap: 6px; margin: 0 12px 8px; padding: 7px 9px; background: #eef1fb; border: 1px solid #d6dcf5; border-radius: 9px; font-size: 12.5px; }
-  .job-pill-tag { flex: none; font-size: 9px; font-weight: 700; letter-spacing: .08em; color: #fff; background: #6b78d6; border-radius: 4px; padding: 2px 5px; }
-  .job-pill-label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #2b3380; }
-  .job-pill-clear { flex: none; border: none; background: none; color: #6b78d6; cursor: pointer; font-size: 16px; line-height: 1; padding: 0 2px; }
-  .job-pill-clear:hover { color: #b42318; }
+  .roles { display: flex; flex-direction: column; gap: 4px; margin: 0 12px 10px; }
+  .roles[hidden] { display: none; }
+  .roles-head { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #9a9aa2; margin: 2px 2px 1px; }
+  .role-pill { display: flex; align-items: center; gap: 6px; padding: 5px 6px 5px 8px; background: #f4f5fb; border: 1px solid #e4e6f1; border-radius: 8px; font-size: 12.5px; }
+  .role-pill.focused { background: #eef1fb; border-color: #b9c2ee; }
+  .role-dot { flex: none; width: 6px; height: 6px; border-radius: 50%; background: #cfd2e0; }
+  .role-pill.focused .role-dot { background: var(--accent); }
+  .role-label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: left; border: none; background: none; padding: 0; font: inherit; color: #5a5a64; cursor: pointer; }
+  .role-pill.focused .role-label { color: #2b3380; font-weight: 600; }
+  .role-x { flex: none; display: inline-flex; align-items: center; border: none; background: none; color: #a6a6ae; cursor: pointer; padding: 0; }
+  .role-x:hover { color: #b42318; }
+  .role-x svg { width: 14px; height: 14px; }
+  /* read-only admin: users → summary → replay */
+  .admin-app { position: fixed; inset: 0; display: flex; flex-direction: column; background: var(--bg); color: var(--text); }
+  .admin-bar { flex: none; height: 52px; display: flex; align-items: center; gap: 8px; padding: 0 20px; border-bottom: 1px solid var(--border); font-size: 14px; }
+  .admin-crumb { color: var(--text); }
+  .admin-crumb.link { border: none; background: none; padding: 0; font: inherit; color: var(--accent); cursor: pointer; }
+  .admin-crumb.link:hover { text-decoration: underline; }
+  .admin-crumb-sep { color: var(--muted); }
+  .admin-body { flex: 1; min-height: 0; display: flex; }
+  .admin-replay { flex: 1; min-height: 0; display: flex; }
+  .admin-scroll { flex: 1; overflow-y: auto; }
+  .admin-panel { max-width: 760px; margin: 0 auto; padding: 24px 20px 80px; }
+  .admin-card { display: block; width: 100%; text-align: left; border: 1px solid var(--border); border-radius: 10px; background: #fff; padding: 12px 14px; margin-bottom: 8px; cursor: pointer; }
+  .admin-card:hover { border-color: #c7c7cc; }
+  .ac-loc { font-weight: 600; font-size: 15px; }
+  .ac-meta { font-size: 12.5px; color: var(--muted); margin-top: 3px; }
+  .admin-card .admin-roles { margin-top: 8px; }
+  .admin-sum-head { margin-bottom: 18px; }
+  .admin-sum-head h2 { margin: 0 0 4px; font-size: 22px; }
+  .admin-sum-sub { color: var(--muted); font-size: 13px; }
+  .admin-section { margin-bottom: 22px; }
+  .admin-section h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0 0 10px; }
+  .admin-roles { display: flex; flex-wrap: wrap; gap: 6px; }
+  .admin-role { font-size: 12px; border: 1px solid #e4e6f1; border-radius: 6px; padding: 3px 8px; color: #5a5a64; text-decoration: none; }
+  .admin-role.focused { background: #eef1fb; border-color: #b9c2ee; color: #2b3380; font-weight: 600; }
+  .admin-conv { display: block; width: 100%; text-align: left; border: 1px solid var(--border); border-radius: 10px; background: #fff; padding: 12px 14px; margin-bottom: 8px; cursor: pointer; }
+  .admin-conv:hover { border-color: #c7c7cc; }
+  .acv-title { font-weight: 600; font-size: 14.5px; }
+  .acv-explored { font-size: 12.5px; color: var(--muted); margin-top: 4px; }
+  .acv-open { font-size: 12.5px; color: var(--accent); margin-top: 8px; }
+  .admin-empty { color: var(--muted); font-size: 14px; padding: 20px 0; }
+  .admin-empty.pad { margin: auto; }
+  .admin-gate { margin: auto; display: flex; flex-direction: column; gap: 10px; width: 260px; }
+  .admin-gate-title { font-size: 16px; font-weight: 600; text-align: center; margin-bottom: 2px; }
+  .admin-gate-input { border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; font: inherit; }
+  .admin-gate-btn { border: none; background: var(--accent); color: #fff; border-radius: 8px; padding: 10px; font: inherit; cursor: pointer; }
+  .admin-gate-err { color: #b42318; font-size: 13px; text-align: center; }
   .sidebar-list { flex: 1; overflow-y: auto; padding: 2px 8px 14px; display: flex; flex-direction: column; gap: 2px; }
   .sidebar-item { display: flex; align-items: center; gap: 6px; padding: 8px 10px; border-radius: 8px; cursor: pointer; font-size: 13.5px; color: var(--text); }
   .sidebar-item:hover { background: #ececee; }
@@ -355,27 +476,31 @@ const STYLES = `
   .sidebar-del { flex: none; border: none; background: none; color: var(--muted); cursor: pointer; font-size: 16px; line-height: 1; padding: 0 2px; opacity: 0; }
   .sidebar-item:hover .sidebar-del { opacity: 1; }
   .sidebar-del:hover { color: #b42318; }
-  .fs-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-  /* Slack-style side thread */
-  .thread { display: none; flex: none; width: 42%; min-width: 340px; flex-direction: column; border-left: 1px solid var(--border); background: var(--bg); }
-  .fs.thread-open .thread { display: flex; }
-  .fs.thread-open .fs-main { flex: 1 1 0; min-width: 0; }
-  .thread-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 20px; border-bottom: 1px solid var(--border); font-size: 14px; font-weight: 600; }
-  .thread-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .thread-close { border: none; background: none; color: var(--muted); cursor: pointer; font-size: 20px; line-height: 1; }
-  .thread-close:hover { color: var(--text); }
-  .thread-scroll { flex: 1; overflow-y: auto; padding: 20px; }
-  .thread-composer { border-top: 1px solid var(--border); padding: 12px 16px 16px; }
-  .fs-scroll { flex: 1; overflow-y: auto; }
+  /* Hierarchical columns: main chat + thread columns; ~2 visible, scroll for more. */
+  .columns { flex: 1; min-width: 0; display: flex; overflow-x: auto; overflow-y: hidden; }
+  .column { flex: 0 0 50%; min-width: 0; display: flex; flex-direction: column; border-left: 1px solid var(--border); background: var(--bg); }
+  .column:first-child { border-left: none; }
+  .columns:not(.multi) .column { flex: 1 1 100%; }
+  .thread-col { transition: opacity .22s ease, flex-basis .22s ease; }
+  .thread-col.entering { opacity: 0; }
+  .thread-col.leaving { opacity: 0; flex-basis: 0 !important; min-width: 0; overflow: hidden; }
+  .thread-col-head { flex: none; display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 14px; font-weight: 600; }
+  .thread-col-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .thread-col-back { display: inline-flex; align-items: center; border: none; background: none; color: var(--muted); cursor: pointer; padding: 0; }
+  .thread-col-back:hover { color: var(--text); }
+  .thread-col-close { display: inline-flex; align-items: center; border: none; background: none; color: var(--muted); cursor: pointer; padding: 0; }
+  .thread-col-close:hover { color: var(--text); }
+  .col-scroll { flex: 1; overflow-y: auto; }
+  .col-scroll .messages { padding-bottom: 28px; }
+  .thread-col .col-scroll .fs-col { padding-top: 18px; }
   .fs-col { max-width: 768px; margin: 0 auto; padding: 0 20px; }
   .fs-intro { padding: 52px 0 24px; text-align: left; }
   .fs-intro h1 { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-weight: 650; font-size: clamp(28px, 4.4vw, 38px); margin: 0; }
   .fs-intro .tagline { margin: 12px 0 0; max-width: 620px; color: var(--muted); font-size: 16px; line-height: 1.5; }
-  .fs-scroll .messages { padding-bottom: 28px; }
-  .fs-composer { background: var(--bg); border-top: 1px solid var(--border); }
-  .fs-composer .fs-col { padding-top: 14px; padding-bottom: 18px; }
-  /* widen the menu beyond the message column so all columns sit side by side */
-  .fs-composer .slash { left: 50%; right: auto; transform: translateX(-50%); width: min(1240px, 95vw); }
+  .col-composer { background: var(--bg); border-top: 1px solid var(--border); }
+  .col-composer .fs-col { padding-top: 14px; padding-bottom: 18px; }
+  /* widen the "/" menu beyond the message column */
+  .col-composer .slash { left: 50%; right: auto; transform: translateX(-50%); width: min(1000px, 90vw); }
 
   /* ---------- floating ---------- */
   .launcher {
@@ -767,7 +892,7 @@ function createConversation({ scrollEl, messagesEl, input, form, sendBtn, starte
     const stick = atBottom();
     followupsEl = document.createElement("div");
     followupsEl.className = "starters"; // same chip-row styling
-    buildStarters(followupsEl, currentSuggestions, (q) => send(q));
+    buildStarters(followupsEl, currentSuggestions, (q) => drill(q, q));
     messagesEl.appendChild(followupsEl);
     if (stick) toBottom();
   }
@@ -779,9 +904,8 @@ function createConversation({ scrollEl, messagesEl, input, form, sendBtn, starte
     btn.type = "button";
     btn.title = "More on this";
     btn.setAttribute("aria-label", "More on this");
-    btn.innerHTML =
-      '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8.5 12h6M12.5 9l3 3-3 3"/></svg>';
-    btn.addEventListener("click", () => send(query));
+    btn.innerHTML = ICON.circleArrowRight;
+    btn.addEventListener("click", () => drill(query, "More", null, () => btn.classList.add("loaded")));
     const host = bubble.querySelector("p:last-of-type, li:last-of-type") || bubble;
     host.append(" ", btn);
   }
@@ -791,13 +915,24 @@ function createConversation({ scrollEl, messagesEl, input, form, sendBtn, starte
   function addSectionMore(bubble) {
     [...bubble.querySelectorAll(".md-h")].forEach((h) => {
       let last = h;
-      for (let n = h.nextElementSibling; n && !n.classList.contains("md-h"); n = n.nextElementSibling) last = n;
+      const parts = [h];
+      for (let n = h.nextElementSibling; n && !n.classList.contains("md-h"); n = n.nextElementSibling) {
+        last = n;
+        parts.push(n);
+      }
       const topic = h.textContent.trim();
+      const sectionText = parts.map((p) => p.textContent.trim()).filter(Boolean).join("\n");
       const link = document.createElement("button");
       link.className = "section-more";
       link.type = "button";
-      link.textContent = "More →";
-      link.addEventListener("click", () => onMore(`Tell me more about ${topic} (in the context of Oliver's career).`, messages.slice(), topic));
+      link.innerHTML = "More " + ICON.circleArrowRight;
+      // Mark loaded only once the thread's reply actually arrives (the onLoaded
+      // callback), so an interrupted thread doesn't leave a filled circle behind.
+      link.addEventListener("click", () =>
+        drill(`Tell me more about ${topic} (in the context of Oliver's career).`, topic, sectionText, () =>
+          link.classList.add("loaded"),
+        ),
+      );
       last.after(link);
     });
   }
@@ -808,8 +943,22 @@ function createConversation({ scrollEl, messagesEl, input, form, sendBtn, starte
     else appendMore(bubble, moreQuery);
   }
 
-  // Clicking a bold entity drills into that topic (delegated; bubbles use innerHTML).
-  const drillEntity = (el) => el && send(`Tell me more about ${el.textContent.trim()}.`);
+  // Any drill-in (bold entity, section "More", circle-arrow, suggestion chip)
+  // opens a NEW thread to the right when onMore is wired (fullscreen); otherwise
+  // it continues in-place (the floating panel). sectionText, when present, is the
+  // paragraph the link sits under, passed as focused context for the new thread.
+  // onLoaded fires only once the spawned thread's reply actually completes (and
+  // the thread still exists) — so a "loaded" indicator never lies about content
+  // that was interrupted.
+  const drill = (question, label, sectionText, onLoaded) =>
+    onMore
+      ? onMore(question, messages.slice(), label || question, sectionText || null, onLoaded)
+      : send(question);
+  const drillEntity = (el) => {
+    if (!el) return;
+    const t = el.textContent.trim();
+    drill(`Tell me more about ${t}.`, t);
+  };
   messagesEl.addEventListener("click", (e) => drillEntity(e.target.closest?.(".entity")));
   messagesEl.addEventListener("keydown", (e) => {
     if (e.key === "Enter" || e.key === " ") {
@@ -818,16 +967,23 @@ function createConversation({ scrollEl, messagesEl, input, form, sendBtn, starte
     }
   });
 
-  async function send(text) {
+  async function send(text, hidden = false) {
     if (startersEl) startersEl.replaceChildren(); // hide the opener chips, keep the slot
     renderFollowups([]);
-    messages.push({ role: "user", content: text });
-    addBubble("user", text);
+    messages.push({ role: "user", content: text, ...(hidden ? { hidden: true } : {}) });
+    // A hidden seed (a thread's opening "More" click) goes to the model but isn't
+    // shown: the thread header already makes the topic obvious.
+    if (!hidden) addBubble("user", text);
     toBottom();
     saveState();
-
     input.value = "";
     input.style.height = ""; // collapse the auto-grown textarea back to one line
+    return respondToLast();
+  }
+
+  // Generate the assistant reply for the latest user message already in `messages`.
+  // Split out from send() so a failed turn can be retried without re-posting it.
+  async function respondToLast() {
     input.disabled = true;
     sendBtn.disabled = true;
 
@@ -884,24 +1040,36 @@ function createConversation({ scrollEl, messagesEl, input, form, sendBtn, starte
         messages.push({ role: "assistant", content: clean });
         renderFollowups(extractSuggestions(answer));
         saveState();
+        return clean; // success: the loaded reply
       } else {
         bubble.remove();
-        addBubble("error", "No reply received. Please try again.");
+        showError();
+        return "";
       }
-    } catch (err) {
+    } catch {
       bubble.remove();
-      const unreachable = err instanceof TypeError;
-      addBubble(
-        "error",
-        unreachable
-          ? "Couldn't reach the assistant just now. Please try again in a moment."
-          : err.message || "Something went wrong. Try again shortly.",
-      );
+      showError();
+      return "";
     } finally {
       input.disabled = false;
       sendBtn.disabled = false;
       input.focus();
     }
+  }
+
+  // Generic error bubble with an inline Retry that re-runs the last turn.
+  function showError() {
+    const el = addBubble("error", "Something went wrong. ");
+    const retry = document.createElement("button");
+    retry.type = "button";
+    retry.className = "retry-link";
+    retry.textContent = "Retry";
+    retry.addEventListener("click", () => {
+      el.remove();
+      respondToLast();
+    });
+    el.appendChild(retry);
+    toBottom();
   }
 
   form.addEventListener("submit", (e) => {
@@ -984,6 +1152,7 @@ function createConversation({ scrollEl, messagesEl, input, form, sendBtn, starte
     if (chat && chat.messages && chat.messages.length) {
       for (const m of chat.messages) {
         messages.push(m);
+        if (m.hidden) continue; // the hidden thread seed: kept for context, never shown
         const el = addBubble(m.role, m.content);
         if (m.role === "assistant") applyMore(el, "Tell me more about that."); // re-add thread links on restore
       }
@@ -1115,7 +1284,7 @@ function composerHTML(placeholder) {
         <button class="mic" type="button" aria-label="Voice input" hidden>
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="11" rx="3"/><path d="M5 10v1a7 7 0 0 0 14 0v-1"/><line x1="12" y1="18" x2="12" y2="22"/></svg>
         </button>
-        <button class="send" type="submit" aria-label="Send">&uarr;</button>
+        <button class="send" type="submit" aria-label="Send">${ICON.arrowUp}</button>
       </form>
       <div class="hint">Press <kbd>/</kbd> for companies, stack &amp; projects</div>
     </div>
@@ -1128,7 +1297,7 @@ function threadComposerHTML() {
     <div class="composer">
       <form class="form">
         <textarea class="ta" rows="1" placeholder="Reply in this thread..." autocomplete="off"></textarea>
-        <button class="send" type="submit" aria-label="Send">&uarr;</button>
+        <button class="send" type="submit" aria-label="Send">${ICON.arrowUp}</button>
       </form>
     </div>
   `;
@@ -1187,7 +1356,7 @@ function createSession(convo, listEl, onChange) {
   }
 
   function switchTo(chat) {
-    if (chat === current) return;
+    if (chat === current) { onChange?.(); return; } // same chat: just collapse threads
     current = chat;
     state.currentId = chat.id;
     convo.load(chat);
@@ -1244,107 +1413,310 @@ function mountFullscreen(root) {
     <div class="fs">
       <aside class="sidebar">
         <button class="sidebar-new" type="button"><span>+</span> New chat</button>
-        <div class="job-pill" hidden></div>
+        <div class="roles" hidden></div>
         <div class="sidebar-list"></div>
       </aside>
-      <div class="fs-main">
-        <div class="fs-scroll">
-          <div class="fs-col">
-            <div class="fs-intro">
-              <h1>Oliver Searle-Barnes</h1>
-              <p class="tagline">Hands-on CTO and Staff Engineer. A decade of Elixir at scale, most recently building agentic AI.</p>
-            </div>
-            <div class="messages"></div>
-            <div class="starters"></div>
-          </div>
-        </div>
-        <div class="fs-composer">
-          <div class="fs-col">${composerHTML("Ask anything about Oliver...")}</div>
-        </div>
-      </div>
-      <aside class="thread"></aside>
+      <div class="columns"></div>
     </div>
   `;
 
-  const fs = root.querySelector(".fs");
-  const fsMain = root.querySelector(".fs-main");
-  const threadEl = root.querySelector(".thread");
-  const scrollEl = fsMain.querySelector(".fs-scroll");
-  const messagesEl = fsMain.querySelector(".messages");
-  const form = fsMain.querySelector(".form");
-  const input = form.querySelector("textarea");
-  const sendBtn = form.querySelector(".send");
-  const startersEl = fsMain.querySelector(".starters");
+  const columnsEl = root.querySelector(".columns");
+  const listEl = root.querySelector(".sidebar-list");
+  const rolesEl = root.querySelector(".roles");
+  const genId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+  const syncMulti = () => columnsEl.classList.toggle("multi", columns.length > 1);
+  const scrollToEnd = () =>
+    requestAnimationFrame(() => columnsEl.scrollTo({ left: columnsEl.scrollWidth, behavior: "smooth" }));
+  const scrollToStart = () => columnsEl.scrollTo({ left: 0, behavior: "smooth" });
 
-  // Slack-style side thread: a separate conversation seeded with the parent
-  // chat as hidden context, named after the section, persisted in the chat.
-  function openThread(question, ctx, title) {
-    const { thread, isNew } = session.ensureThread(question, ctx, title);
-    const heading = thread.title || "Thread";
-    threadEl.innerHTML = `
-      <header class="thread-head"><span class="thread-title"></span><button class="thread-close" type="button" aria-label="Close thread">&times;</button></header>
-      <div class="thread-scroll"><div class="messages"></div></div>
-      <div class="thread-composer">${threadComposerHTML()}</div>
-    `;
-    threadEl.querySelector(".thread-title").textContent = heading;
-    fs.classList.add("thread-open");
-    threadEl.querySelector(".thread-close").addEventListener("click", closeThread);
-    const tForm = threadEl.querySelector(".form");
-    const tInput = tForm.querySelector("textarea");
-    const tConvo = createConversation({
-      scrollEl: threadEl.querySelector(".thread-scroll"),
-      messagesEl: threadEl.querySelector(".messages"),
-      input: tInput,
-      form: tForm,
-      sendBtn: tForm.querySelector(".send"),
-      lite: true,
-      contextMessages: thread.context,
-      onUpdate: (m, s) => { thread.messages = m; thread.suggestions = s; session.saveThreads(); },
+  // ---- state: a chat IS its node tree ----
+  // chat = { id, title, focusedJobId, nodes:[node], updatedAt }; node = { id,
+  // parentId, position, title, seed, sectionText, messages[], suggestions[] }.
+  // columns (the live UI) map 1:1 to current.nodes (root = main, rest = open chain).
+  const store = loadChats();
+  let chats = (store.chats || []).map(normaliseChat);
+  let current = null;
+  const columns = []; // [{ el, convo, node }]
+
+  function normaliseChat(c) {
+    // Accept either the tree shape or a legacy {messages} shape; always end with nodes[].
+    if (Array.isArray(c.nodes) && c.nodes.length) return c;
+    const root = { id: c.id, parentId: null, position: 0, title: "", seed: "", sectionText: "", messages: c.messages || [], suggestions: c.suggestions || [] };
+    return { id: c.id, title: c.title || "", focusedJobId: c.focusedJobId || null, nodes: [root], updatedAt: c.updatedAt || Date.now() };
+  }
+  function titleOf(chat) {
+    if (chat.title) return chat.title;
+    const first = (chat.nodes[0]?.messages || []).find((m) => m.role === "user");
+    const t = (first ? first.content : "New chat").replace(/\s+/g, " ").trim();
+    return t.length > 42 ? t.slice(0, 42) + "…" : t || "New chat";
+  }
+
+  function renderList() {
+    listEl.replaceChildren();
+    for (const chat of chats) {
+      const item = document.createElement("div");
+      item.className = "sidebar-item" + (chat === current ? " active" : "");
+      const title = document.createElement("span");
+      title.className = "sidebar-title";
+      title.textContent = titleOf(chat);
+      const del = document.createElement("button");
+      del.className = "sidebar-del";
+      del.type = "button";
+      del.setAttribute("aria-label", "Delete chat");
+      del.textContent = "×";
+      del.addEventListener("click", (e) => { e.stopPropagation(); removeChat(chat); });
+      item.append(title, del);
+      item.addEventListener("click", () => switchTo(chat));
+      listEl.appendChild(item);
+    }
+  }
+
+  // Serialise the live columns back onto `current`, persist (localStorage), and
+  // beacon the whole tree to D1. Called after every message / structural change.
+  function persist() {
+    if (!current) return;
+    current.nodes = columns.map((c, i) => {
+      c.node.position = i;
+      return c.node;
     });
-    if (isNew) tConvo.send(question); // fetch the first reply
-    else tConvo.load({ messages: thread.messages, suggestions: thread.suggestions }); // restore instantly
-    tInput.focus();
-  }
-  function closeThread() {
-    fs.classList.remove("thread-open");
-    threadEl.replaceChildren();
+    current.title = titleOf(current);
+    current.focusedJobId = loadJobsState().focusedId;
+    current.updatedAt = Date.now();
+    if (current.nodes[0]?.messages?.length && !chats.includes(current)) chats.unshift(current);
+    chats.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
+    saveChats({ chats, currentId: current.id });
+    logConversation(current, current.title);
+    renderList();
   }
 
-  let session;
-  const convo = createConversation({
-    scrollEl, messagesEl, input, form, sendBtn, startersEl,
-    onUpdate: (m, s) => session.onUpdate(m, s),
-    onMore: (q, ctx, title) => openThread(q, ctx, title),
+  // Build a column (DOM + conversation) bound to a node. Main column carries the
+  // intro + slash composer; thread columns are lite with a header.
+  function makeColumn(node, { main = false, ctx = [] } = {}) {
+    const el = document.createElement("div");
+    if (main) {
+      el.className = "column";
+      el.innerHTML = `
+        <div class="col-scroll"><div class="fs-col">
+          <div class="fs-intro"><h1>Oliver Searle-Barnes</h1>
+            <p class="tagline">Hands-on CTO and Staff Engineer. A decade of Elixir at scale, most recently building agentic AI.</p></div>
+          <div class="messages"></div><div class="starters"></div>
+        </div></div>
+        <div class="col-composer"><div class="fs-col">${composerHTML("Ask anything about Oliver...")}</div></div>`;
+    } else {
+      el.className = "column thread-col";
+      el.innerHTML = `
+        <div class="thread-col-head">
+          <button class="thread-col-back" type="button" title="Back" aria-label="Close thread">${ICON.arrowLeft}</button>
+          <span class="thread-col-title"></span>
+          <button class="thread-col-close" type="button" aria-label="Close thread">${ICON.x}</button>
+        </div>
+        <div class="col-scroll"><div class="fs-col"><div class="messages"></div></div></div>
+        <div class="col-composer"><div class="fs-col">${threadComposerHTML()}</div></div>`;
+      el.querySelector(".thread-col-title").textContent = node.title || "Thread";
+    }
+    const form = el.querySelector(".form");
+    const colObj = { el, convo: null, node };
+    colObj.convo = createConversation({
+      scrollEl: el.querySelector(".col-scroll"),
+      messagesEl: el.querySelector(".messages"),
+      input: form.querySelector("textarea"),
+      form,
+      sendBtn: form.querySelector(".send"),
+      startersEl: main ? el.querySelector(".starters") : null,
+      lite: !main,
+      contextMessages: ctx,
+      onUpdate: (m, s) => {
+        node.messages = m;
+        node.suggestions = s;
+        persist();
+      },
+      onMore: (q, c, t, st, ol) => spawnFrom(colObj, q, c, t, st, ol),
+    });
+    if (!main) {
+      const closeThis = () => closeFrom(colObj);
+      el.querySelector(".thread-col-close").addEventListener("click", closeThis);
+      el.querySelector(".thread-col-back").addEventListener("click", closeThis);
+    }
+    return colObj;
+  }
+
+  const ancestorCtx = () => columns.flatMap((c) => c.node.messages || []);
+
+  // Open a new thread column to the right of `parentCol` (truncating any to its right).
+  function spawnFrom(parentCol, question, ctx, title, sectionText, onLoaded) {
+    const idx = columns.indexOf(parentCol);
+    if (idx < 0) return;
+    columns.splice(idx + 1).forEach((c) => c.el.remove());
+    const seed = sectionText
+      ? `Go deeper, expanding specifically on this part of your previous answer (in the context of Oliver's career): "${sectionText}"`
+      : question;
+    const node = { id: genId(), parentId: parentCol.node.id, position: idx + 1, title: title || "Thread", seed, sectionText: sectionText || "", messages: [], suggestions: [] };
+    const col = makeColumn(node, { ctx: ancestorCtx() });
+    columns.push(col);
+    // Always play the open animation (even re-opening an already-loaded thread):
+    // paint at opacity 0, force a reflow, then transition in.
+    col.el.classList.add("entering");
+    columnsEl.appendChild(col.el);
+    void col.el.offsetWidth;
+    col.el.classList.remove("entering");
+    syncMulti();
+    col.convo.send(seed, /* hidden */ true).then((reply) => {
+      if (reply && onLoaded && columns.includes(col)) onLoaded();
+    });
+    persist();
+    scrollToEnd();
+  }
+
+  // Fade + collapse columns from `colObj` (inclusive) to the end, then remove.
+  function closeFrom(colObj, animate = true) {
+    const i = columns.indexOf(colObj);
+    if (i < 1) return; // never close the main column
+    const removed = columns.splice(i);
+    syncMulti();
+    if (animate) {
+      removed.forEach((c) => c.el.classList.add("leaving"));
+      setTimeout(() => removed.forEach((c) => c.el.remove()), 220);
+    } else {
+      removed.forEach((c) => c.el.remove());
+    }
+    persist();
+    scrollToEnd();
+  }
+  const closeRightmost = () => columns.length > 1 && closeFrom(columns[columns.length - 1]);
+
+  // Render a chat by rebuilding its column chain from the stored nodes.
+  function openChat(chat) {
+    current = chat;
+    columns.length = 0;
+    columnsEl.replaceChildren();
+    const nodes = chat.nodes && chat.nodes.length ? chat.nodes : [{ id: chat.id, parentId: null, position: 0, title: "", seed: "", sectionText: "", messages: [], suggestions: [] }];
+    nodes.forEach((node, i) => {
+      const col = makeColumn(node, { main: i === 0, ctx: ancestorCtx() });
+      columns.push(col);
+      columnsEl.appendChild(col.el);
+      const hasReply = (node.messages || []).some((m) => m.role === "assistant" && m.content.trim());
+      if (i === 0 || hasReply) {
+        col.convo.load({ messages: node.messages || [], suggestions: node.suggestions || [] });
+      } else {
+        // Thread interrupted before its reply landed: re-issue the seed (cache-hit).
+        col.convo.send(node.seed || node.title, true);
+      }
+    });
+    syncMulti();
+    columnsEl.scrollTo({ left: columnsEl.scrollWidth });
+    renderList();
+  }
+
+  function newChat() {
+    const node = { id: genId(), parentId: null, position: 0, title: "", seed: "", sectionText: "", messages: [], suggestions: [] };
+    const chat = { id: node.id, title: "", focusedJobId: loadJobsState().focusedId, nodes: [node], updatedAt: Date.now() };
+    openChat(chat);
+    scrollToStart();
+  }
+  function switchTo(chat) {
+    if (chat === current) {
+      // same chat: collapse threads back to the main column
+      if (columns.length > 1) closeFrom(columns[1]);
+      scrollToStart();
+      return;
+    }
+    openChat(chat);
+    saveChats({ chats, currentId: chat.id });
+    scrollToStart();
+  }
+  function removeChat(chat) {
+    chats = chats.filter((c) => c !== chat);
+    saveChats({ chats, currentId: current?.id });
+    if (chat === current) {
+      chats.length ? openChat(chats[0]) : newChat();
+    } else {
+      renderList();
+    }
+  }
+
+  root.querySelector(".sidebar-new").addEventListener("click", newChat);
+
+  // Escape closes the rightmost thread (unless the "/" menu is open, which owns it).
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    if (root.querySelector(".slash:not([hidden])")) return;
+    if (columns.length > 1) { e.preventDefault(); closeRightmost(); }
   });
-  session = createSession(convo, root.querySelector(".sidebar-list"), closeThread);
-  root.querySelector(".sidebar-new").addEventListener("click", () => session.newChat());
 
-  // The active-job pill: shows the remembered JD (injected into every chat /
-  // thread) with a clear button.
-  const jobPill = root.querySelector(".job-pill");
-  function renderJobPill(job) {
-    jobPill.replaceChildren();
-    if (!job || !job.text) { jobPill.hidden = true; return; }
-    jobPill.hidden = false;
-    const tag = document.createElement("span");
-    tag.className = "job-pill-tag";
-    tag.textContent = "JOB";
-    const label = document.createElement("span");
-    label.className = "job-pill-label";
-    label.textContent = jobLabel(job);
-    label.title = "Active job description — included as context in every chat and thread";
-    const clear = document.createElement("button");
-    clear.className = "job-pill-clear";
-    clear.type = "button";
-    clear.setAttribute("aria-label", "Clear active job");
-    clear.textContent = "×";
-    clear.addEventListener("click", () => setActiveJob(null));
-    jobPill.append(tag, label, clear);
+  // ---- initial paint (localStorage) then reconcile with D1 (source of truth) ----
+  const startId = store.currentId;
+  const startChat = chats.find((c) => c.id === startId) || chats[0];
+  if (startChat) openChat(startChat);
+  else newChat();
+
+  (async () => {
+    try {
+      const data = await fetch(`${STATE_URL}?visitor=${encodeURIComponent(visitorId())}`).then((r) => r.json());
+      if (data && data.jobs) persistJobs({ jobs: data.jobs, focusedId: data.focusedJobId || null }, { sync: false });
+      if (data && Array.isArray(data.chats) && data.chats.length) {
+        const d1chats = data.chats.map(normaliseChat);
+        const started = !!current && !!current.nodes?.[0]?.messages?.length;
+        const inD1 = d1chats.find((c) => c.id === current?.id);
+        if (started && !inD1) {
+          // The visitor began a fresh chat before /state returned — keep it.
+          chats = [current, ...d1chats.filter((c) => c.id !== current.id)];
+          saveChats({ chats, currentId: current.id });
+          renderList();
+        } else {
+          chats = d1chats;
+          saveChats({ chats, currentId: current?.id });
+          openChat(inD1 || chats[0]);
+        }
+      }
+    } catch {
+      /* offline: localStorage paint stands */
+    }
+  })();
+
+  // The "Roles" list: every job description the visitor has added. Click a pill
+  // to FOCUS it (the focused role is injected as context into chats); the × removes
+  // it. State is mirrored to D1.
+  function renderRoles(state) {
+    rolesEl.replaceChildren();
+    const jobs = state.jobs || [];
+    if (!jobs.length) {
+      rolesEl.hidden = true;
+      return;
+    }
+    rolesEl.hidden = false;
+    const head = document.createElement("div");
+    head.className = "roles-head";
+    head.textContent = jobs.length > 1 ? "Roles" : "Role";
+    rolesEl.append(head);
+    for (const j of jobs) {
+      const focused = j.id === state.focusedId;
+      const pill = document.createElement("div");
+      pill.className = "role-pill" + (focused ? " focused" : "");
+      const dot = document.createElement("span");
+      dot.className = "role-dot";
+      const label = document.createElement("button");
+      label.className = "role-label";
+      label.type = "button";
+      label.textContent = jobLabel(j);
+      label.title = focused ? "Focused — used as context in chats" : "Click to focus this role";
+      label.addEventListener("click", () => focusJob(j.id));
+      const x = document.createElement("button");
+      x.className = "role-x";
+      x.type = "button";
+      x.setAttribute("aria-label", "Remove role");
+      x.innerHTML = ICON.x;
+      x.addEventListener("click", (e) => {
+        e.stopPropagation();
+        removeJob(j.id);
+      });
+      pill.append(dot, label, x);
+      rolesEl.append(pill);
+    }
   }
-  renderJobPill(loadActiveJob());
-  onActiveJobChange(renderJobPill);
+  renderRoles(loadJobsState());
+  onJobsChange(renderRoles);
 
-  input.focus();
+  columns[0]?.el.querySelector("textarea")?.focus();
 }
 
 function mountFloating(root) {
@@ -1394,6 +1766,312 @@ function mountFloating(root) {
   });
 }
 
+// Read-only admin replay: browse a visitor's conversations in the REAL widget UI
+// (same columns / bubbles / threads), no composer, no LLM, no writes. Gated by an
+// admin password sent as the X-Admin-Pass header to the worker's /admin/api/*.
+function mountAdmin(root) {
+  document.body.style.display = "none";
+  document.documentElement.style.overflow = "hidden";
+  const ADMIN_API = AGENT_URL.replace(/\/chat$/, "/admin/api");
+  let pass = "";
+  try {
+    pass = sessionStorage.getItem("cv-agent-admin-pass") || "";
+  } catch {
+    /* ignore */
+  }
+
+  root.innerHTML = `<div class="admin-app"><div class="admin-bar"></div><div class="admin-body"></div></div>`;
+  const barEl = root.querySelector(".admin-bar");
+  const bodyEl = root.querySelector(".admin-body");
+  const api = (p) => fetch(ADMIN_API + p, { headers: { "x-admin-pass": pass } });
+  const setBar = (...parts) => {
+    barEl.replaceChildren();
+    parts.forEach((p, i) => {
+      if (i) {
+        const sep = document.createElement("span");
+        sep.className = "admin-crumb-sep";
+        sep.textContent = "/";
+        barEl.append(sep);
+      }
+      barEl.append(p);
+    });
+  };
+  const crumb = (text, onClick) => {
+    const b = document.createElement(onClick ? "button" : "span");
+    b.className = "admin-crumb" + (onClick ? " link" : "");
+    b.textContent = text;
+    if (onClick) b.addEventListener("click", onClick);
+    return b;
+  };
+
+  const rel = (ts) => {
+    if (!ts) return "";
+    const d = Math.floor((Date.now() - ts) / 1000);
+    if (d < 60) return "just now";
+    if (d < 3600) return Math.floor(d / 60) + "m ago";
+    if (d < 86400) return Math.floor(d / 3600) + "h ago";
+    return Math.floor(d / 86400) + "d ago";
+  };
+
+  function bubble(m) {
+    const b = document.createElement("div");
+    b.className = "msg " + (m.role === "assistant" ? "assistant" : "user");
+    if (m.role === "assistant") {
+      b.innerHTML = renderMarkdown(m.content || "");
+      decorateEntities(b);
+    } else {
+      b.textContent = m.content || "";
+    }
+    return b;
+  }
+
+  const section = (title) => {
+    const s = document.createElement("section");
+    s.className = "admin-section";
+    const h = document.createElement("h3");
+    h.textContent = title;
+    s.appendChild(h);
+    return s;
+  };
+  const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+  // ---- auth gate (in front of everything) ----
+  function showAuth(failed) {
+    setBar(crumb("Admin"));
+    bodyEl.replaceChildren();
+    const gateForm = document.createElement("form");
+    gateForm.className = "admin-gate";
+    gateForm.innerHTML = `
+      <div class="admin-gate-title">Admin access</div>
+      <input class="admin-gate-input" type="password" placeholder="Password" autocomplete="current-password" />
+      <button class="admin-gate-btn" type="submit">Enter</button>
+      ${failed ? '<div class="admin-gate-err">Incorrect password.</div>' : ""}`;
+    bodyEl.appendChild(gateForm);
+    const inp = gateForm.querySelector("input");
+    inp.focus();
+    gateForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      pass = inp.value;
+      try {
+        sessionStorage.setItem("cv-agent-admin-pass", pass);
+      } catch {
+        /* ignore */
+      }
+      const r = await api("/visitors").catch(() => null);
+      if (r && r.ok) showUsers(await r.json());
+      else showAuth(true);
+    });
+  }
+  async function gate() {
+    const r = pass ? await api("/visitors").catch(() => null) : null;
+    if (r && r.ok) showUsers(await r.json());
+    else showAuth(false);
+  }
+
+  // ---- users list ----
+  function showUsers(list) {
+    setBar(crumb("Visitors"));
+    bodyEl.replaceChildren();
+    const scroll = document.createElement("div");
+    scroll.className = "admin-scroll";
+    const panel = document.createElement("div");
+    panel.className = "admin-panel";
+    if (!list.length) {
+      panel.innerHTML = '<div class="admin-empty">No visitors yet.</div>';
+    } else {
+      for (const v of list) {
+        const card = document.createElement("button");
+        card.className = "admin-card";
+        const loc = document.createElement("div");
+        loc.className = "ac-loc";
+        loc.textContent = v.location || "Unknown location";
+        const meta = document.createElement("div");
+        meta.className = "ac-meta";
+        meta.textContent = `${v.chats} conversation${v.chats === 1 ? "" : "s"} · last active ${rel(v.lastSeen)}`;
+        card.append(loc, meta);
+        const roles = Array.isArray(v.roles) ? v.roles : [];
+        if (roles.length) {
+          const chips = document.createElement("div");
+          chips.className = "admin-roles";
+          for (const t of roles) {
+            const chip = document.createElement("span");
+            chip.className = "admin-role";
+            chip.textContent = t;
+            chips.appendChild(chip);
+          }
+          card.appendChild(chips);
+        }
+        card.addEventListener("click", () => openUser(v));
+        panel.appendChild(card);
+      }
+    }
+    scroll.appendChild(panel);
+    bodyEl.appendChild(scroll);
+  }
+
+  async function openUser(v) {
+    setBar(crumb("Visitors", gate), crumb(v.location || v.id));
+    bodyEl.replaceChildren();
+    const loading = document.createElement("div");
+    loading.className = "admin-empty pad";
+    loading.textContent = "Loading…";
+    bodyEl.appendChild(loading);
+    const r = await api("/visitor?id=" + encodeURIComponent(v.id)).catch(() => null);
+    if (!r || !r.ok) {
+      loading.textContent = "Failed to load.";
+      return;
+    }
+    showSummary(v, await r.json());
+  }
+
+  // ---- per-user summary: roles + conversations + what they explored ----
+  function showSummary(v, state) {
+    setBar(crumb("Visitors", gate), crumb(v.location || v.id));
+    bodyEl.replaceChildren();
+    const scroll = document.createElement("div");
+    scroll.className = "admin-scroll";
+    const panel = document.createElement("div");
+    panel.className = "admin-panel";
+
+    const head = document.createElement("div");
+    head.className = "admin-sum-head";
+    head.innerHTML = `<h2>${esc(v.location || "Unknown location")}</h2>
+      <div class="admin-sum-sub">visitor ${esc((v.id || "").slice(0, 10))} · last active ${rel(v.lastSeen)}</div>`;
+    panel.appendChild(head);
+
+    if (state.jobs && state.jobs.length) {
+      const sec = section("Roles evaluated");
+      const chips = document.createElement("div");
+      chips.className = "admin-roles";
+      for (const j of state.jobs) {
+        const chip = document.createElement(j.url ? "a" : "span");
+        chip.className = "admin-role" + (j.id === state.focusedJobId ? " focused" : "");
+        chip.textContent = j.title || "role";
+        if (j.url) {
+          chip.href = j.url;
+          chip.target = "_blank";
+          chip.rel = "noopener";
+        }
+        chips.appendChild(chip);
+      }
+      sec.appendChild(chips);
+      panel.appendChild(sec);
+    }
+
+    const sec = section(`Conversations (${(state.chats || []).length})`);
+    if (!state.chats || !state.chats.length) {
+      const e = document.createElement("div");
+      e.className = "admin-empty";
+      e.textContent = "No conversations.";
+      sec.appendChild(e);
+    } else {
+      for (const chat of state.chats) {
+        const row = document.createElement("button");
+        row.className = "admin-conv";
+        const title = document.createElement("div");
+        title.className = "acv-title";
+        title.textContent = chat.title || "(untitled)";
+        row.appendChild(title);
+        const explored = (chat.nodes || []).filter((n) => n.parentId).map((n) => n.title).filter(Boolean);
+        if (explored.length) {
+          const ex = document.createElement("div");
+          ex.className = "acv-explored";
+          ex.textContent = "Explored: " + explored.join(" · ");
+          row.appendChild(ex);
+        }
+        const open = document.createElement("div");
+        open.className = "acv-open";
+        open.textContent = "Open as they saw it →";
+        row.appendChild(open);
+        row.addEventListener("click", () => showReplay(v, state, chat));
+        sec.appendChild(row);
+      }
+    }
+    panel.appendChild(sec);
+    scroll.appendChild(panel);
+    bodyEl.appendChild(scroll);
+  }
+
+  // ---- read-only replay: the real widget (side nav + columns) ----
+  function showReplay(v, state, chat) {
+    setBar(crumb("Visitors", gate), crumb(v.location || v.id, () => showSummary(v, state)), crumb(chat.title || "conversation"));
+    bodyEl.replaceChildren();
+    const wrap = document.createElement("div");
+    wrap.className = "admin-replay";
+
+    // side nav: the visitor's roles (read-only) + their conversation list
+    const side = document.createElement("aside");
+    side.className = "sidebar";
+    if (state.jobs && state.jobs.length) {
+      const roles = document.createElement("div");
+      roles.className = "roles";
+      const rh = document.createElement("div");
+      rh.className = "roles-head";
+      rh.textContent = state.jobs.length > 1 ? "Roles" : "Role";
+      roles.appendChild(rh);
+      for (const j of state.jobs) {
+        const pill = document.createElement("div");
+        pill.className = "role-pill" + (j.id === state.focusedJobId ? " focused" : "");
+        const dot = document.createElement("span");
+        dot.className = "role-dot";
+        const label = document.createElement("span");
+        label.className = "role-label";
+        label.textContent = j.title || "role";
+        pill.append(dot, label);
+        roles.appendChild(pill);
+      }
+      side.appendChild(roles);
+    }
+    const list = document.createElement("div");
+    list.className = "sidebar-list";
+    for (const c of state.chats || []) {
+      const item = document.createElement("div");
+      item.className = "sidebar-item" + (c === chat ? " active" : "");
+      const title = document.createElement("span");
+      title.className = "sidebar-title";
+      title.textContent = c.title || "(untitled)";
+      item.appendChild(title);
+      item.addEventListener("click", () => showReplay(v, state, c));
+      list.appendChild(item);
+    }
+    side.appendChild(list);
+    wrap.appendChild(side);
+
+    const cols = document.createElement("div");
+    cols.className = "columns";
+    const nodes = chat.nodes && chat.nodes.length ? chat.nodes : [{ messages: [] }];
+    nodes.forEach((node, i) => {
+      const col = document.createElement("div");
+      col.className = i === 0 ? "column" : "column thread-col";
+      if (i > 0) {
+        const h = document.createElement("div");
+        h.className = "thread-col-head";
+        const t = document.createElement("span");
+        t.className = "thread-col-title";
+        t.textContent = node.title || "Thread";
+        h.appendChild(t);
+        col.appendChild(h);
+      }
+      const sc = document.createElement("div");
+      sc.className = "col-scroll";
+      const fscol = document.createElement("div");
+      fscol.className = "fs-col";
+      const msgs = document.createElement("div");
+      msgs.className = "messages";
+      (node.messages || []).filter((m) => !m.hidden).forEach((m) => msgs.appendChild(bubble(m)));
+      fscol.appendChild(msgs);
+      sc.appendChild(fscol);
+      col.appendChild(sc);
+      cols.appendChild(col);
+    });
+    cols.classList.toggle("multi", nodes.length > 1);
+    wrap.appendChild(cols);
+    bodyEl.appendChild(wrap);
+  }
+
+  gate();
+}
+
 function mount() {
   const host = document.createElement("div");
   host.id = "cv-agent-host";
@@ -1406,9 +2084,9 @@ function mount() {
   const container = document.createElement("div");
   root.appendChild(container);
 
-  const path = window.location.pathname;
-  const isHome = path === "/" || path === "/index.html";
-  if (isHome) mountFullscreen(container);
+  const path = window.location.pathname.replace(/\/+$/, "");
+  if (path === "/admin") mountAdmin(container);
+  else if (path === "" || path === "/index.html") mountFullscreen(container);
   else mountFloating(container);
 }
 
