@@ -56,6 +56,14 @@ const PERSONAS = [
   "What's he looking for?",
 ];
 
+// Once a role is set, the visitor is a recruiter checking fit — offer the fit
+// assessment + ways to interrogate the match, instead of "are you hiring?".
+const FIT_CHIPS = [
+  "Map him to the key requirements",
+  "His strongest evidence for this role",
+  "What would he bring in the first 90 days?",
+];
+
 // AI tools, frameworks and ways of working.
 const AI = [
   { label: "Agentic systems", query: "Tell me about Oliver's experience building agentic AI systems." },
@@ -160,8 +168,8 @@ const STATE_URL = AGENT_URL.replace(/\/chat$/, "/state");
 // Stable id for a durable thread generation (the per-thread Durable Object name):
 // a hash of the exact request (context + seed + injected JD), so re-opening the
 // same drill-in re-attaches to the same live stream.
-function threadStreamId(outgoing) {
-  const s = JSON.stringify(outgoing);
+function threadStreamId(outgoing, jobContext) {
+  const s = JSON.stringify(outgoing) + " " + (jobContext || "");
   let h = 0;
   for (let i = 0; i < s.length; i++) h = (Math.imul(h, 31) + s.charCodeAt(i)) | 0;
   return "ts" + (h >>> 0).toString(36) + s.length.toString(36);
@@ -212,6 +220,22 @@ function jobLabel(job) {
   const t = first.replace(/\s+/g, " ").trim();
   return t.length > 30 ? t.slice(0, 30) + "…" : t;
 }
+// Heuristic: did the visitor paste a job description as text (vs ask a question)?
+// A pasted JD is long and carries role-posting language; this lets a pasted
+// description register as the focused role just like a pasted link does.
+function isLikelyJobDescription(text) {
+  if (!text || text.length < 180) return false;
+  const t = text.toLowerCase();
+  const kw = [
+    "responsibilit", "requirement", "qualificat", "you'll", "you will", "we're looking",
+    "we are looking", "about the role", "what you'll", "must have", "nice to have",
+    "experience with", "experience in", "this position", "the role", "who you are",
+    "what we offer", "benefits", "salary", "full-time", "full time",
+  ];
+  const hits = kw.filter((k) => t.includes(k)).length;
+  return hits >= 2 || (text.split("\n").length >= 4 && hits >= 1);
+}
+
 function addJob({ url, text, title }) {
   if (!text && !url) return null;
   const state = loadJobsState();
@@ -331,7 +355,7 @@ const STYLES = `
 
   .msg p { margin: 0 0 10px; }
   .msg p:last-child { margin-bottom: 0; }
-  .msg .md-h { font-size: 20.5px; font-weight: 500; line-height: 1.3; margin: 22px 0 8px; color: var(--text); }
+  .msg .md-h { font-size: 18px; font-weight: 500; line-height: 1.3; margin: 22px 0 8px; color: var(--text); }
   .msg .md-h:first-child { margin-top: 0; }
   .msg .md-h.entity { display: inline-flex; align-items: center; gap: 7px; cursor: pointer; border-bottom: none; border-radius: 7px; padding: 2px 7px; margin-left: -7px; }
   .msg .md-h.entity:hover { background: #eef1ff; color: #2b3380; }
@@ -352,13 +376,14 @@ const STYLES = `
   .more-btn:hover { color: var(--accent); }
   .more-btn.loaded .circle-arrow circle { fill: currentColor; }
   .more-btn.loaded .circle-arrow path { stroke: #fff; }
-  .section-more { display: flex; align-items: center; gap: 5px; width: fit-content; margin: 6px 0 0; border: none; background: none; padding: 0; font: inherit; font-size: 13px; color: #6b78d6; cursor: pointer; }
+  .section-more { display: flex; align-items: center; gap: 5px; width: fit-content; margin: 6px 0 0 auto; border: none; background: none; padding: 0; font: inherit; font-size: 13px; color: #6b78d6; cursor: pointer; }
   .section-more:hover { color: #2b3380; }
   .section-more.loaded .circle-arrow circle { fill: currentColor; } /* opened */
   .section-more.loaded .circle-arrow path { stroke: #fff; }
   .msg code { font-family: ui-monospace, Menlo, monospace; font-size: .9em; background: #f4f4f5; padding: 1px 5px; border-radius: 5px; }
   .msg.user code { background: rgba(0,0,0,.06); }
   .msg a { color: #2563eb; text-decoration: underline; }
+  .msg hr { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
 
   /* ---------- composer (shared) ---------- */
   .composer { position: relative; }
@@ -509,17 +534,25 @@ const STYLES = `
   /* Fixed header above the chat area (sidebar stays full-height to its left), so
      the name + what-he-does are always in view. */
   .main-area { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-  .page-header { flex: none; padding: 13px 24px; border-bottom: 1px solid var(--border); background: var(--bg); }
+  .page-header { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 13px 24px; border-bottom: 1px solid var(--border); background: var(--bg); }
+  .page-header-id { min-width: 0; }
   .page-header h1 { margin: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-weight: 650; font-size: 20px; }
   .page-header .tagline { margin: 3px 0 0; color: var(--muted); font-size: 13.5px; line-height: 1.45; }
+  /* Focused role(s) sit at the right end of the header. */
+  .page-header .roles { flex: none; flex-direction: row; align-items: center; gap: 10px; margin: 0; max-width: 46%; }
+  .page-header .roles-head { margin: 0; }
+  .page-header .role-pill { max-width: 300px; }
   .col-composer { background: var(--bg); border-top: 1px solid var(--border); }
   .col-composer .fs-col { padding-top: 14px; padding-bottom: 18px; }
   /* widen the "/" menu beyond the message column */
   .col-composer .slash { left: 50%; right: auto; transform: translateX(-50%); width: min(1000px, 90vw); }
   /* Centered ChatGPT-style opener for an empty chat (composer in the middle). */
-  .column.empty { justify-content: center; }
-  .column.empty .col-scroll { flex: 0 0 auto; overflow: visible; }
+  /* Centred opener: the COMPOSER sits at the vertical middle (equal flex spacers
+     above and below); the heading is pinned just above it. */
+  .column.empty .col-scroll { flex: 1 1 0; min-height: 0; overflow: visible; display: flex; flex-direction: column; justify-content: flex-end; }
   .column.empty .col-composer { border-top: none; }
+  .opener-spacer { display: none; }
+  .column.empty .opener-spacer { display: block; flex: 1 1 0; }
   .opener-head { text-align: center; padding: 0 0 18px; }
   .opener-title { margin: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-weight: 600; font-size: 26px; }
   .opener-sub { margin: 10px auto 0; max-width: 520px; color: var(--muted); font-size: 14.5px; line-height: 1.5; }
@@ -567,11 +600,14 @@ const STYLES = `
 `;
 
 /** Parse an Anthropic SSE stream, invoking onText for each text delta. */
-async function streamReply(messages, onText, onJd, signal, threadId) {
+async function streamReply(messages, onText, onJd, signal, threadId, jobContext) {
+  const body = { messages };
+  if (threadId) body.threadId = threadId;
+  if (jobContext) body.jobContext = jobContext; // appended to the SYSTEM prompt server-side
   const res = await fetch(AGENT_URL, {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify(threadId ? { messages, threadId } : { messages }),
+    body: JSON.stringify(body),
     signal,
   });
 
@@ -633,7 +669,11 @@ function renderMarkdown(md) {
   for (const line of md.split("\n")) {
     if (!line.trim()) { closeList(); continue; }
     let m;
-    if ((m = line.match(/^\s*[-*]\s+(.*)$/))) {
+    if (/^\s*([-*_])([ \t]*\1){2,}[ \t]*$/.test(line)) {
+      // thematic break: ---, ***, ___ (also spaced) -> dividing line
+      closeList();
+      html += "<hr>";
+    } else if ((m = line.match(/^\s*[-*]\s+(.*)$/))) {
       if (list !== "ul") { closeList(); html += "<ul>"; list = "ul"; }
       html += `<li>${inline(m[1])}</li>`;
     } else if ((m = line.match(/^\s*\d+\.\s+(.*)$/))) {
@@ -941,8 +981,12 @@ function createConversation({ scrollEl, messagesEl, input, form, sendBtn, starte
 
   // For multi-section replies, append a "Tell me more" link after each section
   // (heading + its paragraphs). Clicking opens a side thread via onMore.
-  function addSectionMore(bubble) {
-    [...bubble.querySelectorAll(".md-h")].forEach((h) => {
+  function addSectionMore(bubble, { skipLast = false } = {}) {
+    const heads = [...bubble.querySelectorAll(".md-h")];
+    heads.forEach((h, i) => {
+      // While streaming, the LAST section is still being written — don't give it a
+      // "More" until it's complete; earlier sections (a heading follows them) are done.
+      if (skipLast && i === heads.length - 1) return;
       let last = h;
       const parts = [h];
       for (let n = h.nextElementSibling; n && !n.classList.contains("md-h"); n = n.nextElementSibling) {
@@ -961,7 +1005,11 @@ function createConversation({ scrollEl, messagesEl, input, form, sendBtn, starte
         link.classList.add("loaded");
         drill(`Tell me more about ${topic} (in the context of Oliver's career).`, topic, sectionText);
       });
-      last.after(link);
+      // If the section ends with a divider (---), keep the divider LAST so it
+      // separates this section + its "More" from the next, rather than splitting
+      // the content from its own "More".
+      if (last.tagName === "HR") last.before(link);
+      else last.after(link);
     });
   }
 
@@ -969,6 +1017,12 @@ function createConversation({ scrollEl, messagesEl, input, form, sendBtn, starte
   function applyMore(bubble, moreQuery) {
     if (onMore && bubble.querySelector(".md-h")) addSectionMore(bubble);
     else appendMore(bubble, moreQuery);
+  }
+
+  // While the reply streams, surface "More" links on sections that are already
+  // complete (a heading follows them); the in-progress last section waits for finalize.
+  function applyMoreStreaming(bubble) {
+    if (onMore && bubble.querySelector(".md-h")) addSectionMore(bubble, { skipLast: true });
   }
 
   // Any drill-in (bold entity, section "More", circle-arrow, suggestion chip)
@@ -1007,7 +1061,12 @@ function createConversation({ scrollEl, messagesEl, input, form, sendBtn, starte
     saveState();
     input.value = "";
     input.style.height = ""; // collapse the auto-grown textarea back to one line
-    return respondToLast();
+    const reply = await respondToLast();
+    // If the visitor pasted a job description as text, register it as the focused
+    // role AFTER this turn — so this (JD-provision) turn still gets the fit
+    // assessment, and future turns carry it as context + the opener reflects it.
+    if (!hidden && !lite && isLikelyJobDescription(text)) addJob({ text });
+    return reply;
   }
 
   // Generate the assistant reply for the latest user message already in `messages`.
@@ -1026,32 +1085,19 @@ function createConversation({ scrollEl, messagesEl, input, form, sendBtn, starte
     let outgoing = [...contextMessages, ...messages].slice(-20);
     while (outgoing.length && outgoing[0].role !== "user") outgoing.shift();
 
-    // Inject the globally-active job description so EVERY chat and thread sees it,
-    // unless this conversation already carries the job link (the server fetches
-    // that one itself) or the JD is already in the messages.
+    // The active job description is sent as SYSTEM-level background context
+    // (jobContext) — NOT mixed into the messages — so the visitor's latest message
+    // stays the only thing the model responds to. Skip when the JD link is already
+    // in the conversation (the server fetches it itself on the JD-provision turn).
     const job = loadActiveJob();
-    if (job && job.text) {
-      const ui = outgoing.findIndex((m) => m.role === "user");
-      const hasLink = job.url && outgoing.some((m) => m.content.includes(job.url));
-      const alreadyInjected = outgoing.some((m) => m.content.includes("[Active job description"));
-      if (ui >= 0 && !hasLink && !alreadyInjected) {
-        outgoing = outgoing.slice();
-        outgoing[ui] = {
-          ...outgoing[ui],
-          content:
-            "[Active job description the visitor is evaluating Oliver against — keep it in mind for this whole conversation:]\n" +
-            job.text +
-            "\n\n---\n\n" +
-            outgoing[ui].content,
-        };
-      }
-    }
+    const hasLink = job?.url && outgoing.some((m) => m.content.includes(job.url));
+    const jobContext = job && job.text && !hasLink ? job.text : null;
 
     let answer = "";
     try {
       // Threads use the durable server-side generation (continues in the
       // background, polled to follow along); the main chat streams live.
-      if (durable) return await durableTurn(outgoing, bubble, caret);
+      if (durable) return await durableTurn(outgoing, bubble, caret, jobContext);
       abortController = new AbortController();
       await streamReply(
         outgoing,
@@ -1059,11 +1105,14 @@ function createConversation({ scrollEl, messagesEl, input, form, sendBtn, starte
           const stick = atBottom();
           answer += delta;
           bubble.innerHTML = renderMarkdown(stripTokens(answer));
+          applyMoreStreaming(bubble);
           bubble.appendChild(caret);
           if (stick) toBottom();
         },
         (jd) => setActiveJob({ url: jd.url, text: jd.text, at: Date.now() }),
         abortController.signal,
+        null,
+        jobContext,
       );
       caret.remove();
       const clean = stripTokens(answer);
@@ -1098,11 +1147,12 @@ function createConversation({ scrollEl, messagesEl, input, form, sendBtn, starte
   // already-running thread, or a finished one all look the same here — we just
   // stream. The DO sends the content-so-far up front, then live deltas. Closing the
   // column aborts our SSE; the DO keeps generating and we re-attach on return.
-  async function durableTurn(outgoing, bubble, caret) {
-    const id = threadStreamId(outgoing);
+  async function durableTurn(outgoing, bubble, caret, jobContext) {
+    const id = threadStreamId(outgoing, jobContext);
     const renderPartial = (txt) => {
       const stick = atBottom();
       bubble.innerHTML = renderMarkdown(stripTokens(txt));
+      applyMoreStreaming(bubble);
       bubble.appendChild(caret);
       if (stick) toBottom();
     };
@@ -1118,6 +1168,7 @@ function createConversation({ scrollEl, messagesEl, input, form, sendBtn, starte
         (jd) => setActiveJob({ url: jd.url, text: jd.text }),
         abortController.signal,
         id,
+        jobContext,
       );
     } catch (err) {
       if (err && err.name === "AbortError") return ""; // column closed; the DO keeps generating
@@ -1223,6 +1274,30 @@ function createConversation({ scrollEl, messagesEl, input, form, sendBtn, starte
     });
   }
 
+  // Paint the centered opener for the current focused-job state: with a role set,
+  // the visitor is a recruiter checking fit, so ask the fit question; otherwise
+  // invite a JD. Re-run when the focused job changes.
+  function paintOpener() {
+    if (!opener) return;
+    const job = loadActiveJob();
+    const titleEl = scrollEl?.querySelector(".opener-title");
+    const subEl = scrollEl?.querySelector(".opener-sub");
+    if (titleEl && subEl) {
+      titleEl.textContent = job ? "How does Oliver fit this role?" : "Hiring for a position?";
+      subEl.textContent = job
+        ? "Ask for an honest fit assessment, or drill into any requirement."
+        : "Paste the job description or a link";
+    }
+    if (startersEl) {
+      startersEl.replaceChildren();
+      // No suggestion chips on the default opener — just the heading + composer.
+      // With a role set, offer the fit-oriented prompts.
+      if (job) buildStarters(startersEl, FIT_CHIPS, (q) => send(q));
+      const zone = startersEl.closest(".starters-zone");
+      if (zone) zone.hidden = !job;
+    }
+  }
+
   // Show a given chat's messages (or, if empty, the greeting + opener chips).
   function load(chat) {
     messages.length = 0;
@@ -1241,9 +1316,8 @@ function createConversation({ scrollEl, messagesEl, input, form, sendBtn, starte
       toBottom();
       onLayout?.(false);
     } else if (opener) {
-      // Centered opener: the heading + sub live in the column DOM; here we just
-      // lay out the suggestion chips beneath the composer.
-      if (startersEl) buildStarters(startersEl, PERSONAS, (q) => send(q));
+      // Centered opener: role-aware heading/sub (live in the column DOM) + chips.
+      paintOpener();
       onLayout?.(true);
     } else {
       greet();
@@ -1252,7 +1326,7 @@ function createConversation({ scrollEl, messagesEl, input, form, sendBtn, starte
         cta.className = "hiring-cta";
         cta.innerHTML =
           '<div class="hiring-cta-title">Hiring for a position?</div>' +
-          "<div class=\"hiring-cta-sub\">Paste the job description or a link, and I'll show you exactly how Oliver maps to it.</div>";
+          "<div class=\"hiring-cta-sub\">Paste the job description or a link</div>";
         cta.addEventListener("click", () => input.focus());
         startersEl.appendChild(cta);
         const orLabel = document.createElement("div");
@@ -1274,7 +1348,7 @@ function createConversation({ scrollEl, messagesEl, input, form, sendBtn, starte
       /* ignore */
     }
   };
-  return { send, load, abort };
+  return { send, load, abort, paintOpener };
 }
 
 // Speech recognisers mis-hear tech terms ("next jazz" -> "Next.js"). Browsers
@@ -1507,13 +1581,15 @@ function mountFullscreen(root) {
     <div class="fs">
       <aside class="sidebar">
         <button class="sidebar-new" type="button"><span>+</span> New chat</button>
-        <div class="roles" hidden></div>
         <div class="sidebar-list"></div>
       </aside>
       <div class="main-area">
         <header class="page-header">
-          <h1>Oliver Searle-Barnes</h1>
-          <p class="tagline">Hands-on CTO and Staff Engineer. Two decades shipping production software, most recently agentic AI.</p>
+          <div class="page-header-id">
+            <h1>Oliver Searle-Barnes</h1>
+            <p class="tagline">Hands-on CTO and Staff Engineer. Two decades shipping production software, most recently agentic AI.</p>
+          </div>
+          <div class="roles" hidden></div>
         </header>
         <div class="columns"></div>
       </div>
@@ -1599,12 +1675,13 @@ function mountFullscreen(root) {
         <div class="col-scroll"><div class="fs-col">
           <div class="opener-head">
             <h2 class="opener-title">Hiring for a position?</h2>
-            <p class="opener-sub">Paste the job description or a link, and I'll show you exactly how Oliver maps to it.</p>
+            <p class="opener-sub">Paste the job description or a link</p>
           </div>
           <div class="messages"></div>
         </div></div>
         <div class="col-composer"><div class="fs-col">${composerHTML("Ask anything about Oliver...")}</div></div>
-        <div class="starters-zone"><div class="fs-col"><div class="starters"></div></div></div>`;
+        <div class="starters-zone"><div class="fs-col"><div class="starters"></div></div></div>
+        <div class="opener-spacer"></div>`;
     } else {
       el.className = "column thread-col";
       el.innerHTML = `
@@ -1776,7 +1853,20 @@ function mountFullscreen(root) {
   (async () => {
     try {
       const data = await fetch(`${STATE_URL}?visitor=${encodeURIComponent(visitorId())}`).then((r) => r.json());
-      if (data && data.jobs) persistJobs({ jobs: data.jobs, focusedId: data.focusedJobId || null }, { sync: false });
+      // Jobs: D1 is the source of truth, but NEVER let an empty / not-yet-synced D1
+      // wipe a locally-held role (the bug where a just-provided JD vanished). Union
+      // D1 with local, and re-sync to D1 if local carried a role D1 hadn't stored.
+      {
+        const local = loadJobsState();
+        const d1Jobs = data && Array.isArray(data.jobs) ? data.jobs : [];
+        const byId = new Map(d1Jobs.map((j) => [j.id, j]));
+        let added = false;
+        for (const j of local.jobs) if (!byId.has(j.id)) { byId.set(j.id, j); added = true; }
+        const jobs = [...byId.values()];
+        let focusedId = (data && data.focusedJobId) || local.focusedId || null;
+        if (!jobs.some((j) => j.id === focusedId)) focusedId = jobs.length ? jobs[jobs.length - 1].id : null;
+        persistJobs({ jobs, focusedId }, { sync: added });
+      }
       if (data && Array.isArray(data.chats) && data.chats.length) {
         const d1chats = data.chats.map(normaliseChat);
         const started = !!current && !!current.nodes?.[0]?.messages?.length;
@@ -1838,7 +1928,13 @@ function mountFullscreen(root) {
     }
   }
   renderRoles(loadJobsState());
-  onJobsChange(renderRoles);
+  onJobsChange((s) => {
+    renderRoles(s);
+    // If the main column is sitting on the centered opener, swap it to the
+    // role-aware question (or back) as roles are focused / removed.
+    const main = columns[0];
+    if (main && main.el.classList.contains("empty")) main.convo.paintOpener?.();
+  });
 
   columns[0]?.el.querySelector("textarea")?.focus();
 }
@@ -1964,7 +2060,8 @@ function mountAdmin(root) {
       const mk = document.createElement("div");
       mk.className = "section-more loaded replay-more";
       mk.innerHTML = "Opened " + ICON.circleArrowRight;
-      last.after(mk);
+      if (last.tagName === "HR") last.before(mk);
+      else last.after(mk);
     });
     b.querySelectorAll(".entity").forEach((e) => {
       if (entityTitles.has(e.textContent.trim())) e.classList.add("replay-visited");
