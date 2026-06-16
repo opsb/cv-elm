@@ -77,7 +77,7 @@ highlights : List String
 highlights =
     [ "Took Alfie from zero to one as XP Flow's founding engineer: an agentic LLM product for partner recruiting, grown to 200 brands and 30k affiliates."
     , "Multi-time CTO and co-founder, including a school-commerce platform acquired by Marks & Spencer, leading engineering from the first hire upward."
-    , "At Boulevard, a health-and-beauty unicorn, built reusable platform capabilities: an App Store, a GraphQL rate limiter, and the authorization model."
+    , "At Boulevard, a health-and-beauty unicorn: scaled platform performance, implemented HIPAA compliance, built the GraphQL authorization layer, and expanded the App Store with QuickBooks and Zapier integrations."
     , "Rebuilt CompareTheMarket's Bean as a personal finance manager, integrating 15 UK high-street banks via Open Banking under FCA authorisation, launched to tens of thousands."
     ]
 
