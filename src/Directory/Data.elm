@@ -40,12 +40,38 @@ type alias Group =
 
 groups : List Group
 groups =
-    [ leadership
+    [ aiPlatform
+    , leadership
     , elixir
     , node
     , engineeringManager
     , general
     ]
+
+
+aiPlatform : Group
+aiPlatform =
+    { name = "AI Platform (hands-on)"
+    , blurb = "The AI-tilted, hands-on technical-owner cut: enterprise AI / agentic-product seats where they want a Tech Lead / Principal / Head of Eng who builds the system and works with AI agents as second nature, not a Jira manager."
+    , entries =
+        [ { route = "/ai-platform-lead"
+          , title = "AI Platform Lead"
+          , tagline = "Hands-on Tech Lead · AI Platform & Agentic Engineering"
+          , design = "Portrait (modern)"
+          , when = "Hands-on technical-owner roles on an AI / agentic platform: foregrounds agentic AI, platform-primitives-over-per-client-forks, production reliability, security / compliance, integrations, and Claude Code / Codex as daily leverage. Forked from /node-lead and re-weighted for the AI-platform reader."
+          , pdf = Just "Oliver-Searle-Barnes-AI-Platform-Lead.pdf"
+          , legacy = False
+          }
+        , { route = "/cto-ai"
+          , title = "Founding CTO (AI)"
+          , tagline = "Founding CTO · AI & Agentic Engineering"
+          , design = "Portrait (modern)"
+          , when = "Founding CTO / co-founder seats on an AI / agentic product: same hands-on, AI-native content as /ai-platform-lead but lifted to founding-CTO altitude (founding / 0->1 and leadership foregrounded, still hands-on in the code). Reach for this over /cto when the role is AI-first and wants a builder-leader, and over /ai-platform-lead when the title is CTO / co-founder."
+          , pdf = Just "Oliver-Searle-Barnes-Founding-CTO-AI.pdf"
+          , legacy = False
+          }
+        ]
+    }
 
 
 leadership : Group

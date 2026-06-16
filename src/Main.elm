@@ -4,7 +4,9 @@ import Browser
 import Browser.Events exposing (onResize)
 import Browser.Navigation as Nav
 import LeadershipData as Data exposing (..)
+import AiPortrait.Data
 import Cto.View
+import CtoAi.Data
 import Cv.PortraitView
 import Directory.View
 import ElixirPortrait.Data
@@ -161,6 +163,19 @@ isNodeLead path =
             False
 
 
+isAiPlatformLead : String -> Bool
+isAiPlatformLead path =
+    case String.toLower (String.trim path) of
+        "/ai-platform-lead" ->
+            True
+
+        "/ai-platform-lead/" ->
+            True
+
+        _ ->
+            False
+
+
 isCto : String -> Bool
 isCto path =
     case String.toLower (String.trim path) of
@@ -168,6 +183,19 @@ isCto path =
             True
 
         "/cto/" ->
+            True
+
+        _ ->
+            False
+
+
+isCtoAi : String -> Bool
+isCtoAi path =
+    case String.toLower (String.trim path) of
+        "/cto-ai" ->
+            True
+
+        "/cto-ai/" ->
             True
 
         _ ->
@@ -282,8 +310,14 @@ view model =
     else if isNodeLead model.path then
         Cv.PortraitView.view (NodePortrait.Data.portrait NodePortrait.Data.Leader)
 
+    else if isAiPlatformLead model.path then
+        Cv.PortraitView.view AiPortrait.Data.portrait
+
     else if isNode model.path then
         Node.View.view { leader = nodeLeaderFlag model.query }
+
+    else if isCtoAi model.path then
+        Cv.PortraitView.view CtoAi.Data.portrait
 
     else if isCto model.path then
         Cto.View.view

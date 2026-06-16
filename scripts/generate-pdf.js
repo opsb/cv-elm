@@ -50,6 +50,8 @@ const allVariants = [
   { path: "/em", file: "Oliver-Searle-Barnes-Engineering-Manager.pdf" },
   { path: "/node-staff", file: "Oliver-Searle-Barnes-Staff-Engineer.pdf" },
   { path: "/node-lead", file: "Oliver-Searle-Barnes-Hands-On-CTO.pdf" },
+  { path: "/ai-platform-lead", file: "Oliver-Searle-Barnes-AI-Platform-Lead.pdf" },
+  { path: "/cto-ai", file: "Oliver-Searle-Barnes-Founding-CTO-AI.pdf" },
   { path: "/elixir-staff", file: "Oliver-Searle-Barnes-Staff-Elixir-Engineer.pdf" },
   { path: "/elixir-lead", file: "Oliver-Searle-Barnes-Elixir-Lead.pdf" },
 ];
