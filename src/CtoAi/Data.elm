@@ -113,6 +113,7 @@ ai =
     { name = "AI & Agentic Engineering"
     , skills =
         [ "Agentic LLM pipelines (LangChain / LangGraph)"
+        , "Multi-agent orchestration"
         , "Tool-calling agents on real systems"
         , "Evals & prompt-regression harnesses"
         , "Claude Code & Codex (daily)"
@@ -204,8 +205,8 @@ xpflow =
         , stack = [ "Next.js", "React", "TypeScript", "Node.js", "LangChain / LangGraph", "Postgres", "Redis" ]
         , bullets =
             [ "Hired and led a cross-functional team of designer, engineers, and sales, running 1:1s and the hiring loop."
-            , "Built Alfie, a fleet of LLM agents that discover, evaluate, and reach out to affiliate partners on behalf of growth teams: an agentic learning loop on LangChain / LangGraph with a regression-test harness for prompts."
-            , "Built a custom chat stack with in-chat widgets and tool-calling UI, surfacing agent state in real time."
+            , "Built Alfie, a fleet of LLM agents that discover, evaluate, and reach out to affiliate partners on behalf of growth teams: a todo-driven agentic learning loop on LangChain / LangGraph with a regression-test harness for prompts."
+            , "Built a custom chat stack with in-chat widgets, progress tracking, and an agent-controlled side panel."
             , "Designed the brand-to-affiliate discovery engine: a scraping pipeline feeding multi-stage LLM evaluation, with Stripe and Everflow integrations."
             , "Built the full-stack Next.js / TypeScript application end to end."
             ]
