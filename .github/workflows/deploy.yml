@@ -5,6 +5,14 @@
 # apex bounces over to chat (canonical + JS path-preserving + meta-refresh
 # fallback). It replaces the old Elm-CV build, which kept overriding the
 # redirect on every push to main.
+#
+# GitHub Pages is static and can't emit a real 301 for arbitrary paths: unknown
+# paths fall through to 404.html (which still redirects in-browser via JS, but
+# returns a 404 status to crawlers/link-unfurlers). So we additionally emit a
+# per-route stub (/<route>/index.html) for every real CV route, which returns
+# 200 with a correct per-path canonical. Keep ROUTES in step with the route list
+# in the opsb.co.uk repo (web/scripts/generate-pdf.js + src/Directory/Data.elm);
+# any route missing here still works in-browser via the 404.html fallback.
 name: Deploy apex redirect to Pages
 
 on:
@@ -36,24 +44,41 @@ jobs:
     steps:
       - name: Build redirect site
         run: |
+          set -euo pipefail
+
+          # Real CV routes on chat.opsb.co.uk that should redirect at the apex.
+          ROUTES="elixir experimental node cto team-lead em node-staff node-tech node-lead cto-ai elixir-staff elixir-lead elixir-em directory"
+
+          # Emit a redirect page whose canonical + meta-refresh point at $1.
+          # The JS preserves the full path/query/hash regardless of which file
+          # served it, so the per-route meta target is only the no-JS fallback.
+          emit() {
+            printf '%s\n' \
+              '<!DOCTYPE html>' \
+              '<html lang="en">' \
+              '<head>' \
+              '<meta charset="utf-8">' \
+              '<title>opsb.co.uk</title>' \
+              "<link rel=\"canonical\" href=\"$1\">" \
+              '<script>location.replace("https://chat.opsb.co.uk" + location.pathname + location.search + location.hash);</script>' \
+              "<meta http-equiv=\"refresh\" content=\"0; url=$1\">" \
+              '</head>' \
+              "<body>Redirecting to <a href=\"$1\">chat.opsb.co.uk</a>…</body>" \
+              '</html>'
+          }
+
           mkdir -p _site
-          cat > _site/index.html <<'HTML'
-          <!DOCTYPE html>
-          <html lang="en">
-          <head>
-          <meta charset="utf-8">
-          <title>opsb.co.uk</title>
-          <link rel="canonical" href="https://chat.opsb.co.uk/">
-          <script>location.replace("https://chat.opsb.co.uk" + location.pathname + location.search + location.hash);</script>
-          <meta http-equiv="refresh" content="0; url=https://chat.opsb.co.uk/">
-          </head>
-          <body>Redirecting to <a href="https://chat.opsb.co.uk/">chat.opsb.co.uk</a>…</body>
-          </html>
-          HTML
-          # 404 handles deep paths (/node-lead etc.); the JS preserves the path.
+          # Apex root, plus the catch-all 404 for any path without a stub below.
+          emit "https://chat.opsb.co.uk/" > _site/index.html
           cp _site/index.html _site/404.html
           # Keep the custom domain attached to this Pages site.
           printf 'opsb.co.uk\n' > _site/CNAME
+
+          # Per-route stubs: known deep paths return 200, not 404.
+          for r in $ROUTES; do
+            mkdir -p "_site/$r"
+            emit "https://chat.opsb.co.uk/$r" > "_site/$r/index.html"
+          done
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Upload artifact
