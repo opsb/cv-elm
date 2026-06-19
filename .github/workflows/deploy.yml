@@ -1,5 +1,11 @@
-# Simple workflow for deploying static content to GitHub Pages
-name: Deploy static content to Pages
+# Deploy the apex redirect to GitHub Pages.
+#
+# opsb.co.uk is retired as a site host: chat.opsb.co.uk (Cloudflare Pages) is
+# canonical. This workflow publishes a tiny redirect site to GitHub Pages so the
+# apex bounces over to chat (canonical + JS path-preserving + meta-refresh
+# fallback). It replaces the old Elm-CV build, which kept overriding the
+# redirect on every push to main.
+name: Deploy apex redirect to Pages
 
 on:
   # Runs on pushes targeting the default branch
@@ -28,26 +34,32 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Set up Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: "npm"
-      - name: Install dependencies
-        run: npm ci
-      - name: Build
-        run: npm run build
-      - name: Generate PDFs for each variant
-        run: npm run generate-pdf
+      - name: Build redirect site
+        run: |
+          mkdir -p _site
+          cat > _site/index.html <<'HTML'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+          <meta charset="utf-8">
+          <title>opsb.co.uk</title>
+          <link rel="canonical" href="https://chat.opsb.co.uk/">
+          <script>location.replace("https://chat.opsb.co.uk" + location.pathname + location.search + location.hash);</script>
+          <meta http-equiv="refresh" content="0; url=https://chat.opsb.co.uk/">
+          </head>
+          <body>Redirecting to <a href="https://chat.opsb.co.uk/">chat.opsb.co.uk</a>…</body>
+          </html>
+          HTML
+          # 404 handles deep paths (/node-lead etc.); the JS preserves the path.
+          cp _site/index.html _site/404.html
+          # Keep the custom domain attached to this Pages site.
+          printf 'opsb.co.uk\n' > _site/CNAME
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload dist folder
-          path: "./dist"
+          path: "_site"
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
